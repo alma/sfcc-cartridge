@@ -1,0 +1,8 @@
+{
+    "hostname": "your-sandbox.demandware.net",
+    "username": "your@username.com",
+    "password": "yourpassword",
+    "code-version": "your_code_version",
+    "p12": "/absolute/path/for/a/p12/key", // optional, only needed for PIG env, remove it if you don't need it
+    "passphrase": "passphrase of the p12 key" // optional, only needed for PIG env, remove it if you don't need it
+}

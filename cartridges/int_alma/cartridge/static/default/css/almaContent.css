@@ -1,0 +1,48 @@
+.alma-content .pay-type{
+    /* background: #cccccc7a;*/
+    border-radius: 5px;
+    margin-top: 10px;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.alma-content .pay-type .img{
+    background: #fff;
+    border-radius: 5px;
+    height: 40px;
+    padding: 5px;
+}
+
+.alma-content .pay-type .img-content,
+.alma-content .pay-type .img,
+.alma-content .pay-type .icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.alma-content .pay-type .check-on-shipment {
+    color: green;
+    font-size: 20px;
+    display: none;
+}
+.alma-content .pay-type .img-text{
+    background:#00425d;
+    color: #fff;
+    border-radius: 5px;
+    margin-right: 5px;
+    padding: 3px;
+    height: 30px;
+    font-weight: 700;
+}
+.alma-content .pay-type h4{
+    margin-top: 10px;
+}
+.alma-content .pay-type p{
+    color: #444444b5;
+}
+.alma-content .pay-type .installments{
+    margin-bottom: 0px;
+}
+.alma-content .loading{
+    display: none;
+}

@@ -1,0 +1,23 @@
+<isscript>
+    var Calendar = require('dw/util/Calendar');
+    var StringUtils = require('dw/util/StringUtils');
+    var formatCurrency = require('*/cartridge/scripts/util/formatting').formatCurrency;
+</isscript>
+<isinclude template="/components/modules" sf-toolkit="off" />
+<isset name="almaInfo" value="${pdict.paymentObj.payment_plan}" scope="page" />
+<isif condition="${almaInfo.size()>0}">
+    <isprint value="${Resource.msg('alma.pay_with_alma', 'alma', null)}" encoding="off"/>.
+</isif>
+<!--<isloop items="${almaInfo}" var="almaPayment" status="status"> -->
+
+<!--        <div class="mb-2">-->
+<!--            <div class="credit-card-type">-->
+<!--            <isset name="date" value="${new Date(almaPayment.due_date * 1000)}" scope="page" />-->
+<!--            <isset name="formattedDate" value="${StringUtils.formatCalendar(new Calendar(date), 'dd/MM/yyyy')}" scope="page" />-->
+<!--             ${formattedDate} : ${formatCurrency(almaPayment.purchase_amount / 100, 'EUR')} <isprint value="${Resource.msg('alma.'+almaPayment.state, 'alma', null)}" encoding="off"/>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--</isloop>-->
+<isif condition="${almaInfo.size()>0}">
+    <a href="${pdict.paymentObj.url}" target="_blank" class="mb-10"><isprint value="${Resource.msg('alma.view', 'alma', null)}" encoding="off"/>  </a>
+</isif>

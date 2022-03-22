@@ -1,0 +1,161 @@
+<link rel="stylesheet" href="${URLUtils.staticURL('/css/almaContent.css')}" />
+<script src="https://cdn.jsdelivr.net/npm/@alma/fragments@1.x/dist/alma-fragments.umd.js" ></script>
+
+<div class="tab-pane alma-content" id="alma-content" role="tabpanel">
+    <isloop iterator= "${pdict.plans}" var= "plan" status="planStatus" >
+        <div class="row pay-type alma-payment-method" id="${plan.selector}"
+            data-installments="${plan.installments_count}" data-deferred-days="${plan.deferred_days}">
+            <div class="col-2 img-content">
+                <div class="img">
+                    <div class="img-text">
+                        <isprint value="${plan.properties.img}" encoding="off"/>
+                    </div>
+                    <img alt="" src="${URLUtils.staticURL('/images/alma.png')}" title="ALMA" style="height: 20px;" />
+                </div>
+            </div>
+            <div class="col-9">
+                <h4><isprint value="${plan.properties.title}" encoding="off"/></h4>
+                <p><isprint value="${plan.properties.description}" encoding="off"/></p>
+                <p class="installments">
+                    <isprint value="${plan.properties.payment_installments}" encoding="off"/>
+                </p>
+                <p class="pt-30">
+                    <isprint value="${plan.properties.fees}" />
+                </p>
+            </div>
+            <div class="col-1 icon">
+                <span class="fa fa-chevron-right"></span>
+            </div>
+        </div>
+        <div id="${plan.selector}_fragment" ></div>
+    </isloop>
+
+    <fieldset class="payment-form-fields">
+        <input type="hidden" class="form-control" name="${pdict.forms.billingForm.paymentMethod.htmlName}" value="ALMA" />
+    </fieldset>
+</div>
+
+
+<script>
+    window.addEventListener('DOMContentLoaded', function () {
+        var fragments = new Alma.Fragments("${pdict.merchantId}", {
+            mode: '${pdict.mode}' == 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST,
+        });
+        var orderId = '';
+
+        function getPaymentData(data, installments_count, deferred_days) {
+            return {
+                payment: {
+                    purchase_amount: Number("${pdict.purchase_amount}"),
+                    installments_count: installments_count,
+                    deferred_days: deferred_days,
+                    deferred_months: 0,
+                    return_url: "${pdict.return_url}",
+                    ipn_callback_url: "${pdict.ipn_callback_url}",
+                    customer_cancel_url: "${pdict.customer_cancel_url}",
+                    locale: data.locale.split("_")[0],
+                    shipping_address: data.shipping_address,
+                    deferred: data.isEnableOnShipment ? "trigger" : "",
+                    deferred_description: data.isEnableOnShipment ? decodeHtml("${Resource.msg('alma.at_shipping', 'alma', null)}"):"",
+                    custom_data: {
+                        order_id:  data.orderId,
+                        order_token: data.orderToken
+                    }
+                },
+                customer: data.customer,
+                order: {
+                    merchant_reference: data.orderId
+                }
+            };
+        }
+
+        async function callFragments(
+            container,
+            installments_count,
+            deferred_days
+        ) {
+            const response = await fetch('${pdict.data_url}?oid='+orderId+'&installment='+installments_count);
+            const data = await response.json();
+
+            var paymentData = getPaymentData(data, installments_count, deferred_days)
+
+            fragments.createPaymentForm(paymentData, {
+                onSuccess: function (returnedData) {
+                    window.location=returnedData.return_url;
+                },
+                onFailure: function (returnedData) { },
+                onPopupClose: function (returnedData) { },
+            }).mount(document.getElementById(container));
+
+        }
+
+        /**
+         * SFCC resource needs to be decoded to be given to Alma Fragment
+         * @param {string} ressource the message to decode
+         * @returns {string} the decoded string
+         */
+        function decodeHtml(ressource) {
+            var txt = document.createElement("textarea");
+            txt.innerHTML = ressource;
+            return txt.value;
+        }
+
+        async function toggle(t){
+            var activeElt = document.querySelector("#" + t.id + " .fa");
+            let isAlreadyOpen = false;
+            if (activeElt.classList.contains("fa-chevron-down")) {
+                isAlreadyOpen = true;
+            }
+            const icons = document.querySelectorAll(".alma-payment-method .fa");
+            [].forEach.call(icons, function(icon) {
+                icon.classList.remove("fa-chevron-down");
+            });
+            if (!isAlreadyOpen) {
+                activeElt.classList.add("fa-chevron-down");
+
+                let installments_count = parseInt(t.getAttribute('data-installments'));
+                let deferred_days = parseInt(t.getAttribute('data-deferred-days'));
+
+                document.body.style.cursor = 'wait';
+                await callFragments(
+                    t.id + "_fragment",
+                    installments_count,
+                    deferred_days
+                );
+                document.body.style.cursor = 'default';
+
+            } else {
+                document.getElementById(t.id + "_fragment").remove();
+            }
+        }
+
+        async function handlePaymentMethodClick(event) {
+            var t = event.target;
+            while(t && !(t.classList && t.classList.contains("alma-payment-method"))) {
+                t = t.parentNode;
+            }
+
+            await toggle(t);
+        }
+
+        const almaPaymentMethods = document.querySelectorAll(".alma-payment-method");
+        for (let pm of almaPaymentMethods) {
+            pm.addEventListener("click", function(e) {
+                handlePaymentMethodClick(e);
+            });
+        }
+
+        const checkoutBtn = document.querySelector('.submit-payment');
+        const paymentMethodsTabs = document.querySelectorAll(".credit-card-tab");
+        for (let pm of paymentMethodsTabs) {
+            pm.addEventListener("click", (event) => {
+                const isAlmaTab = event.target.getAttribute("href") === '#alma-content';
+                if (isAlmaTab) {
+                    checkoutBtn.setAttribute('disabled', true);
+                } else {
+                    checkoutBtn.removeAttribute('disabled');
+                }
+            });
+        }
+    });
+</script>

@@ -1,0 +1,79 @@
+{
+  "name": "alma-sfcc-plugin",
+  "version": "3.0.3",
+  "description": "Alma SFCC integration plugin",
+  "main": "index.js",
+  "engines": {
+    "node": ">=12.22"
+  },
+  "scripts": {
+    "build:archive": "node site_preference_builder/compress.js",
+    "build:metadata": "node site_preference_builder/main.js",
+    "build": "npm run build:metadata && npm run build:archive",
+    "lint": "npm run lint:css && npm run lint:js",
+    "lint:css": "sgmf-scripts --lint css",
+    "lint:js": "sgmf-scripts --lint js",
+    "lint:js:fix": "./node_modules/eslint/bin/eslint.js . --fix",
+    "init:isml": "./node_modules/.bin/isml-linter --init",
+    "lint:isml": "./node_modules/.bin/isml-linter",
+    "build:isml": "./node_modules/.bin/isml-linter --build",
+    "fix:isml": "./node_modules/.bin/isml-linter --autofix",
+    "uploadCartridge": "sgmf-scripts --uploadCartridge int_alma"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alma/sfcc-plugin.git"
+  },
+  "author": "Alma Integrations Team <integrations@getalma.eu>",
+  "license": "ISC",
+  "homepage": "https://github.com/alma/sfcc-plugin",
+  "devDependencies": {
+    "del": "^6.0.0",
+    "dotenv": "^16.0.0",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^5.0.3",
+    "eslint-plugin-import": "^1.16.0",
+    "eslint-plugin-sitegenesis": "~1.0.0",
+    "gulp": "^4.0.2",
+    "gulp-zip": "^5.1.0",
+    "husky": "^4.2.5",
+    "isml-linter": "^5.26.4",
+    "istanbul": "^0.4.5",
+    "node-fetch": "^2.2.0",
+    "node-sass": "^4.12.0",
+    "postcss-loader": "^2.1.6",
+    "properties-parser": "^0.3.1",
+    "proxyquire": "1.7.4",
+    "request-promise": "^4.2.4",
+    "sass-loader": "^7.3.1",
+    "sgmf-scripts": "^2.3.0",
+    "style-loader": "^0.21.0",
+    "stylelint": "^8.4.0",
+    "stylelint-config-standard": "^17.0.0",
+    "stylelint-scss": "^2.5.0",
+    "xml2js": "^0.4.22"
+  },
+  "dependencies": {
+    "bootstrap": "4.3.1",
+    "cleave.js": "^1.5.3",
+    "flag-icon-css": "^2.9.0",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.5.1"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "ie >= 10"
+  ],
+  "packageName": "int_alma",
+  "babel": {
+    "presets": [
+      "env"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm run lint"
+    }
+  }
+}

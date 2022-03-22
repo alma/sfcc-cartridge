@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xmlns="http://www.demandware.com/xml/impex/metadata/2006-10-31">
+    <type-extension type-id="Order">
+        <custom-attribute-definitions>
+            <attribute-definition attribute-id="ALMA_ResponseDetails">
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="almaPaymentId">
+                <display-name xml:lang="x-default">Alma Payment ID</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+        </custom-attribute-definitions>
+        <group-definitions>
+            <attribute-group group-id="Alma">
+                <display-name xml:lang="x-default">Alma</display-name>
+                <attribute attribute-id="almaPaymentId"/>
+                <attribute attribute-id="ALMA_ResponseDetails"/>
+            </attribute-group>
+        </group-definitions>
+    </type-extension>
+
+    <type-extension type-id="Basket">
+        <custom-attribute-definitions>
+            <attribute-definition attribute-id="ALMA_ResponseDetails">
+                <type>text</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+        </custom-attribute-definitions>
+    </type-extension>
+
+    <type-extension type-id="SitePreferences">
+        <custom-attribute-definitions>
+            <attribute-definition attribute-id="isAlmaEnable">
+                <display-name xml:lang="x-default">Is Alma Enable</display-name>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="ALMA_On_Shipment_Payment">
+                <display-name xml:lang="x-default">Pay on shipment </display-name>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="isWidgetEnable">
+                <display-name xml:lang="x-default">Displays Alma badge showing available timelines in cart</display-name>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>true</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="cartSelector">
+                <display-name xml:lang="x-default">Add custom selector to displays Alma badge in cart</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>#alma-badge</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="isProductWidgetEnable">
+                <display-name xml:lang="x-default">Displays Alma badge showing available timelines in product</display-name>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>true</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="productSelector">
+                <display-name xml:lang="x-default">Add custom selector to displays Alma badge in product</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>#alma-badge</default-value>
+            </attribute-definition>
+
+         </custom-attribute-definitions>
+        <group-definitions>
+            <attribute-group group-id="ALMA">
+                <display-name xml:lang="x-default">ALMA</display-name>
+                <attribute attribute-id="isAlmaEnable"/>
+                <attribute attribute-id="ALMA_APIUrl"/>
+                <attribute attribute-id="ALMA_APIKey"/>
+                <attribute attribute-id="ALMA_Merchant_Id"/>
+                <attribute attribute-id="ALMA_On_Shipment_Payment"/>
+                <attribute attribute-id="isWidgetEnable"/>
+                <attribute attribute-id="cartSelector"/>
+                <attribute attribute-id="isProductWidgetEnable"/>
+                <attribute attribute-id="productSelector"/>
+            </attribute-group>
+        </group-definitions>
+    </type-extension>
+</metadata>
