@@ -120,6 +120,24 @@ function getPropertiesForPlan(plan, currencyCode) {
     );
 }
 
+/**
+ * Returns if the current payment option is pnx 2,3 or 4
+ * @param  {Object} plan any alma plan
+ * @returns {boolean} true means we can use fragment
+ */
+function isPnx(plan) {
+    return plan.installments_count <= 4;
+}
+
+/**
+ * Returns true if the merchant want in-page payment
+ * @returns {bool} if we can use fragment
+ */
+function isFragmentActivated() {
+    var Site = require('dw/system/Site');
+
+    return Site.getCurrent().getCustomPreferenceValue('ALMA_Fragment_Payment');
+}
 
 /**
  * Format plan data to fit in Checkout view data
@@ -129,6 +147,7 @@ function getPropertiesForPlan(plan, currencyCode) {
  */
 function formatPlanForCheckout(plan, currencyCode) {
     return {
+        in_page: isPnx(plan) && isFragmentActivated(),
         selector: getSelectorNameFromPlan(plan),
         installments_count: plan.installments_count,
         deferred_days: plan.deferred_days,

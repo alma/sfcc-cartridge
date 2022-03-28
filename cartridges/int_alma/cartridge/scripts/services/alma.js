@@ -77,17 +77,15 @@ function checkEligibility() {
 }
 
 /**
- * Builds service for getting all merchant plans
+ * Builds service for payment refund
  * @returns {dw.svc.LocalServiceRegistry} service instances
  */
-function getMerchantPlans() {
+function refundPayment() {
     return LocalServiceRegistry.createService('alma', {
         createRequest: function (service, params) {
-            service.setRequestMethod('GET');
-            service.URL = almaHelpers.getUrl('/v1/me/fee-plans?kind=general&only=all&deferred=true'); // eslint-disable-line no-param-reassign
+            service.setRequestMethod('POST');
+            service.URL = almaHelpers.getUrl('/v1/payments/' + params.pid + '/refunds'); // eslint-disable-line no-param-reassign
             almaHelpers.addHeaders(service);
-
-            return JSON.stringify(params);
         },
         parseResponse: function (svc, client) {
             return client;
@@ -99,6 +97,6 @@ module.exports = {
     getPaymentDetails: getPaymentDetails,
     checkEligibility: checkEligibility,
     triggerPayment: triggerPayment,
-    createPayment: createPayment,
-    getMerchantPlans: getMerchantPlans
+    refundPayment: refundPayment,
+    createPayment: createPayment
 };

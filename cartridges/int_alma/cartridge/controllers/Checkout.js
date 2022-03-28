@@ -30,24 +30,15 @@ function getAlmaUrls() {
         ipn_callback_url: URLUtils.http('Alma-IPN').toString(),
         customer_cancel_url: URLUtils.https('Alma-CustomerCancel').toString(),
         data_url: URLUtils.http('Alma-BasketData').toString(),
+        create_payment_url: URLUtils.https('Alma-CreatePaymentUrl').toString(),
         order_amount_url: URLUtils.http('Alma-OrderAmount').toString()
     };
-}
-
-/**
- * Return current Locale
- * @param {dw.system.Request} req the controller request
- * @returns {string} current locale
- */
-function getLocale(req) {
-    var Locale = require('dw/util/Locale');
-
-    return Locale.getLocale(req.locale.id);
 }
 
 server.extend(module.superModule);
 
 server.append('Begin', function (req, res, next) {
+    var getLocale = require('*/cartridge/scripts/helpers/almaHelpers').getLocale;
     var almaPlanHelper = require('*/cartridge/scripts/helpers/almaPlanHelper');
     var almaConfigInfo = getAlmaInfo();
 

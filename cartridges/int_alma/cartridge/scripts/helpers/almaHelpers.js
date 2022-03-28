@@ -81,22 +81,6 @@ function getMode() {
 }
 
 /**
- * Get merchant plans
- * @returns {array} plans
- */
-function getMerchantPlans() {
-    var service = require('*/cartridge/scripts/services/alma');
-    var merchantPlans = [];
-    var merchantPlansService = service.getMerchantPlans();
-    var httpResult = merchantPlansService.call();
-    if (httpResult.msg === 'OK') {
-        var rawResponse = httpResult.getObject().text;
-        merchantPlans = JSON.parse(rawResponse);
-    }
-    return merchantPlans;
-}
-
-/**
  * Get customer data for init payment
  * @param {Object} profile customer profile
  * @param {string} customerEmail customer email
@@ -117,13 +101,24 @@ function formatCustomerData(profile, customerEmail) {
     };
 }
 
+/**
+ * Return current Locale
+ * @param {dw.system.Request} req the controller request
+ * @returns {string} current locale
+ */
+function getLocale(req) {
+    var Locale = require('dw/util/Locale');
+
+    return Locale.getLocale(req.locale.id);
+}
+
 module.exports = {
     addHeaders: addHeaders,
+    formatCustomerData: formatCustomerData,
+    getLocale: getLocale,
+    getMerchantId: getMerchantId,
+    getMode: getMode,
     getUrl: getUrl,
     isAlmaEnable: isAlmaEnable,
-    getMerchantId: getMerchantId,
-    isAlmaOnShipment: isAlmaOnShipment,
-    getMode: getMode,
-    getMerchantPlans: getMerchantPlans,
-    formatCustomerData: formatCustomerData
+    isAlmaOnShipment: isAlmaOnShipment
 };
