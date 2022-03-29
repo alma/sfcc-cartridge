@@ -1,0 +1,84 @@
+CHANGELOG
+=========
+
+v3.0.3
+------
+* repository is now public
+
+v3.0.2
+------
+* Fixed a faulty FR property
+* Added a better way to offer onShipment payment
+
+v3.0.1
+------
+
+* added translations for ES, DE, BE, FR, IT, NL
+
+v3.0.0
+------
+
+* added package.json to pilot the project
+* added npm commands :
+    * `build:sitepref` (see below)
+    * `lint` allow to lint css, js and isml for the cartridge
+    * `uploadCartridge` upload cartridge to a sandbox
+* refactored widget and fragment usage to use Alma plans
+* refactored Alma controller
+* refactored job for onShipment orders
+
+v2.3.0
+------
+
+* trans: init crowdin and update translations
+* refactor: change const to var and update widget's cdn
+* refactor: renaming functions and optimisation
+* feat: add billing adress to payment payload and refactor
+
+v2.2.1
+------
+
+* refactor: use fee-plan instead of eligibility on checkout
+* refactor: decrease complexity
+* fix: remove forgotten js console output
+
+v2.2.0
+------
+
+* feat: add order.merchant_reference on payment creation
+* fix: customer locale on payment creation
+* refactor: extract inlined css into stylesheet file
+
+v2.1.0
+------
+
+* widget-v2 + i18n
+
+v2.0.2
+------
+
+* fix: multiple descriptions display on confirmation page
+
+v2.0.1
+------
+
+* fix: js ; eol
+* fix: checkout without required payment plans
+* refactor: remove .history directory from versionning
+
+v2.0.0
+------
+
+* feat: deferred payment (on shipping)
+* feat: paylater (J+15)
+* feat: monthly payment (p3x)
+
+v1.0.1
+------
+
+* fix: Checkout unrounded cents
+
+v1.0.0
+------
+
+* first release

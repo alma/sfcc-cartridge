@@ -1,0 +1,200 @@
+<link rel="stylesheet" href="${URLUtils.staticURL('/css/almaContent.css')}" />
+<script src="https://cdn.jsdelivr.net/npm/@alma/fragments@1.x/dist/alma-fragments.umd.js" ></script>
+
+<div class="tab-pane alma-content" id="alma-content" role="tabpanel">
+    <isloop iterator= "${pdict.plans}" var= "plan" status="planStatus" >
+        <div class="row pay-type alma-payment-method" id="${plan.selector}"
+            data-installments="${plan.installments_count}"
+            data-deferred-days="${plan.deferred_days}"
+            data-in-page="${plan.in_page}"
+        >
+            <div class="col-2 img-content">
+                <div class="img">
+                    <div class="img-text">
+                        <isprint value="${plan.properties.img}" encoding="off"/>
+                    </div>
+                    <img alt="" src="${URLUtils.staticURL('/images/alma.png')}" title="ALMA" style="height: 20px;" />
+                </div>
+            </div>
+            <div class="col-9">
+                <h4><isprint value="${plan.properties.title}" encoding="off"/></h4>
+                <p><isprint value="${plan.properties.description}" encoding="off"/></p>
+                <p class="installments">
+                    <isprint value="${plan.properties.payment_installments}" encoding="off"/>
+                </p>
+                <p class="pt-30">
+                    <isprint value="${plan.properties.fees}" />
+                </p>
+            </div>
+            <div class="col-1 icon">
+                <span class="fa fa-chevron-right"></span>
+            </div>
+        </div>
+        <div id="${plan.selector}_fragment" ></div>
+    </isloop>
+
+    <fieldset class="payment-form-fields">
+        <input type="hidden" class="form-control" name="${pdict.forms.billingForm.paymentMethod.htmlName}" value="ALMA" />
+    </fieldset>
+</div>
+
+
+<script>
+    window.addEventListener('DOMContentLoaded', function () {
+        var fragments = new Alma.Fragments("${pdict.merchantId}", {
+            mode: '${pdict.mode}' == 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST,
+        });
+        var orderId = '';
+
+        /**
+         * Returns the data formatted for inpage payment
+         * @param  {Object} data an alma plan
+         * @param  {number} installments_count number of installments
+         * @param  {number} deferred_days number of days before the 1st payment
+         * @returns {Object}
+         */
+        function getPaymentData(data, installments_count, deferred_days) {
+            return {
+                payment: {
+                    purchase_amount: Number("${pdict.purchase_amount}"),
+                    installments_count: installments_count,
+                    deferred_days: deferred_days,
+                    deferred_months: 0,
+                    return_url: "${pdict.return_url}",
+                    ipn_callback_url: "${pdict.ipn_callback_url}",
+                    customer_cancel_url: "${pdict.customer_cancel_url}",
+                    locale: data.locale.split("_")[0],
+                    shipping_address: data.shipping_address,
+                    deferred: data.isEnableOnShipment ? "trigger" : "",
+                    deferred_description: data.isEnableOnShipment ? decodeHtml("${Resource.msg('alma.at_shipping', 'alma', null)}"):"",
+                    custom_data: {
+                        order_id:  data.orderId,
+                        order_token: data.orderToken
+                    }
+                },
+                customer: data.customer,
+                order: {
+                    merchant_reference: data.orderId
+                }
+            };
+        }
+
+        /**
+         * Build an inpage payment form to allow the customer to pay
+         * This option is only available when installments_count is 2 or 3
+         * @param  {string} container the div elem where the form will be built
+         * @param  {number} installments_count number of installments
+         * @param  {number} deferred_days number of days before the 1st payment
+         */
+        async function renderInPage(
+            container,
+            installments_count,
+            deferred_days
+        ) {
+            const response = await fetch('${pdict.data_url}?oid='+orderId+'&installment='+installments_count);
+            const data = await response.json();
+
+            var paymentData = getPaymentData(data, installments_count, deferred_days)
+
+            fragments.createPaymentForm(paymentData, {
+                onSuccess: function (returnedData) {
+                    window.location = returnedData.return_url;
+                },
+                onFailure: function (returnedData) { },
+                onPopupClose: function (returnedData) { },
+            }).mount(document.getElementById(container));
+        }
+
+        /**
+         * SFCC resource needs to be decoded to be given to Alma Fragment
+         * @param {string} ressource the message to decode
+         * @returns {string} the decoded string
+         */
+        function decodeHtml(ressource) {
+            var txt = document.createElement("textarea");
+            txt.innerHTML = ressource;
+            return txt.value;
+        }
+
+        /*
+         * Redirect to Alma website to allow the customer to pay
+         * @param  {number} installments_count number of installments
+         * @param  {number} deferred_days number of days before the 1st payment
+         */
+        async function redirectToPaymentPage(installments_count, deferred_days) {
+            const response = await fetch(
+                '${pdict.create_payment_url}?deferred_days='+deferred_days+'&installments='+installments_count,
+                { method: 'POST' }
+            );
+            const body = await response.json();
+            window.location = body.url;
+        }
+
+        /**
+         * Open a payment option and hide the others
+         * @param  {Object} t a JS selector
+         */
+        async function toggle(t){
+            const activeElt = document.querySelector("#" + t.id + " .fa");
+            const isAlreadyOpen = activeElt.classList.contains("fa-chevron-down");
+
+            const icons = document.querySelectorAll(".alma-payment-method .fa");
+            [].forEach.call(icons, function(icon) {
+                icon.classList.remove("fa-chevron-down");
+            });
+
+            if (!isAlreadyOpen) {
+                activeElt.classList.add("fa-chevron-down");
+
+                const installments_count = parseInt(t.getAttribute('data-installments'));
+                const deferred_days = parseInt(t.getAttribute('data-deferred-days'));
+                const in_page = t.getAttribute('data-in-page') === 'true';
+
+                document.body.style.cursor = 'wait';
+                if (in_page) {
+                    await renderInPage( t.id + "_fragment", installments_count, deferred_days);
+                } else {
+                    activeElt.parentNode.innerHTML = '<div class="alma-lds-ring"><div></div><div></div><div></div><div></div></div>';
+                    await redirectToPaymentPage(installments_count, deferred_days);
+                }
+                document.body.style.cursor = 'default';
+
+            } else {
+                document.getElementById(t.id + "_fragment").remove();
+            }
+        }
+
+        /**
+         * Add on click event callback
+         * @param  {Object} event a JS event
+         */
+        async function handlePaymentMethodClick(event) {
+            var t = event.target;
+            while(t && !(t.classList && t.classList.contains("alma-payment-method"))) {
+                t = t.parentNode;
+            }
+
+            await toggle(t);
+        }
+
+        const almaPaymentMethods = document.querySelectorAll(".alma-payment-method");
+        for (let pm of almaPaymentMethods) {
+            pm.addEventListener("click", function(e) {
+                handlePaymentMethodClick(e);
+            });
+        }
+
+        const checkoutBtn = document.querySelector('.submit-payment');
+        const paymentMethodsTabs = document.querySelectorAll(".credit-card-tab");
+        for (let pm of paymentMethodsTabs) {
+            pm.addEventListener("click", (event) => {
+                const isAlmaTab = event.target.getAttribute("href") === '#alma-content';
+                if (isAlmaTab) {
+                    checkoutBtn.setAttribute('disabled', true);
+                } else {
+                    checkoutBtn.removeAttribute('disabled');
+                }
+            });
+        }
+    });
+</script>

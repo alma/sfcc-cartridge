@@ -1,0 +1,16 @@
+<li class="nav-item alma-tab" data-method-id="${paymentOption.ID}">
+    <a class="nav-link credit-card-tab" data-toggle="tab" href="#alma-content" role="tab">
+        <img class="credit-card-option"
+            src="${URLUtils.staticURL('/images/alma.png')}"
+            height="32"
+            alt="${paymentOption.name}"
+            title="${paymentOption.name}"
+        >
+    </a>
+</li>
+
+<style>
+.nav-item.disabled {
+    opacity: 0.3
+}
+</style>

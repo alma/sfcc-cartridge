@@ -1,0 +1,12 @@
+{
+    "hooks": [
+        {
+            "name": "app.payment.processor.alma",
+            "script": "./cartridge/scripts/hooks/payment/processor/alma"
+        },
+        {
+            "name": "app.payment.form.processor.alma",
+            "script": "./cartridge/scripts/hooks/payment/processor/alma_form_processor"
+        }
+    ]
+}

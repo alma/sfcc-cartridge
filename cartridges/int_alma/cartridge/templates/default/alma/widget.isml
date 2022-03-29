@@ -1,0 +1,47 @@
+<isif condition="${pdict.isAlmaEnable && pdict.isWidgetEnabled}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@alma/widgets@2.x/dist/widgets.min.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/@alma/widgets@2.x/dist/widgets.umd.js"></script>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const widgets = Alma.Widgets.initialize(
+                '${pdict.merchantId}',
+                '${pdict.mode}' === 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST, // mode de l'API (LIVE ou TEST)
+            );
+
+            const displayAlmaWidget = (selector, url) => {
+                fetch(url).then(function(response) {
+                    response.json().then(function(data) {
+                        if(data.isWidgetEnabled){
+                            widgets.add(Alma.Widgets.PaymentPlans, {
+                                container: selector,
+                                purchaseAmount: data.amount,
+                                transitionDelay: false,
+                                locale: data.locale.split("_")[0],
+                                plans: data.paymentTypes
+                            });
+                        }
+                    });
+                });
+            }
+
+            const refreshAlmaWidget = (selector, url) => {
+                document.querySelector(selector).innerHTML = '<div id="refresh-selector"></div>';
+                displayAlmaWidget("#refresh-selector", url);
+            }
+
+            const selector = document.querySelector('.quantity-select');
+            selector.onchange = function (event) {
+                refreshAlmaWidget(
+                    '${pdict.selector}',
+                    '${pdict.data_url}?pid=${pdict.product.id}&qte=' + event.target.value,
+                    event.target.value
+                );
+            }
+            displayAlmaWidget('${pdict.selector}', '${pdict.data_url}?pid=${pdict.product.id}&qte=1');
+        });
+    </script>
+
+    <div class="payment-plans" id="alma-badge"></div>
+</isif>
