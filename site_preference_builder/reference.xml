@@ -48,6 +48,13 @@
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
+            <attribute-definition attribute-id="ALMA_Fragment_Payment">
+                <display-name xml:lang="x-default">Activate in-page payment when possible</display-name>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>true</default-value>
+            </attribute-definition>
             <attribute-definition attribute-id="isWidgetEnable">
                 <display-name xml:lang="x-default">Displays Alma badge showing available timelines in cart</display-name>
                 <type>boolean</type>
@@ -77,7 +84,7 @@
                 <default-value>#alma-badge</default-value>
             </attribute-definition>
 
-         </custom-attribute-definitions>
+        </custom-attribute-definitions>
         <group-definitions>
             <attribute-group group-id="ALMA">
                 <display-name xml:lang="x-default">ALMA</display-name>
@@ -86,6 +93,7 @@
                 <attribute attribute-id="ALMA_APIKey"/>
                 <attribute attribute-id="ALMA_Merchant_Id"/>
                 <attribute attribute-id="ALMA_On_Shipment_Payment"/>
+                <attribute attribute-id="ALMA_Fragment_Payment"/>
                 <attribute attribute-id="isWidgetEnable"/>
                 <attribute attribute-id="cartSelector"/>
                 <attribute attribute-id="isProductWidgetEnable"/>
