@@ -159,10 +159,11 @@ exports.addFeePlans = (file, plans) => {
   file.metadata['type-extension'][2]['custom-attribute-definitions'][0]['attribute-definition'].push(
     buildCustomSitePrefObject({
       id: 'ALMA_FEEPLANS',
-      name: 'ALMA_FEEPLANS',
+      name: 'Advanced Alma plan management',
       type: 'string',
+      description: 'Can be used to update your alma plans',
       mandatory: false,
-      externallyManaged: true,
+      externallyManaged: false,
       defaultValue: JSON.stringify(plansToSerialize)
     })
   );
@@ -178,7 +179,7 @@ exports.addAPIInfo = (file, url, key, merchantId) => {
       name: 'Your Alma API key',
       type: 'string',
       mandatory: false,
-      externallyManaged: true,
+      externallyManaged: false,
       defaultValue: key
     })
   );
@@ -190,7 +191,7 @@ exports.addAPIInfo = (file, url, key, merchantId) => {
       name: 'Your Alma Merchant Id',
       type: 'string',
       mandatory: false,
-      externallyManaged: true,
+      externallyManaged: false,
       defaultValue: merchantId
     })
   );
@@ -202,7 +203,7 @@ exports.addAPIInfo = (file, url, key, merchantId) => {
       name: 'Alma API Url',
       type: 'string',
       mandatory: false,
-      externallyManaged: true,
+      externallyManaged: false,
       defaultValue: url
     })
   );

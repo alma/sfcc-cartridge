@@ -5,13 +5,13 @@
             <attribute-definition attribute-id="ALMA_ResponseDetails">
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>true</externally-managed-flag>
+                <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
             <attribute-definition attribute-id="almaPaymentId">
                 <display-name xml:lang="x-default">Alma Payment ID</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>true</externally-managed-flag>
+                <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
         </custom-attribute-definitions>
@@ -98,6 +98,7 @@
                 <attribute attribute-id="cartSelector"/>
                 <attribute attribute-id="isProductWidgetEnable"/>
                 <attribute attribute-id="productSelector"/>
+                <attribute attribute-id="ALMA_FEEPLANS"/>
             </attribute-group>
         </group-definitions>
     </type-extension>
