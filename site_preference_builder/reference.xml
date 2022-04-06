@@ -56,7 +56,7 @@
                 <default-value>true</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="isWidgetEnable">
-                <display-name xml:lang="x-default">Displays Alma badge showing available timelines in cart</display-name>
+                <display-name xml:lang="x-default">Displays Alma badge showing available payment methods in cart</display-name>
                 <type>boolean</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -70,7 +70,7 @@
                 <default-value>#alma-badge</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="isProductWidgetEnable">
-                <display-name xml:lang="x-default">Displays Alma badge showing available timelines in product</display-name>
+                <display-name xml:lang="x-default">Displays Alma badge showing available payment methods in product</display-name>
                 <type>boolean</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
