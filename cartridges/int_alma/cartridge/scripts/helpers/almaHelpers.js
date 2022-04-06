@@ -109,7 +109,7 @@ function formatCustomerData(profile, customerEmail) {
 function getLocale(req) {
     var Locale = require('dw/util/Locale');
 
-    return Locale.getLocale(req.locale.id);
+    return Locale.getLocale(req.locale.id).toString();
 }
 
 module.exports = {
