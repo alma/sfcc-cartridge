@@ -45,10 +45,8 @@ server.append('Begin', function (req, res, next) {
     var BasketMgr = require('dw/order/BasketMgr');
     var currentBasket = BasketMgr.getCurrentBasket();
 
-    if (!almaConfigInfo.isAlmaEnable
-        || currentBasket === null
-        || currentBasket.currencyCode !== 'EUR') {
-        // if alma isn't activated don't even bother to call any API
+    // if alma isn't activated don't even bother to call any API
+    if (!almaConfigInfo.isAlmaEnable) {
         next();
         return;
     }
