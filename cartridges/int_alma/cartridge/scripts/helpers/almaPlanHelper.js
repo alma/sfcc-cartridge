@@ -41,7 +41,8 @@ function getSitePrefNameFromPlan(plan) {
  * @returns {boolean} true or false
  */
 function checkMerchantConfig(plan) {
-    return Site.getCurrent().getCustomPreferenceValue(getSitePrefNameFromPlan(plan)) === true;
+    var sitePref = Site.getCurrent().getCustomPreferenceValue(getSitePrefNameFromPlan(plan));
+    return sitePref === true || sitePref === null;
 }
 
 /**
@@ -61,7 +62,7 @@ function applyMerchantConfig(currentPlan) {
     }
 
     var maxSitePref = Site.getCurrent().getCustomPreferenceValue(sitePrefBase + '_max');
-    if (maxSitePref) {
+    if (maxSitePref !== null) {
         // * 100 because price is in cents
         plan.max_purchase_amount = maxSitePref * 100;
     }
