@@ -22,9 +22,18 @@
                 <p class="installments">
                     <isprint value="${plan.properties.payment_installments}" encoding="off"/>
                 </p>
-                <p class="pt-30">
-                    <isprint value="${plan.properties.fees}" />
-                </p>
+                <isif condition="${plan.installments_count > 4}">
+                    <p class="pt-30">
+                        <isprint value="${plan.properties.credit.amount}" />
+                    </p>
+                    <p class="pt-30">
+                        <isprint value="${plan.properties.credit.rate}" />
+                    </p>
+                <iselse/>
+                    <p class="pt-30">
+                        <isprint value="${plan.properties.fees}" />
+                    </p>
+                </isif>
             </div>
             <div class="col-1 icon">
                 <span class="fa fa-chevron-right"></span>
