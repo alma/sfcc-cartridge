@@ -19,14 +19,14 @@
             <div class="col-9">
                 <h4><isprint value="${plan.properties.title}" encoding="off"/></h4>
                 <p><isprint value="${plan.properties.description}" encoding="off"/></p>
-                <p class="installments">
+                <p class="no-margin">
                     <isprint value="${plan.properties.payment_installments}" encoding="off"/>
                 </p>
                 <isif condition="${plan.installments_count > 4}">
-                    <p class="pt-30">
+                    <p class="no-margin">
                         <isprint value="${plan.properties.credit.amount}" />
                     </p>
-                    <p class="pt-30">
+                    <p>
                         <isprint value="${plan.properties.credit.rate}" />
                     </p>
                 <iselse/>

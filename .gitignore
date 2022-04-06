@@ -21,3 +21,6 @@ metadata/
 **/dw.js
 **/dw.json
 .env
+
+# avoid publishing translation config
+crowdin.yml
