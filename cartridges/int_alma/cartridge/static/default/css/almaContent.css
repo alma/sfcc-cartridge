@@ -45,7 +45,7 @@
     color:  var(--color-grey6);
 }
 
-.alma-content .pay-type .installments {
+.alma-content .pay-type .no-margin {
     margin-bottom: 0px;
 }
 

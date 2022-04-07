@@ -51,6 +51,21 @@ function getPaymentCoreInfo(plan) {
 }
 
 /**
+ * Returns the amount and rate of a credit properties for a given plan
+ * @param  {Object} plan any alma plan
+ * @param  {string} currencyCode e.g. 'EUR'
+ * @returns {Object} with the properties translated
+ */
+function getCreditInfo(plan, currencyCode) {
+    var costOfCredit = formatCurrency(plan.customer_total_cost_amount / 100, currencyCode);
+    var rate = Math.round(plan.annual_interest_rate / 100).toString() + '.' + (plan.annual_interest_rate % 100) + '%';
+    return {
+        amount: Resource.msgf('alma.credit.cost_of_credit', 'alma', null, costOfCredit),
+        rate: Resource.msgf('alma.credit.fixed_apr', 'alma', null, rate)
+    };
+}
+
+/**
  * Returns the payment fees for a given plan
  * @param  {Object} plan any alma plan
  * @param  {string} currencyCode e.g. 'EUR'
@@ -115,6 +130,7 @@ function getPropertiesForPlan(plan, currencyCode) {
         getPaymentCoreInfo(plan),
         {
             fees: getPaymentFees(plan, currencyCode),
+            credit: getCreditInfo(plan, currencyCode),
             payment_installments: getPaymentInstallments(plan, currencyCode)
         }
     );
