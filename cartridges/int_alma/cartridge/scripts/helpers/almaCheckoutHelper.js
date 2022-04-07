@@ -58,7 +58,7 @@ function getPaymentCoreInfo(plan) {
  */
 function getCreditInfo(plan, currencyCode) {
     var costOfCredit = formatCurrency(plan.customer_total_cost_amount / 100, currencyCode);
-    var rate = parseInt(plan.annual_interest_rate / 100, 10).toString() + '.' + (plan.annual_interest_rate % 100) + '%';
+    var rate = Math.round(plan.annual_interest_rate / 100).toString() + '.' + (plan.annual_interest_rate % 100) + '%';
     return {
         amount: Resource.msgf('alma.credit.cost_of_credit', 'alma', null, costOfCredit),
         rate: Resource.msgf('alma.credit.fixed_apr', 'alma', null, rate)
