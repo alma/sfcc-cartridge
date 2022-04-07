@@ -57,6 +57,7 @@ function acceptOrder(order, paymentStatus) {
         // place the order
         OrderMgr.placeOrder(order);
         order.setConfirmationStatus(Order.CONFIRMATION_STATUS_CONFIRMED);
+        order.setExportStatus(Order.EXPORT_STATUS_READY);
         order.setPaymentStatus(paymentStatus);
     });
 }
