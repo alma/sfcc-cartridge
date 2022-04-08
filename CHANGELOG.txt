@@ -3,7 +3,11 @@ CHANGELOG
 
 v3.0.3
 ------
-* repository is now public
+* Repository is now public
+* inpage payment can be activated when there's less than 4 installments
+* p10x is now available
+* removed model that conflicted with Stripe
+* Export status now set properly upon payment success
 
 v3.0.2
 ------
