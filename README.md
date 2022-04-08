@@ -2,7 +2,7 @@
 
 Alma plugin for SFCC
 
-The full documentation is available [here](https://docs.getalma.eu/docs/guide-dinstallation-de-la-cartouche).
+The full documentation is available [here](https://docs.getalma.eu/docs/cartridge-installation-guide).
 
 ## setup
 
