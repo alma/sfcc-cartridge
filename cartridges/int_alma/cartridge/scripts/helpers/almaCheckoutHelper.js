@@ -58,10 +58,14 @@ function getPaymentCoreInfo(plan) {
  */
 function getCreditInfo(plan, currencyCode) {
     var costOfCredit = formatCurrency(plan.customer_total_cost_amount / 100, currencyCode);
+    var purchaseAmount = formatCurrency(plan.purchaseAmount, currencyCode);
+    var totalCost = formatCurrency(plan.purchaseAmount + (plan.customer_total_cost_amount / 100), currencyCode);
     var rate = Math.round(plan.annual_interest_rate / 100).toString() + '.' + (plan.annual_interest_rate % 100) + '%';
     return {
+        basket_cost: Resource.msgf('alma.credit.basket_cost', 'alma', null, purchaseAmount),
         amount: Resource.msgf('alma.credit.cost_of_credit', 'alma', null, costOfCredit),
-        rate: Resource.msgf('alma.credit.fixed_apr', 'alma', null, rate)
+        rate: Resource.msgf('alma.credit.fixed_apr', 'alma', null, rate),
+        total_cost: Resource.msgf('alma.credit.total_cost', 'alma', null, totalCost)
     };
 }
 
@@ -162,6 +166,10 @@ function isFragmentActivated() {
  * @returns {array} a plan Object understandable for Eligibility
  */
 function formatPlanForCheckout(plan, currencyCode) {
+    var logger = require('dw/system/Logger');
+    logger.error(plan.purchaseAmount.toString());
+
+
     return {
         in_page: isPnx(plan) && isFragmentActivated(),
         selector: getSelectorNameFromPlan(plan),

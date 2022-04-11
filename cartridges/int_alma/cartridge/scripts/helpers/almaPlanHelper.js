@@ -121,10 +121,10 @@ function getPlansForWidget() {
  */
 function getPlansForCheckout(locale, currentBasket) {
     var plansForEligibility = getAllowedPlans();
-    var purchaseAmount = Math.round(currentBasket.totalGrossPrice.value);
+    var purchaseAmount = currentBasket.totalGrossPrice.value;
 
     plansForEligibility = almaUtilsHelpers.filter(plansForEligibility, function (plan) {
-        return filterWithMerchantConfig(plan, purchaseAmount);
+        return filterWithMerchantConfig(plan, Math.round(purchaseAmount));
     });
 
     var plans = almaEligibilityHelper.getEligibility(plansForEligibility, locale, currentBasket);
@@ -135,6 +135,7 @@ function getPlansForCheckout(locale, currentBasket) {
     });
 
     plans = almaUtilsHelpers.map(plans, function (plan) {
+        plan.purchaseAmount = purchaseAmount; // eslint-disable-line no-param-reassign
         return almaCheckoutHelper.formatForCheckout(plan, currentBasket.currencyCode);
     });
 
