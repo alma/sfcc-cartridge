@@ -12,20 +12,23 @@ var resource = {
     }
 };
 
+var site = {
+    getCurrent: function () {
+        return {
+            getCustomPreferenceValue: function (str) {
+                return true;
+            }
+        };
+    }
+};
+
+
 function proxyModel() {
     return proxyquire('../../../cartridges/int_alma/cartridge/scripts/helpers/almaCheckoutHelper', {
         'dw/web/Resource': resource,
         '*/cartridge/scripts/util/formatting': { formatCurrency: function (str) { return str; } },
         '*/cartridge/scripts/helpers/almaOnShipmentHelper': { isOnShipmentPaymentEnabled: function (installmentsCount, deferredDays) { return false; } },
-        'dw/system/Site': {
-            getCurrent: function () {
-                return {
-                    getCustomPreferenceValue: function (str) {
-                        return true;
-                    }
-                };
-            }
-        }
+        'dw/system/Site': site
     });
 }
 
