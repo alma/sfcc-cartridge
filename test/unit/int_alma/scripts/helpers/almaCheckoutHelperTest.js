@@ -58,7 +58,12 @@ describe('almaCheckoutHelpers', function () {
                 img: 'alma.pay.in_x_installment.img',
                 description: 'alma.pay.in_x_installment.description',
                 fees: 'alma.not_fee',
-                credit: { amount: 'alma.credit.cost_of_credit', rate: 'alma.credit.fixed_apr' },
+                credit: {
+                    amount: 'alma.credit.cost_of_credit',
+                    rate: 'alma.credit.fixed_apr',
+                    basket_cost: 'alma.credit.basket_cost',
+                    total_cost: 'alma.credit.total_cost'
+                },
                 payment_installments: '117 alma.pay.in_x_installment.installments  2x116'
             });
         });
