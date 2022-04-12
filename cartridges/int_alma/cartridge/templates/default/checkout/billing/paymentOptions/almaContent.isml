@@ -24,10 +24,16 @@
                 </p>
                 <isif condition="${plan.installments_count > 4}">
                     <p class="no-margin">
+                        <isprint value="${plan.properties.credit.basket_cost}" />
+                    </p>
+                    <p class="no-margin">
+                        <isprint value="${plan.properties.credit.rate}" />
+                    </p>
+                    <p class="no-margin">
                         <isprint value="${plan.properties.credit.amount}" />
                     </p>
                     <p>
-                        <isprint value="${plan.properties.credit.rate}" />
+                        <isprint value="${plan.properties.credit.total_cost}" />
                     </p>
                 <iselse/>
                     <p class="pt-30">
