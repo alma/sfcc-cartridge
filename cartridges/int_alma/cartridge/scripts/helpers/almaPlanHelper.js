@@ -124,7 +124,7 @@ function getPlansForCheckout(locale, currentBasket) {
     var purchaseAmount = currentBasket.totalGrossPrice.value;
 
     plansForEligibility = almaUtilsHelpers.filter(plansForEligibility, function (plan) {
-        return filterWithMerchantConfig(plan, Math.round(purchaseAmount));
+        return filterWithMerchantConfig(plan, purchaseAmount);
     });
 
     var plans = almaEligibilityHelper.getEligibility(plansForEligibility, locale, currentBasket);
