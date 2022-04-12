@@ -166,10 +166,6 @@ function isFragmentActivated() {
  * @returns {array} a plan Object understandable for Eligibility
  */
 function formatPlanForCheckout(plan, currencyCode) {
-    var logger = require('dw/system/Logger');
-    logger.error(plan.purchaseAmount.toString());
-
-
     return {
         in_page: isPnx(plan) && isFragmentActivated(),
         selector: getSelectorNameFromPlan(plan),
