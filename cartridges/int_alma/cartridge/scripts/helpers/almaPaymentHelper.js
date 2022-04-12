@@ -49,8 +49,6 @@ function acceptOrder(order, paymentStatus) {
 
         // ensure that the order need to be opened/placed
         if (!orderStatusEquals(order, Order.ORDER_STATUS_CREATED)) {
-            var logger = require('dw/system/Logger').getLogger('alma');
-            logger.info('[ALMA] order ' + (order.custom ? order.custom.almaPaymentId : '') + ' already placed (status : ' + order.status + ')');
             return;
         }
 
