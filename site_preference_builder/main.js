@@ -33,7 +33,7 @@ const TEST_MODE = {
 };
 
 const METADIR = './metadata/site_template/meta/';
-const INPUT_FILE = './site_preference_builder/reference.xml';
+const INPUT_FILE = './site_preference_builder/ref/system-objecttype-extensions.xml';
 const OUTPUT_FILE = './metadata/site_template/meta/system-objecttype-extensions.xml';
 
 /**

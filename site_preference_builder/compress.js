@@ -17,7 +17,7 @@ function createPaymentRefFiles() {
   createDir(siteDir);
 
   console.log('Copying ref. files');
-  const paymentRefFiles = './site_preference_builder/payment/*.xml';
+  const paymentRefFiles = './site_preference_builder/ref/payment/*.xml';
   gulp.src(paymentRefFiles)
    .pipe(gulp.dest(siteDir))
   ;
@@ -28,7 +28,7 @@ function createPaymentRefFiles() {
  */
 function copyServiceFile() {
   console.log('Copying service file');
-  gulp.src('./site_preference_builder/services.xml')
+  gulp.src('./site_preference_builder/ref/services.xml')
    .pipe(gulp.dest('./metadata/site_template/'))
   ;
 }
