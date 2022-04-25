@@ -1,6 +1,6 @@
 const { readFileSync, writeFileSync } = require('fs');
 
-const INPUT_JOB_FILE = './site_preference_builder/jobs.xml';
+const INPUT_JOB_FILE = './site_preference_builder/ref/jobs.xml';
 const OUTPUT_JOB_FILE = './metadata/site_template/jobs.xml';
 
 const merchantHasOnShipment = (plans) => {
