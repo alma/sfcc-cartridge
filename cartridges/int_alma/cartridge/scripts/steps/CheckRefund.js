@@ -16,40 +16,16 @@ function isOrderToBeRefund(order) {
 }
 
 /**
- * Get refund payment params
- * @param {dw.order.Order} order to be refunded
- * @returns {Object} an object
- */
-function refundPaymentParams(order) {
-    if (order.custom.ALMA_Refund_Type === 'Partial') {
-        return {
-            method: 'POST',
-            pid: order.custom.almaPaymentId,
-            merchant_reference: order.orderNo,
-            amount: Math.round(order.custom.ALMA_Refund_Amount * 100)
-        };
-    }
-    return {
-        method: 'POST',
-        pid: order.custom.almaPaymentId,
-        merchant_reference: order.orderNo
-    };
-}
-/**
  * Call the alma refund payment API
- * @param {Object} refundService service to call
  * @param {dw.order.Order} order to be refunded
  */
-function refundPaymentForOrder(refundService, order) {
-    var Transaction = require('dw/system/Transaction');
-    var httpResult = refundService.call(refundPaymentParams(order));
-    if (httpResult.msg !== 'OK') {
-        throw Error(httpResult.msg);
+function refundPaymentForOrder(order) {
+    var refundHelper = require('*/cartridge/scripts/helpers/almaRefundHelper');
+    if (order.custom.ALMA_Refund_Type === 'Partial') {
+        refundHelper.refundPaymentForOrder(order, order.custom.ALMA_Refund_Amoun);
+    } else {
+        refundHelper.refundPaymentForOrder(order);
     }
-
-    Transaction.wrap(function () {
-        order.custom.ALMA_Refunded = true; // eslint-disable-line no-param-reassign
-    });
 }
 
 /**
@@ -68,7 +44,6 @@ exports.execute = function () {
     var Logger = require('dw/system/Logger');
     var Status = require('dw/system/Status');
     var orders = getOrdersRefunded();
-    var refundService = require('../../scripts/services/alma').refundPayment;
     var errors = [];
 
     Logger.info('[INFO][ALMA refund] job launched for: ' + orders.count + ' orders.');
@@ -77,7 +52,7 @@ exports.execute = function () {
             var orderItem = orders.next();
             if (isOrderToBeRefund(orderItem)) {
                 try {
-                    refundPaymentForOrder(refundService, orderItem);
+                    refundPaymentForOrder(orderItem);
                 } catch (e) {
                     Logger.error('[ERROR][ALMA refund] : ' + e);
                     errors.push(e);
