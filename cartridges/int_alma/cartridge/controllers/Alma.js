@@ -277,7 +277,7 @@ server.post(
         } catch (e) {
             res.setStatusCode(500);
             res.json({
-                error: 'Could not create payment on Alma side'
+                error: refundHelper.refundPaymentForOrder(order, amount)
             });
         }
 

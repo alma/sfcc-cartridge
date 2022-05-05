@@ -32,6 +32,7 @@ function refundPaymentParams(order, amount) {
 /**
  * @param {dw.order.Order} order order to refund
  * @param {int|null} amount amount for refund
+ * @return {string} return an error or a string to confirm refund
  */
 exports.refundPaymentForOrder = function (order, amount) {
     var Transaction = require('dw/system/Transaction');
@@ -40,11 +41,13 @@ exports.refundPaymentForOrder = function (order, amount) {
         .call(refundPaymentParams(order, amount));
 
     if (httpResult.msg !== 'OK') {
-        throw Error(httpResult.msg);
+        throw Error('Could not create payment on Alma side.');
     }
 
     Transaction.wrap(function () {
         order.custom.ALMA_Refunded = true; // eslint-disable-line no-param-reassign
     });
+
+    return 'Refund is ok for the order n°' + order.orderNo;
 };
 
