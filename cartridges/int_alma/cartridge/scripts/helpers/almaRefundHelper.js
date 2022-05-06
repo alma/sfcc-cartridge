@@ -37,8 +37,18 @@ function refundPaymentParams(order, amount) {
 exports.refundPaymentForOrder = function (order, amount) {
     var Transaction = require('dw/system/Transaction');
     var refundService = require('*/cartridge/scripts/services/alma').refundPayment;
-    var httpResult = refundService()
-        .call(refundPaymentParams(order, amount));
+    var httpResult;
+    if (!order) {
+        return 'Order don\'t exist.';
+    }
+
+    try {
+        httpResult = refundService()
+            .call(refundPaymentParams(order, amount));
+    } catch (e) {
+        return e.message;
+    }
+
 
     if (httpResult.msg !== 'OK') {
         throw Error('Could not create refund on Alma side.');
