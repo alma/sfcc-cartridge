@@ -14,7 +14,7 @@ function refundPaymentParams(order, amount) {
         throw Error('Amount can\'t be upper than order total gross price.');
     }
 
-    if (amount && order.getTotalGrossPrice() >= amount) {
+    if (amount) {
         return {
             method: 'POST',
             pid: order.custom.almaPaymentId,
@@ -41,7 +41,7 @@ exports.refundPaymentForOrder = function (order, amount) {
         .call(refundPaymentParams(order, amount));
 
     if (httpResult.msg !== 'OK') {
-        throw Error('Could not create payment on Alma side.');
+        throw Error('Could not create refund on Alma side.');
     }
 
     Transaction.wrap(function () {

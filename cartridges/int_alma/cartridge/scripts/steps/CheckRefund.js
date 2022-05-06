@@ -22,7 +22,7 @@ function isOrderToBeRefund(order) {
 function refundPaymentForOrder(order) {
     var refundHelper = require('*/cartridge/scripts/helpers/almaRefundHelper');
     if (order.custom.ALMA_Refund_Type === 'Partial') {
-        refundHelper.refundPaymentForOrder(order, order.custom.ALMA_Refund_Amoun);
+        refundHelper.refundPaymentForOrder(order, order.custom.ALMA_Refund_Amount);
     } else {
         refundHelper.refundPaymentForOrder(order);
     }

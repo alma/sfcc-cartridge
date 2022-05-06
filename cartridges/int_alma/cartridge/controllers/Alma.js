@@ -272,13 +272,15 @@ server.post(
         var order = OrderMgr.searchOrder('orderNo={0}', req.querystring.id);
         var amount = req.querystring.amount;
 
-        try {
-            res.json(refundHelper.refundPaymentForOrder(order, amount));
-        } catch (e) {
-            res.setStatusCode(500);
-            res.json({
-                error: refundHelper.refundPaymentForOrder(order, amount)
-            });
+        if (order) {
+            try {
+                res.json(refundHelper.refundPaymentForOrder(order, amount));
+            } catch (e) {
+                res.setStatusCode(500);
+                res.json({
+                    error: e.message
+                });
+            }
         }
 
         return next();
