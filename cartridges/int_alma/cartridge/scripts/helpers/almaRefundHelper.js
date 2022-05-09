@@ -23,31 +23,24 @@ function refundPaymentParams(order, amount) {
         };
     }
     return {
-        method: 'POST',
-        pid: order.custom.almaPaymentId,
-        merchant_reference: order.orderNo
+        method: 'POST', pid: order.custom.almaPaymentId, merchant_reference: order.orderNo
     };
 }
 
 /**
  * @param {dw.order.Order} order order to refund
  * @param {int|null} amount amount for refund
- * @return {string} return an error or a string to confirm refund
  */
 exports.refundPaymentForOrder = function (order, amount) {
     var Transaction = require('dw/system/Transaction');
     var refundService = require('*/cartridge/scripts/services/alma').refundPayment;
-    var httpResult;
+
     if (!order) {
-        return 'Order don\'t exist.';
+        throw Error('Order not found');
     }
 
-    try {
-        httpResult = refundService()
-            .call(refundPaymentParams(order, amount));
-    } catch (e) {
-        return e.message;
-    }
+    var httpResult = refundService()
+        .call(refundPaymentParams(order, amount));
 
 
     if (httpResult.msg !== 'OK') {
@@ -57,7 +50,5 @@ exports.refundPaymentForOrder = function (order, amount) {
     Transaction.wrap(function () {
         order.custom.ALMA_Refunded = true; // eslint-disable-line no-param-reassign
     });
-
-    return 'Refund is ok for the order n°' + order.orderNo;
 };
 

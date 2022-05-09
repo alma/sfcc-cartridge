@@ -1,7 +1,5 @@
 // refundHelpers.js unit tests
 
-var assert = require('chai').assert;
-
 var order = {
     getTotalGrossPrice: function () {
         return 300;
@@ -13,26 +11,39 @@ var order = {
 };
 
 var almaRefundHelpers = require('../../../../mocks/helpers/almaRefundHelpers');
+var expect = require('chai').expect;
 
 describe('almaRefundHelpers', function () {
     it('check properties', function () {
-        var refundData = almaRefundHelpers.refundPaymentForOrder(order);
-        assert.equal(refundData, 'Refund is ok for the order n°' + order.orderNo);
+        almaRefundHelpers.refundPaymentForOrder(order);
+        // assert no exception is thrown there
     });
+
     it('when order is null', function () {
-        var refundData = almaRefundHelpers.refundPaymentForOrder();
-        assert.equal(refundData, 'Order don\'t exist.');
+        expect(function () {
+            almaRefundHelpers.refundPaymentForOrder();
+        })
+            .to
+            .throw('Order not found');
     });
+
     it('partial refund', function () {
-        var refundData = almaRefundHelpers.refundPaymentForOrder(order, 10);
-        assert.equal(refundData, 'Refund is ok for the order n°' + order.orderNo);
+        almaRefundHelpers.refundPaymentForOrder(order, 10);
     });
+
     it('partial refund with a negative amount', function () {
-        var refundData = almaRefundHelpers.refundPaymentForOrder(order, -10);
-        assert.equal(refundData, 'Amount can\'t be negative.');
+        expect(function () {
+            almaRefundHelpers.refundPaymentForOrder(order, -10);
+        })
+            .to
+            .throw('Amount can\'t be negative.');
     });
+
     it('partial refund with an amount > to the total price', function () {
-        var refundData = almaRefundHelpers.refundPaymentForOrder(order, 5000);
-        assert.equal(refundData, 'Amount can\'t be upper than order total gross price.');
+        expect(function () {
+            almaRefundHelpers.refundPaymentForOrder(order, 5000);
+        })
+            .to
+            .throw('Amount can\'t be upper than order total gross price.');
     });
 });
