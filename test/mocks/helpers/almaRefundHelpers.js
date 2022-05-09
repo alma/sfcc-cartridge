@@ -17,6 +17,7 @@ var alma = {
             return {
                 msg: 'OK',
                 call: function () {
+                    // This is intentional
                 }
             };
         };
