@@ -5,6 +5,7 @@ var order = {
         return 300;
     },
     orderNo: '00002222',
+    ALMA_Refunded: false,
     custom: {
         almaPaymentId: 'payment_11uXoLs39IVLHMMQytcRzfcqiM6pdGqjuC'
     }
