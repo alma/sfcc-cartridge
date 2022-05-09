@@ -1,12 +1,14 @@
 // refundHelpers.js unit tests
 
+var assert = require('chai').assert;
+
 var order = {
     getTotalGrossPrice: function () {
         return 300;
     },
     orderNo: '00002222',
-    ALMA_Refunded: false,
     custom: {
+        ALMA_Refunded: false,
         almaPaymentId: 'payment_11uXoLs39IVLHMMQytcRzfcqiM6pdGqjuC'
     }
 };
@@ -17,7 +19,7 @@ var expect = require('chai').expect;
 describe('almaRefundHelpers', function () {
     it('check properties', function () {
         almaRefundHelpers.refundPaymentForOrder(order);
-        // assert no exception is thrown there
+        assert.equal(order.custom.ALMA_Refunded, true);
     });
 
     it('when order is null', function () {
@@ -30,6 +32,7 @@ describe('almaRefundHelpers', function () {
 
     it('partial refund', function () {
         almaRefundHelpers.refundPaymentForOrder(order, 10);
+        assert.equal(order.custom.ALMA_Refunded, true);
     });
 
     it('partial refund with a negative amount', function () {
