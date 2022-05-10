@@ -8,7 +8,7 @@ on:
   workflow_dispatch: ~
 
 jobs:
-  j2-run-unit-test:
+  run-unit-test:
 
     runs-on: ubuntu-latest
 
