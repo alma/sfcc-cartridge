@@ -1,0 +1,34 @@
+name: Lint and tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: ~
+
+jobs:
+  j2-run-unit-test:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - name: Checkout current repo in CI
+      uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install dependencies
+      run: npm i
+    - name: Enforce that the code is Linted
+      run: npm run lint
+    - name: Run tests
+      run: npm run test
+    - name: Ensure that we can still build metadata
+      run: npm run build
