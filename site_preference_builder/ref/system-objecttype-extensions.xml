@@ -14,6 +14,36 @@
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
+            <attribute-definition attribute-id="ALMA_Refunded_Amount">
+                <display-name xml:lang="x-default">ALMA Refunded Amount</display-name>
+                <type>double</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="ALMA_Wanted_Refund_Amount">
+                <display-name xml:lang="x-default">ALMA Wanted Refund Amount</display-name>
+                <type>double</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="ALMA_Refund_Type">
+                <display-name xml:lang="x-default">Alma Refund Type</display-name>
+                <description xml:lang="x-default">Refund this order with the Alma module. This will be applied in your
+                    alma dashboard automatically. The maximum amount that can be refunded includes the costs that the
+                    customer has to pay.
+                </description>
+                <type>enum-of-string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <value-definitions>
+                    <value-definition>
+                        <value>Total</value>
+                    </value-definition>
+                    <value-definition>
+                        <value>Partial</value>
+                    </value-definition>
+                </value-definitions>
+            </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
             <attribute-group group-id="Alma">
@@ -21,6 +51,21 @@
                 <attribute attribute-id="almaPaymentId"/>
                 <attribute attribute-id="ALMA_ResponseDetails"/>
             </attribute-group>
+            <attribute-group group-id="AlmaRefund">
+                <display-name xml:lang="x-default">
+                    Alma Refund
+                    (Refund this order with the Alma module. This will be applied in your alma dashboard automatically.
+                    The maximum amount that can be refunded includes the costs that the customer has to pay)
+                </display-name>
+                <description xml:lang="x-default">Refund this order with the Alma module. This will be applied in your
+                    alma dashboard automatically. The maximum amount that can be refunded includes the costs that the
+                    customer has to pay.
+                </description>
+                <attribute attribute-id="ALMA_Refunded_Amount"/>
+                <attribute attribute-id="ALMA_Refund_Type"/>
+                <attribute attribute-id="ALMA_Wanted_Refund_Amount"/>
+            </attribute-group>
+
         </group-definitions>
     </type-extension>
 
@@ -43,7 +88,7 @@
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
             <attribute-definition attribute-id="ALMA_On_Shipment_Payment">
-                <display-name xml:lang="x-default">Pay on shipment </display-name>
+                <display-name xml:lang="x-default">Pay on shipment</display-name>
                 <type>boolean</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -56,7 +101,8 @@
                 <default-value>true</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="isWidgetEnable">
-                <display-name xml:lang="x-default">Displays Alma badge showing available payment methods in cart</display-name>
+                <display-name xml:lang="x-default">Displays Alma badge showing available payment methods in cart
+                </display-name>
                 <type>boolean</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -70,7 +116,8 @@
                 <default-value>#alma-badge</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="isProductWidgetEnable">
-                <display-name xml:lang="x-default">Displays Alma badge showing available payment methods in product</display-name>
+                <display-name xml:lang="x-default">Displays Alma badge showing available payment methods in product
+                </display-name>
                 <type>boolean</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
