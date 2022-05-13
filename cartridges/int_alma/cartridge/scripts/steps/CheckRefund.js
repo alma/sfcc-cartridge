@@ -9,23 +9,9 @@ function isOrderToBeRefund(order) {
     return (
         order.custom.ALMA_Refund_Type.toString() === 'Total'
         || (order.custom.ALMA_Refund_Type.toString() === 'Partial'
-            && order.custom.ALMA_Refund_Amount > 0
-            && order.custom.ALMA_Refund_Amount < order.totalGrossPrice.value)
-        )
-        && order.custom.ALMA_Refunded !== true;
-}
-
-/**
- * Call the alma refund payment API
- * @param {dw.order.Order} order to be refunded
- */
-function refundPaymentForOrder(order) {
-    var refundHelper = require('*/cartridge/scripts/helpers/almaRefundHelper');
-    if (order.custom.ALMA_Refund_Type === 'Partial') {
-        refundHelper.refundPaymentForOrder(order, order.custom.ALMA_Refund_Amount);
-    } else {
-        refundHelper.refundPaymentForOrder(order);
-    }
+            && order.custom.ALMA_Wanted_Refund_Amount > 0
+            && order.custom.ALMA_Wanted_Refund_Amount < order.totalGrossPrice.value)
+    );
 }
 
 /**
@@ -36,7 +22,7 @@ function getOrdersRefunded() {
     var OrderMgr = require('dw/order/OrderMgr');
 
     return OrderMgr.searchOrders(
-        'paymentStatus = {0} and custom.ALMA_Refund_Type != NULL and custom.ALMA_Refunded != true and custom.almaPaymentId != NULL', null, 2
+        'paymentStatus = {0} and custom.ALMA_Refund_Type != NULL and custom.ALMA_wanted_refund_amount > 0 and custom.almaPaymentId != NULL', null, 2
     );
 }
 
@@ -45,6 +31,7 @@ exports.execute = function () {
     var Status = require('dw/system/Status');
     var orders = getOrdersRefunded();
     var errors = [];
+    var refundHelper = require('*/cartridge/scripts/helpers/almaRefundHelper');
 
     Logger.info('[INFO][ALMA refund] job launched for: ' + orders.count + ' orders.');
     if (orders.count > 0) {
@@ -52,7 +39,7 @@ exports.execute = function () {
             var orderItem = orders.next();
             if (isOrderToBeRefund(orderItem)) {
                 try {
-                    refundPaymentForOrder(orderItem);
+                    refundHelper.refundPaymentForOrder(orderItem, orderItem.custom.ALMA_Wanted_Refund_Amount);
                 } catch (e) {
                     Logger.error('[ERROR][ALMA refund] : ' + e);
                     errors.push(e);
