@@ -14,7 +14,7 @@ function refundPaymentParams(order, amount) {
         throw Error('Amount can\'t be upper than order total gross price.');
     }
 
-    if (amount > (order.getTotalGrossPrice() - order.custom.ALMA_Refunded_Amount)) {
+    if (amount > (order.getTotalGrossPrice() - order.custom.almaRefundedAmount)) {
         throw Error('Amount can\'t be upper than order total gross price less refunded amount.');
     }
 
@@ -56,11 +56,11 @@ exports.refundPaymentForOrder = function (order, amount) {
 
     if (amount) {
         Transaction.wrap(function () {
-            order.custom.ALMA_Refunded_Amount += Math.round(amount); // eslint-disable-line no-param-reassign
+            order.custom.almaRefundedAmount += Math.round(amount); // eslint-disable-line no-param-reassign
         });
     } else {
         Transaction.wrap(function () {
-            order.custom.ALMA_Refunded_Amount = order.getTotalGrossPrice(); // eslint-disable-line no-param-reassign
+            order.custom.almaRefundedAmount = order.getTotalGrossPrice(); // eslint-disable-line no-param-reassign
         });
     }
 };

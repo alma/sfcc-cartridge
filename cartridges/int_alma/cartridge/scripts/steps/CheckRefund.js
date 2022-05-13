@@ -7,10 +7,10 @@
  */
 function isOrderToBeRefund(order) {
     return (
-        order.custom.ALMA_Refund_Type.toString() === 'Total'
-        || (order.custom.ALMA_Refund_Type.toString() === 'Partial'
-            && order.custom.ALMA_Wanted_Refund_Amount > 0
-            && order.custom.ALMA_Wanted_Refund_Amount < order.totalGrossPrice.value)
+        order.custom.almaRefundType.toString() === 'Total'
+        || (order.custom.almaRefundType.toString() === 'Partial'
+            && order.custom.almaWantedRefundAmount > 0
+            && order.custom.almaWantedRefundAmount < order.totalGrossPrice.value)
     );
 }
 
@@ -22,7 +22,7 @@ function getOrdersRefunded() {
     var OrderMgr = require('dw/order/OrderMgr');
 
     return OrderMgr.searchOrders(
-        'paymentStatus = {0} and custom.ALMA_Refund_Type != NULL and custom.ALMA_Wanted_Refund_Amount > 0 and custom.almaPaymentId != NULL', null, 2
+        'paymentStatus = {0} and custom.almaRefundType != NULL and custom.almaWantedRefundAmount > 0 and custom.almaPaymentId != NULL', null, 2
     );
 }
 
@@ -39,8 +39,8 @@ exports.execute = function () {
             var orderItem = orders.next();
             if (isOrderToBeRefund(orderItem)) {
                 try {
-                    refundHelper.refundPaymentForOrder(orderItem, orderItem.custom.ALMA_Wanted_Refund_Amount);
-                    orderItem.custom.ALMA_Wanted_Refund_Amount = 0;
+                    refundHelper.refundPaymentForOrder(orderItem, orderItem.custom.almaWantedRefundAmount);
+                    orderItem.custom.almaWantedRefundAmount = 0;
                 } catch (e) {
                     Logger.error('[ERROR][ALMA refund] : ' + e);
                     errors.push(e);

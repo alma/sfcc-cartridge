@@ -14,19 +14,19 @@
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
-            <attribute-definition attribute-id="ALMA_Refunded_Amount">
+            <attribute-definition attribute-id="almaRefundedAmount">
                 <display-name xml:lang="x-default">ALMA Refunded Amount</display-name>
                 <type>double</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>true</externally-managed-flag>
             </attribute-definition>
-            <attribute-definition attribute-id="ALMA_Wanted_Refund_Amount">
+            <attribute-definition attribute-id="almaWantedRefundAmount">
                 <display-name xml:lang="x-default">ALMA Wanted Refund Amount</display-name>
                 <type>double</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
-            <attribute-definition attribute-id="ALMA_Refund_Type">
+            <attribute-definition attribute-id="almaRefundType">
                 <display-name xml:lang="x-default">Alma Refund Type</display-name>
                 <description xml:lang="x-default">Refund this order with the Alma module. This will be applied in your
                     alma dashboard automatically. The maximum amount that can be refunded includes the costs that the
@@ -61,9 +61,9 @@
                     alma dashboard automatically. The maximum amount that can be refunded includes the costs that the
                     customer has to pay.
                 </description>
-                <attribute attribute-id="ALMA_Refunded_Amount"/>
-                <attribute attribute-id="ALMA_Refund_Type"/>
-                <attribute attribute-id="ALMA_Wanted_Refund_Amount"/>
+                <attribute attribute-id="almaRefundedAmount"/>
+                <attribute attribute-id="almaRefundType"/>
+                <attribute attribute-id="almaWantedRefundAmount"/>
             </attribute-group>
 
         </group-definitions>
