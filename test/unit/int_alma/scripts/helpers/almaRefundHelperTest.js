@@ -30,6 +30,7 @@ describe('almaRefundHelpers', function () {
     });
 
     it('partial refund', function () {
+        order.custom.ALMA_Refunded_Amount = 0;
         almaRefundHelpers.refundPaymentForOrder(order, 10);
     });
 

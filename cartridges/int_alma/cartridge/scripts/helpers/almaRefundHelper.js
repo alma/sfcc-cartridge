@@ -29,7 +29,7 @@ function refundPaymentParams(order, amount) {
             method: 'POST',
             pid: order.custom.almaPaymentId,
             merchant_reference: order.orderNo,
-            amount: Math.round(amount)
+            amount: Math.round(amount * 100)
         };
     }
 
