@@ -6,8 +6,6 @@
  * @returns {{method: string, merchant_reference: *, pid: (string|*)}} return params
  */
 function refundPaymentParams(order, amount) {
-    var Transaction = require('dw/system/Transaction');
-
     if (amount <= 0) {
         throw Error('Amount can\'t be negative.');
     }
@@ -21,10 +19,6 @@ function refundPaymentParams(order, amount) {
     }
 
     if (amount) {
-        Transaction.wrap(function () {
-            order.custom.ALMA_Refunded_Amount += Math.round(amount); // eslint-disable-line no-param-reassign
-        });
-
         return {
             method: 'POST',
             pid: order.custom.almaPaymentId,
@@ -32,10 +26,6 @@ function refundPaymentParams(order, amount) {
             amount: Math.round(amount * 100)
         };
     }
-
-    Transaction.wrap(function () {
-        order.custom.ALMA_Refunded_Amount = order.getTotalGrossPrice(); // eslint-disable-line no-param-reassign
-    });
 
     return {
         method: 'POST',
@@ -50,6 +40,7 @@ function refundPaymentParams(order, amount) {
  */
 exports.refundPaymentForOrder = function (order, amount) {
     var refundService = require('*/cartridge/scripts/services/alma').refundPayment;
+    var Transaction = require('dw/system/Transaction');
 
     if (!order) {
         throw Error('Order not found');
@@ -61,6 +52,16 @@ exports.refundPaymentForOrder = function (order, amount) {
 
     if (httpResult.msg !== 'OK') {
         throw Error('Could not create refund on Alma side.');
+    }
+
+    if (amount) {
+        Transaction.wrap(function () {
+            order.custom.ALMA_Refunded_Amount += Math.round(amount); // eslint-disable-line no-param-reassign
+        });
+    } else {
+        Transaction.wrap(function () {
+            order.custom.ALMA_Refunded_Amount = order.getTotalGrossPrice(); // eslint-disable-line no-param-reassign
+        });
     }
 };
 

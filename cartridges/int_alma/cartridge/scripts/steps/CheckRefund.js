@@ -22,7 +22,7 @@ function getOrdersRefunded() {
     var OrderMgr = require('dw/order/OrderMgr');
 
     return OrderMgr.searchOrders(
-        'paymentStatus = {0} and custom.ALMA_Refund_Type != NULL and custom.ALMA_wanted_refund_amount > 0 and custom.almaPaymentId != NULL', null, 2
+        'paymentStatus = {0} and custom.ALMA_Refund_Type != NULL and custom.ALMA_Wanted_Refund_Amount > 0 and custom.almaPaymentId != NULL', null, 2
     );
 }
 
@@ -40,6 +40,7 @@ exports.execute = function () {
             if (isOrderToBeRefund(orderItem)) {
                 try {
                     refundHelper.refundPaymentForOrder(orderItem, orderItem.custom.ALMA_Wanted_Refund_Amount);
+                    orderItem.custom.ALMA_Wanted_Refund_Amount = 0;
                 } catch (e) {
                     Logger.error('[ERROR][ALMA refund] : ' + e);
                     errors.push(e);
