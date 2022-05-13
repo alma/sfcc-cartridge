@@ -86,6 +86,8 @@ function refundPayment() {
             service.setRequestMethod('POST');
             service.URL = almaHelpers.getUrl('/v1/payments/' + params.pid + '/refunds'); // eslint-disable-line no-param-reassign
             almaHelpers.addHeaders(service);
+
+            return JSON.stringify(params);
         },
         parseResponse: function (svc, client) {
             return client;
