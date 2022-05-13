@@ -8,7 +8,7 @@ var order = {
     },
     orderNo: '00002222',
     custom: {
-        ALMA_Refunded: false,
+        ALMA_Refunded_Amount: 0,
         almaPaymentId: 'payment_11uXoLs39IVLHMMQytcRzfcqiM6pdGqjuC'
     }
 };
@@ -19,7 +19,6 @@ var expect = require('chai').expect;
 describe('almaRefundHelpers', function () {
     it('check properties', function () {
         almaRefundHelpers.refundPaymentForOrder(order);
-        assert.equal(order.custom.ALMA_Refunded, true);
     });
 
     it('when order is null', function () {
@@ -32,7 +31,6 @@ describe('almaRefundHelpers', function () {
 
     it('partial refund', function () {
         almaRefundHelpers.refundPaymentForOrder(order, 10);
-        assert.equal(order.custom.ALMA_Refunded, true);
     });
 
     it('partial refund with a negative amount', function () {
@@ -49,5 +47,34 @@ describe('almaRefundHelpers', function () {
         })
             .to
             .throw('Amount can\'t be upper than order total gross price.');
+    });
+
+    it('check ALMA_refunded_amount for partial refund', function () {
+        order.custom.ALMA_Refunded_Amount = 0;
+        almaRefundHelpers.refundPaymentForOrder(order, 10);
+        assert.equal(order.custom.ALMA_Refunded_Amount, 10);
+    });
+
+    it('check ALMA_refunded_amount for 2 partial refund', function () {
+        order.custom.ALMA_Refunded_Amount = 0;
+        almaRefundHelpers.refundPaymentForOrder(order, 10);
+        almaRefundHelpers.refundPaymentForOrder(order, 40);
+        assert.equal(order.custom.ALMA_Refunded_Amount, 50);
+    });
+
+    it('2 partial refund more than total gross price', function () {
+        order.custom.ALMA_Refunded_Amount = 0;
+        almaRefundHelpers.refundPaymentForOrder(order, 250);
+        expect(function () {
+            almaRefundHelpers.refundPaymentForOrder(order, 100);
+        })
+            .to
+            .throw('Amount can\'t be upper than order total gross price less refunded amount.');
+    });
+
+    it('check ALMA_refunded_amount for total refund', function () {
+        order.custom.ALMA_Refunded_Amount = 0;
+        almaRefundHelpers.refundPaymentForOrder(order);
+        assert.equal(order.custom.ALMA_Refunded_Amount, order.getTotalGrossPrice());
     });
 });
