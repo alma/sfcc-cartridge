@@ -32,6 +32,7 @@ describe('almaRefundHelpers', function () {
     it('partial refund', function () {
         order.custom.almaRefundedAmount = 0;
         almaRefundHelpers.refundPaymentForOrder(order, 10);
+        assert.equal(order.custom.almaRefundedAmount, 10);
     });
 
     it('partial refund with a negative amount', function () {
@@ -77,5 +78,9 @@ describe('almaRefundHelpers', function () {
         order.custom.almaRefundedAmount = 0;
         almaRefundHelpers.refundPaymentForOrder(order);
         assert.equal(order.custom.almaRefundedAmount, order.getTotalGrossPrice());
+    });
+    it('check almaWantedRefundAmount goes back to 0', function () {
+        almaRefundHelpers.refundPaymentForOrder(order);
+        assert.equal(order.custom.almaWantedRefundAmount, 0);
     });
 });

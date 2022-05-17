@@ -52,7 +52,6 @@ exports.execute = function () {
             if (isOrderToBeRefund(orderItem)) {
                 try {
                     refundPaymentForOrder(orderItem);
-                    orderItem.custom.almaWantedRefundAmount = 0;
                 } catch (e) {
                     Logger.error('[ERROR][ALMA refund] : ' + e);
                     errors.push(e);

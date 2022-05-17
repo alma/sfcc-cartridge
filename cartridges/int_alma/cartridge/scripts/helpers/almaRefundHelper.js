@@ -54,14 +54,11 @@ exports.refundPaymentForOrder = function (order, amount) {
         throw Error('Could not create refund on Alma side.');
     }
 
-    if (amount) {
-        Transaction.wrap(function () {
-            order.custom.almaRefundedAmount += Math.round(amount); // eslint-disable-line no-param-reassign
-        });
-    } else {
-        Transaction.wrap(function () {
-            order.custom.almaRefundedAmount = order.getTotalGrossPrice(); // eslint-disable-line no-param-reassign
-        });
-    }
+    Transaction.wrap(function () {
+        // eslint-disable-next-line no-param-reassign
+        order.custom.almaRefundedAmount += amount ? Math.round(amount) : order.getTotalGrossPrice();
+        // eslint-disable-next-line no-param-reassign
+        order.custom.almaWantedRefundAmount = 0;
+    });
 };
 
