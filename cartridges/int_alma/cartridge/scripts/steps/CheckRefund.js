@@ -26,12 +26,24 @@ function getOrdersRefunded() {
     );
 }
 
+/**
+ * Call the alma refund payment API
+ * @param {dw.order.Order} order to be refunded
+ */
+function refundPaymentForOrder(order) {
+    var refundHelper = require('*/cartridge/scripts/helpers/almaRefundHelper');
+    if (order.custom.almaRefundType.toString() === 'Partial') {
+        refundHelper.refundPaymentForOrder(order, order.custom.almaWantedRefundAmount);
+    } else {
+        refundHelper.refundPaymentForOrder(order);
+    }
+}
+
 exports.execute = function () {
     var Logger = require('dw/system/Logger');
     var Status = require('dw/system/Status');
     var orders = getOrdersRefunded();
     var errors = [];
-    var refundHelper = require('*/cartridge/scripts/helpers/almaRefundHelper');
 
     Logger.info('[INFO][ALMA refund] job launched for: ' + orders.count + ' orders.');
     if (orders.count > 0) {
@@ -39,7 +51,7 @@ exports.execute = function () {
             var orderItem = orders.next();
             if (isOrderToBeRefund(orderItem)) {
                 try {
-                    refundHelper.refundPaymentForOrder(orderItem, orderItem.custom.almaWantedRefundAmount);
+                    refundPaymentForOrder(orderItem);
                     orderItem.custom.almaWantedRefundAmount = 0;
                 } catch (e) {
                     Logger.error('[ERROR][ALMA refund] : ' + e);
