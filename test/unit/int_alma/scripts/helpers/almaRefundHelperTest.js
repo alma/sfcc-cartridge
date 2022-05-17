@@ -19,6 +19,7 @@ var expect = require('chai').expect;
 describe('almaRefundHelpers', function () {
     it('check properties', function () {
         almaRefundHelpers.refundPaymentForOrder(order);
+        assert.equal(order.custom.almaRefundedAmount, order.getTotalGrossPrice());
     });
 
     it('when order is null', function () {
