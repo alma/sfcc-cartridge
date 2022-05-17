@@ -51,12 +51,6 @@ describe('almaRefundHelpers', function () {
             .throw('Amount can\'t be upper than order total gross price.');
     });
 
-    it('check almaRefundedAmount for partial refund', function () {
-        order.custom.almaRefundedAmount = 0;
-        almaRefundHelpers.refundPaymentForOrder(order, 10);
-        assert.equal(order.custom.almaRefundedAmount, 10);
-    });
-
     it('check almaRefundedAmount for 2 partial refund', function () {
         order.custom.almaRefundedAmount = 0;
         almaRefundHelpers.refundPaymentForOrder(order, 10);
