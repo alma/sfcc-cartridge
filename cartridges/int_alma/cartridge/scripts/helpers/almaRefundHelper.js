@@ -14,6 +14,10 @@ function refundPaymentParams(order, amount) {
         throw Error('Amount can\'t be upper than order total gross price.');
     }
 
+    if (amount > (order.getTotalGrossPrice() - order.custom.almaRefundedAmount)) {
+        throw Error('Amount can\'t be upper than order total gross price less refunded amount.');
+    }
+
     if (amount) {
         return {
             method: 'POST',
@@ -22,8 +26,11 @@ function refundPaymentParams(order, amount) {
             amount: Math.round(amount * 100)
         };
     }
+
     return {
-        method: 'POST', pid: order.custom.almaPaymentId, merchant_reference: order.orderNo
+        method: 'POST',
+        pid: order.custom.almaPaymentId,
+        merchant_reference: order.orderNo
     };
 }
 
@@ -32,8 +39,8 @@ function refundPaymentParams(order, amount) {
  * @param {int|null} amount amount for refund
  */
 exports.refundPaymentForOrder = function (order, amount) {
-    var Transaction = require('dw/system/Transaction');
     var refundService = require('*/cartridge/scripts/services/alma').refundPayment;
+    var Transaction = require('dw/system/Transaction');
 
     if (!order) {
         throw Error('Order not found');
@@ -48,7 +55,10 @@ exports.refundPaymentForOrder = function (order, amount) {
     }
 
     Transaction.wrap(function () {
-        order.custom.ALMA_Refunded = true; // eslint-disable-line no-param-reassign
+        // eslint-disable-next-line no-param-reassign
+        order.custom.almaRefundedAmount += amount ? Math.round(amount) : order.getTotalGrossPrice();
+        // eslint-disable-next-line no-param-reassign
+        order.custom.almaWantedRefundAmount = 0;
     });
 };
 
