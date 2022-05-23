@@ -21,7 +21,7 @@
                 <externally-managed-flag>true</externally-managed-flag>
             </attribute-definition>
             <attribute-definition attribute-id="almaWantedRefundAmount">
-                <display-name xml:lang="x-default">ALMA Wanted Refund Amount</display-name>
+                <display-name xml:lang="x-default">ALMA Refund Amount (if partial)</display-name>
                 <type>double</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
