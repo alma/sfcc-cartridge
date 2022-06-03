@@ -18,7 +18,7 @@ const {
   addRefundCustomAttributesGroup
 } = require('./builder.js');
 
-const { writeJobFile } = require('./onShipment.js');
+const { writeJobShipmentFile } = require('./onShipment.js');
 
 const path = require('path');
 require('dotenv').config({
@@ -71,11 +71,11 @@ async function main() {
   updatedSitePref = addOnShipingOption(updatedSitePref, plans);
 
   if (process.env.TOGGLE_REFUND === 'on') {
-    writeJobFile(plans, process.env.SFCC_SITE_NAME);
     updatedSitePref = addRefundCustomAttributes(updatedSitePref);
     updatedSitePref = addRefundCustomAttributesGroup(updatedSitePref);
   }
 
+  writeJobShipmentFile(plans, process.env.SFCC_SITE_NAME);
   writeFile(OUTPUT_FILE, jsonToXML(updatedSitePref));
 }
 
