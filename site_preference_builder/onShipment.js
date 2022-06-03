@@ -21,8 +21,14 @@ exports.writeJobShipmentFile = async (plans, siteName) => {
 
   const onShipmentJob = await xmlToJson(jobShipment.replace('[[SITENAME]]', siteName));
 
-  jobsContent.jobs = Object.assign(jobsContent.jobs, onShipmentJob);
+  const allJobs = {
+    job: [
+      onShipmentJob.job,
+      onShipmentJob.job // add the second job here
+    ]
+  };
 
+  jobsContent.jobs = Object.assign(jobsContent.jobs, allJobs);
   writeFileSync(OUTPUT_JOB_SHIPMENT_FILE, jsonToXML(jobsContent));
 };
 
