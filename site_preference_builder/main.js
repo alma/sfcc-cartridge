@@ -13,7 +13,9 @@ const {
   addCustomGroupFromPlan,
   addFeePlans,
   addAPIInfo,
-  addOnShipingOption
+  addOnShipingOption,
+  addRefundCustomAttributes,
+  addRefundCustomAttributesGroup
 } = require('./builder.js');
 
 const { writeJobFile } = require('./onShipment.js');
@@ -68,9 +70,13 @@ async function main() {
   updatedSitePref = addAPIInfo(updatedSitePref, url, apiKey, merchantId);
   updatedSitePref = addOnShipingOption(updatedSitePref, plans);
 
-  writeFile(OUTPUT_FILE, jsonToXML(updatedSitePref));
+  if (process.env.TOGGLE_REFUND === 'on') {
+    writeJobFile(plans, process.env.SFCC_SITE_NAME);
+    updatedSitePref = addRefundCustomAttributes(updatedSitePref);
+    updatedSitePref = addRefundCustomAttributesGroup(updatedSitePref);
+  }
 
-  writeJobFile(plans, process.env.SFCC_SITE_NAME);
+  writeFile(OUTPUT_FILE, jsonToXML(updatedSitePref));
 }
 
 /* eslint-disable no-console */

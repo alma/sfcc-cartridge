@@ -102,6 +102,16 @@ const buildCustomSitePrefObject = (sitePref) => {
   if (sitePref.defaultValue) {
     customSitePref['default-value'] = [sitePref.defaultValue];
   }
+  if (sitePref.values) {
+    customSitePref['value-definitions'] = {
+      'value-definition': []
+    };
+    sitePref.values.forEach((value) => {
+      customSitePref['value-definitions']['value-definition'].push({
+        value: value
+      });
+    });
+  }
   return customSitePref;
 };
 
@@ -283,6 +293,62 @@ exports.addCustomGroupFromPlan = (file, plans) => {
         buildCustomGroupObject(group_id, group, [`${id}`, `${id}_min`, `${id}_max`])
       );
     });
+
+  return file;
+};
+
+exports.addRefundCustomAttributes = (file) => {
+  file.metadata['type-extension'][0]['custom-attribute-definitions'][0]['attribute-definition'].push(
+    buildCustomSitePrefObject({
+      id: 'almaRefundedAmount',
+      name: 'ALMA Refunded Amount',
+      type: 'double',
+      mandatory: false,
+      externallyManaged: true
+    })
+  );
+  file.metadata['type-extension'][0]['custom-attribute-definitions'][0]['attribute-definition'].push(
+    buildCustomSitePrefObject({
+      id: 'almaWantedRefundAmount',
+      name: 'ALMA Refund Amount (if partial)',
+      type: 'double',
+      mandatory: false,
+      externallyManaged: false
+    })
+  );
+  file.metadata['type-extension'][0]['custom-attribute-definitions'][0]['attribute-definition'].push(
+    buildCustomSitePrefObject({
+      id: 'almaRefundType',
+      name: 'Alma Refund Type',
+      description: 'Refund this order with the Alma module. This will be applied in your ' +
+        'alma dashboard automatically. The maximum amount that can be refunded includes the costs that the ' +
+        'customer has to pay.',
+      type: 'enum-of-string',
+      mandatory: false,
+      externallyManaged: false,
+      values: [
+        'Total',
+        'Partial'
+      ]
+    })
+  );
+
+  return file;
+};
+
+exports.addRefundCustomAttributesGroup = (file) => {
+  file.metadata['type-extension'][0]['group-definitions'][0]['attribute-group'].push(
+    buildCustomGroupObject('AlmaRefund',
+      'Alma Refund ' +
+      '(Refund this order with the Alma module. This will be applied in your alma dashboard automatically. ' +
+      'The maximum amount that can be refunded includes the costs that the customer has to pay)',
+      [
+        'almaRefundedAmount',
+        'almaRefundType',
+        'almaWantedRefundAmount'
+      ]
+    )
+  );
 
   return file;
 };

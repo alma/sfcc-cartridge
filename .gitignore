@@ -25,3 +25,4 @@ metadata/
 # avoid publishing translation config
 crowdin.yml
 /.editorconfig
+/cartridges/int_alma/package-lock.json
