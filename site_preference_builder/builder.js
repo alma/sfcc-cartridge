@@ -13,6 +13,8 @@ if (locale !== 'en_GB') {
 const {
   messages
 } = require(localisationFile);
+const { merchantHasOnShipment } = require('./onShipment');
+const { readFileSync, writeFileSync } = require('fs');
 
 // we also remove 1x that isn't deferred, as the api will provide it but we don't want to display it
 const filterAllowedPlan = (plan) => {
@@ -145,13 +147,16 @@ const buildCustomGroupObject = (id, name, attributes) => {
   });
   return group;
 };
+const xmlToJson = async (fileContent) => xml2js.parseStringPromise(fileContent);
 
-exports.xmlToJson = async (fileContent) => xml2js.parseStringPromise(fileContent);
+exports.xmlToJson = xmlToJson;
 
-exports.jsonToXML = (jsonSitePref) => {
+const jsonToXML = (jsonSitePref) => {
   var builder = new xml2js.Builder();
   return builder.buildObject(jsonSitePref);
 };
+
+exports.jsonToXML = jsonToXML;
 
 exports.addFeePlans = (file, plans) => {
   // only keep needed fields
@@ -222,8 +227,6 @@ exports.addAPIInfo = (file, url, key, merchantId) => {
 };
 
 exports.addOnShipingOption = (file, plans) => {
-  const { merchantHasOnShipment } = require('./onShipment.js');
-
   if (merchantHasOnShipment(plans)) {
     file.metadata['type-extension'][2]['custom-attribute-definitions'][0]['attribute-definition'].push(
       buildCustomSitePrefObject({
@@ -351,4 +354,34 @@ exports.addRefundCustomAttributesGroup = (file) => {
   );
 
   return file;
+};
+
+exports.writeJobsFile = async (toggleRefund, plans, siteName) => {
+  const INPUT_JOB_SHIPMENT_FILE = './site_preference_builder/ref/jobShipment.xml';
+  const INPUT_JOB_REFUND_FILE = './site_preference_builder/ref/jobRefund.xml';
+  const INPUT_JOBS_FILE = './site_preference_builder/ref/jobs.xml';
+  const OUTPUT_JOB_SHIPMENT_FILE = './metadata/site_template/jobs.xml';
+
+  let { onShipmentJob, onRefundJob } = {};
+  const allJobs = {
+    job: []
+  };
+
+  if (merchantHasOnShipment(plans)) {
+    const jobShipment = readFileSync(INPUT_JOB_SHIPMENT_FILE).toString();
+    onShipmentJob = await xmlToJson(jobShipment.replace('[[SITENAME]]', siteName));
+    allJobs.job.push(onShipmentJob.job);
+  }
+
+  if (toggleRefund === 'on') {
+    const jobRefund = readFileSync(INPUT_JOB_REFUND_FILE).toString();
+    onRefundJob = await xmlToJson(jobRefund.replace('[[SITENAME]]', siteName));
+    allJobs.job.push(onRefundJob.job);
+  }
+
+  const jobs = readFileSync(INPUT_JOBS_FILE);
+  const jobsContent = await xmlToJson(jobs);
+
+  jobsContent.jobs = Object.assign(jobsContent.jobs, allJobs);
+  writeFileSync(OUTPUT_JOB_SHIPMENT_FILE, jsonToXML(jobsContent));
 };
