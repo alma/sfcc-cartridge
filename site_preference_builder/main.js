@@ -15,11 +15,11 @@ const {
   addAPIInfo,
   addOnShipingOption,
   addRefundCustomAttributes,
-  addRefundCustomAttributesGroup,
-  writeJobsFile
-} = require('./builder.js');
+  addRefundCustomAttributesGroup
+} = require('./customSitePrefBuilder.js');
 
 const path = require('path');
+const { writeJobsFile } = require('./jobs');
 
 require('dotenv').config({
   path: path.resolve(__dirname, '../.env')
