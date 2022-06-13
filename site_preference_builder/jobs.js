@@ -16,8 +16,6 @@ const merchantHasOnShipment = (plans) => {
 exports.merchantHasOnShipment = merchantHasOnShipment;
 
 const getJobShipment = async (plans, siteName) => {
-  // const { builder.xmlToJson } = require('./customSitePrefBuilder.js');
-
   if (merchantHasOnShipment(plans)) {
     const jobShipment = readFileSync(INPUT_JOB_SHIPMENT_FILE).toString();
     const onShipmentJob = await builder.xmlToJson(jobShipment.replace('[[SITENAME]]', siteName));
@@ -26,8 +24,6 @@ const getJobShipment = async (plans, siteName) => {
 };
 
 const getJobRefund = async (toggleRefund, siteName) => {
-  // const { builder.xmlToJson } = require('./customSitePrefBuilder.js');
-
   if (toggleRefund === 'on') {
     const jobRefund = readFileSync(INPUT_JOB_REFUND_FILE).toString();
     const onRefundJob = await builder.xmlToJson(jobRefund.replace('[[SITENAME]]', siteName));
@@ -36,8 +32,6 @@ const getJobRefund = async (toggleRefund, siteName) => {
 };
 
 exports.writeJobsFile = async (toggleRefund, plans, siteName) => {
-  // const { builder.xmlToJson, builder.jsonToXML } = require('./customSitePrefBuilder.js');
-
   await getJobShipment(plans, siteName);
   await getJobRefund(toggleRefund, siteName);
 

@@ -303,7 +303,7 @@ exports.addRefundCustomAttributes = (file) => {
   file.metadata['type-extension'][0]['custom-attribute-definitions'][0]['attribute-definition'].push(
     buildCustomSitePrefObject({
       id: 'almaRefundedAmount',
-      name: 'ALMA Refunded Amount',
+      name: messages.almaRefundedAmount.name,
       type: 'double',
       mandatory: false,
       externallyManaged: true
@@ -312,7 +312,7 @@ exports.addRefundCustomAttributes = (file) => {
   file.metadata['type-extension'][0]['custom-attribute-definitions'][0]['attribute-definition'].push(
     buildCustomSitePrefObject({
       id: 'almaWantedRefundAmount',
-      name: 'ALMA Refund Amount (if partial)',
+      name: messages.almaWantedRefundAmount.name,
       type: 'double',
       mandatory: false,
       externallyManaged: false
@@ -321,16 +321,14 @@ exports.addRefundCustomAttributes = (file) => {
   file.metadata['type-extension'][0]['custom-attribute-definitions'][0]['attribute-definition'].push(
     buildCustomSitePrefObject({
       id: 'almaRefundType',
-      name: 'Alma Refund Type',
-      description: 'Refund this order with the Alma module. This will be applied in your ' +
-        'alma dashboard automatically. The maximum amount that can be refunded includes the costs that the ' +
-        'customer has to pay.',
+      name: messages.almaRefundType.name,
+      description: messages.almaRefundType.description,
       type: 'enum-of-string',
       mandatory: false,
       externallyManaged: false,
       setOfStringValues: [
-        'Total',
-        'Partial'
+        messages.almaRefundType.setOfStringValues.total,
+        messages.almaRefundType.setOfStringValues.partial
       ]
     })
   );
@@ -341,9 +339,7 @@ exports.addRefundCustomAttributes = (file) => {
 exports.addRefundCustomAttributesGroup = (file) => {
   file.metadata['type-extension'][0]['group-definitions'][0]['attribute-group'].push(
     buildCustomGroupObject('AlmaRefund',
-      'Alma Refund ' +
-      '(Refund this order with the Alma module. This will be applied in your alma dashboard automatically. ' +
-      'The maximum amount that can be refunded includes the costs that the customer has to pay)',
+      messages.AlmaRefund.name,
       [
         'almaRefundedAmount',
         'almaRefundType',

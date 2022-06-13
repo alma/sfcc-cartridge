@@ -38,6 +38,8 @@ const METADIR = './metadata/site_template/meta/';
 const INPUT_FILE = './site_preference_builder/ref/system-objecttype-extensions.xml';
 const OUTPUT_FILE = './metadata/site_template/meta/system-objecttype-extensions.xml';
 
+const REFUND_IS_DISABLED = 'off';
+
 /**
  * return the merchantId from feeplans
  * @param {Object} feePlans returned from Alma API
@@ -70,7 +72,7 @@ async function main() {
   updatedSitePref = addAPIInfo(updatedSitePref, url, apiKey, merchantId);
   updatedSitePref = addOnShipingOption(updatedSitePref, plans);
 
-  if (process.env.TOGGLE_REFUND === 'on') {
+  if (process.env.TOGGLE_REFUND !== REFUND_IS_DISABLED) {
     updatedSitePref = addRefundCustomAttributes(updatedSitePref);
     updatedSitePref = addRefundCustomAttributesGroup(updatedSitePref);
   }
