@@ -151,7 +151,7 @@ const xmlToJson = async (fileContent) => xml2js.parseStringPromise(fileContent);
 exports.xmlToJson = xmlToJson;
 
 const jsonToXML = (jsonSitePref) => {
-  var builder = new xml2js.Builder();
+  const builder = new xml2js.Builder();
   return builder.buildObject(jsonSitePref);
 };
 
