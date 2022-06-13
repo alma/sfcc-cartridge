@@ -1,5 +1,5 @@
 <job job-id="CheckRefund" priority="0">
-    <description>Check if refund status change to REFUND</description>
+    <description>Check if refund status change to REFUND and execute Alma Refund</description>
     <parameters/>
     <split sequential="false">
         <flow>

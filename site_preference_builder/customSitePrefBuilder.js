@@ -103,11 +103,11 @@ const buildCustomSitePrefObject = (sitePref) => {
   if (sitePref.defaultValue) {
     customSitePref['default-value'] = [sitePref.defaultValue];
   }
-  if (sitePref.setOfStringValues) {
+  if (sitePref.valueDefinitions) {
     customSitePref['value-definitions'] = {
       'value-definition': []
     };
-    sitePref.setOfStringValues.forEach((value) => {
+    sitePref.valueDefinitions.forEach((value) => {
       customSitePref['value-definitions']['value-definition'].push({
         value: value
       });
@@ -326,9 +326,9 @@ exports.addRefundCustomAttributes = (file) => {
       type: 'enum-of-string',
       mandatory: false,
       externallyManaged: false,
-      setOfStringValues: [
-        messages.almaRefundType.setOfStringValues.total,
-        messages.almaRefundType.setOfStringValues.partial
+      valueDefinitions: [
+        messages.almaRefundType.valueDefinitions.total,
+        messages.almaRefundType.valueDefinitions.partial
       ]
     })
   );

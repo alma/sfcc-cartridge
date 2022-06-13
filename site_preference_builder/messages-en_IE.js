@@ -33,7 +33,7 @@ exports.messages = {
   almaRefundType: {
     name: 'Alma Refund Type',
     description: 'Refund this order with the Alma module. This will be applied in your alma dashboard automatically. The maximum amount that can be refunded includes the costs that the customer has to pay.',
-    setOfStringValues: {
+    valueDefinitions: {
       total: 'Total',
       partial: 'Partial'
     }
