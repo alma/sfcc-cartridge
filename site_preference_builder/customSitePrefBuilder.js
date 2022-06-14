@@ -13,6 +13,7 @@ if (locale !== 'en_GB') {
 const {
   messages
 } = require(localisationFile);
+const { merchantHasOnShipment } = require('./jobs');
 
 // we also remove 1x that isn't deferred, as the api will provide it but we don't want to display it
 const filterAllowedPlan = (plan) => {
@@ -102,6 +103,16 @@ const buildCustomSitePrefObject = (sitePref) => {
   if (sitePref.defaultValue) {
     customSitePref['default-value'] = [sitePref.defaultValue];
   }
+  if (sitePref.valueDefinitions) {
+    customSitePref['value-definitions'] = {
+      'value-definition': []
+    };
+    sitePref.valueDefinitions.forEach((value) => {
+      customSitePref['value-definitions']['value-definition'].push({
+        value: value
+      });
+    });
+  }
   return customSitePref;
 };
 
@@ -135,13 +146,16 @@ const buildCustomGroupObject = (id, name, attributes) => {
   });
   return group;
 };
+const xmlToJson = async (fileContent) => xml2js.parseStringPromise(fileContent);
 
-exports.xmlToJson = async (fileContent) => xml2js.parseStringPromise(fileContent);
+exports.xmlToJson = xmlToJson;
 
-exports.jsonToXML = (jsonSitePref) => {
-  var builder = new xml2js.Builder();
+const jsonToXML = (jsonSitePref) => {
+  const builder = new xml2js.Builder();
   return builder.buildObject(jsonSitePref);
 };
+
+exports.jsonToXML = jsonToXML;
 
 exports.addFeePlans = (file, plans) => {
   // only keep needed fields
@@ -212,8 +226,6 @@ exports.addAPIInfo = (file, url, key, merchantId) => {
 };
 
 exports.addOnShipingOption = (file, plans) => {
-  const { merchantHasOnShipment } = require('./onShipment.js');
-
   if (merchantHasOnShipment(plans)) {
     file.metadata['type-extension'][2]['custom-attribute-definitions'][0]['attribute-definition'].push(
       buildCustomSitePrefObject({
@@ -283,6 +295,58 @@ exports.addCustomGroupFromPlan = (file, plans) => {
         buildCustomGroupObject(group_id, group, [`${id}`, `${id}_min`, `${id}_max`])
       );
     });
+
+  return file;
+};
+
+exports.addRefundCustomAttributes = (file) => {
+  file.metadata['type-extension'][0]['custom-attribute-definitions'][0]['attribute-definition'].push(
+    buildCustomSitePrefObject({
+      id: 'almaRefundedAmount',
+      name: messages.almaRefundedAmount.name,
+      type: 'double',
+      mandatory: false,
+      externallyManaged: true
+    })
+  );
+  file.metadata['type-extension'][0]['custom-attribute-definitions'][0]['attribute-definition'].push(
+    buildCustomSitePrefObject({
+      id: 'almaWantedRefundAmount',
+      name: messages.almaWantedRefundAmount.name,
+      type: 'double',
+      mandatory: false,
+      externallyManaged: false
+    })
+  );
+  file.metadata['type-extension'][0]['custom-attribute-definitions'][0]['attribute-definition'].push(
+    buildCustomSitePrefObject({
+      id: 'almaRefundType',
+      name: messages.almaRefundType.name,
+      description: messages.almaRefundType.description,
+      type: 'enum-of-string',
+      mandatory: false,
+      externallyManaged: false,
+      valueDefinitions: [
+        messages.almaRefundType.valueDefinitions.total,
+        messages.almaRefundType.valueDefinitions.partial
+      ]
+    })
+  );
+
+  return file;
+};
+
+exports.addRefundCustomAttributesGroup = (file) => {
+  file.metadata['type-extension'][0]['group-definitions'][0]['attribute-group'].push(
+    buildCustomGroupObject('AlmaRefund',
+      messages.AlmaRefund.name,
+      [
+        'almaRefundedAmount',
+        'almaRefundType',
+        'almaWantedRefundAmount'
+      ]
+    )
+  );
 
   return file;
 };

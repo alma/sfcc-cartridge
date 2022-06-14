@@ -13,12 +13,14 @@ const {
   addCustomGroupFromPlan,
   addFeePlans,
   addAPIInfo,
-  addOnShipingOption
-} = require('./builder.js');
-
-const { writeJobFile } = require('./onShipment.js');
+  addOnShipingOption,
+  addRefundCustomAttributes,
+  addRefundCustomAttributesGroup
+} = require('./customSitePrefBuilder.js');
 
 const path = require('path');
+const { writeJobsFile } = require('./jobs');
+
 require('dotenv').config({
   path: path.resolve(__dirname, '../.env')
 });
@@ -35,6 +37,8 @@ const TEST_MODE = {
 const METADIR = './metadata/site_template/meta/';
 const INPUT_FILE = './site_preference_builder/ref/system-objecttype-extensions.xml';
 const OUTPUT_FILE = './metadata/site_template/meta/system-objecttype-extensions.xml';
+
+const REFUND_IS_DISABLED = 'off';
 
 /**
  * return the merchantId from feeplans
@@ -68,9 +72,13 @@ async function main() {
   updatedSitePref = addAPIInfo(updatedSitePref, url, apiKey, merchantId);
   updatedSitePref = addOnShipingOption(updatedSitePref, plans);
 
-  writeFile(OUTPUT_FILE, jsonToXML(updatedSitePref));
+  if (process.env.TOGGLE_REFUND !== REFUND_IS_DISABLED) {
+    updatedSitePref = addRefundCustomAttributes(updatedSitePref);
+    updatedSitePref = addRefundCustomAttributesGroup(updatedSitePref);
+  }
 
-  writeJobFile(plans, process.env.SFCC_SITE_NAME);
+  await writeJobsFile(process.env.TOGGLE_REFUND, plans, process.env.SFCC_SITE_NAME);
+  writeFile(OUTPUT_FILE, jsonToXML(updatedSitePref));
 }
 
 /* eslint-disable no-console */

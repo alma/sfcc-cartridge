@@ -1,0 +1,41 @@
+<job job-id="CheckShippingStatus" priority="0">
+    <description>Check if shipping status change to SHIPPED and send payment link</description>
+    <parameters/>
+    <split sequential="false">
+        <flow>
+            <context site-id="[[SITENAME]]"/>
+            <template-ref template-id="template_40"/>
+        </flow>
+        <flow-template template-id="template_40">
+            <step step-id="CheckShippingStatus" type="ExecuteScriptModule" enforce-restart="false">
+                <description/>
+                <parameters>
+                    <parameter name="ExecuteScriptModule.Module">
+                        int_alma/cartridge/scripts/steps/CheckShippingStatus.js
+                    </parameter>
+                    <parameter name="ExecuteScriptModule.FunctionName">execute</parameter>
+                    <parameter name="ExecuteScriptModule.Transactional">true</parameter>
+                </parameters>
+            </step>
+        </flow-template>
+    </split>
+    <rules/>
+    <triggers>
+        <run-recurring enabled="true">
+            <recurrence>
+                <date-from>2021-11-24Z</date-from>
+                <start-time>22:36:18.000Z</start-time>
+                <interval>5m</interval>
+                <day-of-week>
+                    <weekday>Thursday</weekday>
+                    <weekday>Wednesday</weekday>
+                    <weekday>Friday</weekday>
+                    <weekday>Sunday</weekday>
+                    <weekday>Tuesday</weekday>
+                    <weekday>Monday</weekday>
+                    <weekday>Saturday</weekday>
+                </day-of-week>
+            </recurrence>
+        </run-recurring>
+    </triggers>
+</job>
