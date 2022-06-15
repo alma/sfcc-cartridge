@@ -23,5 +23,4 @@ metadata/
 .env
 
 # avoid publishing translation config
-crowdin.yml
 /.editorconfig
