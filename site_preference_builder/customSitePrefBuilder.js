@@ -6,7 +6,7 @@ const {
 } = require('./error');
 
 let localisationFile = './messages';
-const locale = 'en_GB';
+const locale = process.env.LOCALE;
 if (locale !== 'en_GB') {
   localisationFile += `-${locale}`;
 }
