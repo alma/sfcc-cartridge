@@ -11,6 +11,9 @@
         <currencies>
             <currency>EUR</currency>
         </currencies>
+        <custom-attributes>
+            <custom-attribute attribute-id="almaActivated">d+15 | d+30</custom-attribute>
+        </custom-attributes>
     </payment-method>
 
     <payment-method method-id="ALMA_PNX">
@@ -23,6 +26,9 @@
         <currencies>
             <currency>EUR</currency>
         </currencies>
+        <custom-attributes>
+            <custom-attribute attribute-id="almaActivated">p2x | p3x | p4x</custom-attribute>
+        </custom-attributes>
     </payment-method>
 
     <payment-method method-id="ALMA_CREDIT">
@@ -35,6 +41,9 @@
         <currencies>
             <currency>EUR</currency>
         </currencies>
+        <custom-attributes>
+            <custom-attribute attribute-id="almaActivated">p6x | p10x | p12x</custom-attribute>
+        </custom-attributes>
     </payment-method>
 
 </payment-settings>
