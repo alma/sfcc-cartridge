@@ -24,11 +24,12 @@ const getJobShipment = async (plans, siteName) => {
 };
 
 const getJobRefund = async (toggleRefund, siteName) => {
-  if (toggleRefund === 'on') {
-    const jobRefund = readFileSync(INPUT_JOB_REFUND_FILE).toString();
-    const onRefundJob = await builder.xmlToJson(jobRefund.replace('[[SITENAME]]', siteName));
-    allJobs.job.push(onRefundJob.job);
+  if (toggleRefund === 'off') {
+    return;
   }
+  const jobRefund = readFileSync(INPUT_JOB_REFUND_FILE).toString();
+  const onRefundJob = await builder.xmlToJson(jobRefund.replace('[[SITENAME]]', siteName));
+  allJobs.job.push(onRefundJob.job);
 };
 
 exports.writeJobsFile = async (toggleRefund, plans, siteName) => {
