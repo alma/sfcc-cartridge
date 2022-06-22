@@ -59,6 +59,8 @@ exports.refundPaymentForOrder = function (order, amount) {
         order.custom.almaRefundedAmount += amount ? Math.round(amount) : order.getTotalGrossPrice();
         // eslint-disable-next-line no-param-reassign
         order.custom.almaWantedRefundAmount = 0;
+        // eslint-disable-next-line no-param-reassign
+        order.custom.almaRefundType = null;
     });
 };
 
