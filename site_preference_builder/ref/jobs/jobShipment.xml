@@ -10,9 +10,7 @@
             <step step-id="CheckShippingStatus" type="ExecuteScriptModule" enforce-restart="false">
                 <description/>
                 <parameters>
-                    <parameter name="ExecuteScriptModule.Module">
-                        int_alma/cartridge/scripts/steps/CheckShippingStatus.js
-                    </parameter>
+                    <parameter name="ExecuteScriptModule.Module">int_alma/cartridge/scripts/steps/CheckShippingStatus.js</parameter>
                     <parameter name="ExecuteScriptModule.FunctionName">execute</parameter>
                     <parameter name="ExecuteScriptModule.Transactional">true</parameter>
                 </parameters>
