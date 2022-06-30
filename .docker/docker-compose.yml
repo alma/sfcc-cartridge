@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  sfcc-script:
+    container_name: sfcc-script
+    build:
+      context: ../
+      dockerfile: ./.docker/Dockerfile
+    volumes:
+      - ../:/app
+    restart: unless-stopped
+    stdin_open: true
+    tty: true

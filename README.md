@@ -13,6 +13,12 @@ npm i
 
 create and fill your `.env` and `dw.json` files.
 
+ps : if don't want node on your computer, have linux and docker, there's a makefile you can use
+```
+make
+```
+
+
 ## create metadata
 ```
 npm run build
