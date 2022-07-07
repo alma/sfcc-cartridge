@@ -23,5 +23,16 @@ exports.messages = {
     max: 'Montante máximo da encomenda para permitir o pagamento em [[installments]] prestações @ +[[deferredDays]] dias',
     max_disclamer: 'N.B. não pode ser superior a [[amount]] (por favor, entre em contato com o seu Vendedor Alma se quiser alterá-lo)',
     group: 'Alma [[installments]]x @ D+[[deferredDays]]'
-  }
+  },
+  almaRefundedAmount: { name: 'ALMA Montante Reembolsado' },
+  almaWantedRefundAmount: { name: 'ALMA Montante de Reembolso (se parcial)' },
+  almaRefundType: {
+    name: 'Alma Tipo de Reembolso',
+    description: 'Reembolso desta encomenda com o módulo Alma. Isto será aplicado automaticamente no painel de bordo da sua alma. O montante máximo que pode ser reembolsado inclui os custos que o cliente tem de pagar.',
+    valueDefinitions: {
+      total: 'Total',
+      partial: 'Parcial'
+    }
+  },
+  AlmaRefund: { name: 'Alma Reembolso (Reembolso desta encomenda com o módulo Alma. Isto será aplicado automaticamente no painel de bordo da sua alma. O montante máximo que pode ser reembolsado inclui os custos que o cliente tem de pagar)' }
 };

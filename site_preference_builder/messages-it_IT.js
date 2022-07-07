@@ -23,5 +23,16 @@ exports.messages = {
     max: 'Ordine massimo consentito per il pagamento in [[installments]] rate e differito a [[deferredDays]] giorni',
     max_disclamer: 'N.B. il massimo consentito è di [[amount]] (contatta il tuo venditore Alma se vuoi cambiarlo)',
     group: 'Alma [[installments]]x @ G+[[deferredDays]]'
-  }
+  },
+  almaRefundedAmount: { name: 'ALMA Importo rimborsato' },
+  almaWantedRefundAmount: { name: 'Importo del rimborso ALMA (se parziale)' },
+  almaRefundType: {
+    name: 'Alma Tipo di rimborso',
+    description: 'Rimborsare l\'ordine con il modulo Alma. Il rimborso verrà applicato automaticamente nel cruscotto di Alma. L\'importo massimo che può essere rimborsato include i costi che il cliente deve pagare.',
+    valueDefinitions: {
+      total: 'Totale',
+      partial: 'Parziale'
+    }
+  },
+  AlmaRefund: { name: 'Alma Refund (Rimborsare questo ordine con il modulo Alma. Il rimborso verrà applicato automaticamente nel cruscotto di Alma. L\'importo massimo che può essere rimborsato include i costi che il cliente deve pagare).' }
 };

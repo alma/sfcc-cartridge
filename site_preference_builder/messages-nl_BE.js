@@ -23,5 +23,16 @@ exports.messages = {
     max: 'Maximum orderbedrag om [[installments]]x termijnbetaling toe te staan',
     max_disclamer: 'N.B. U kunt niet hoger gaan dan [[amount]] (neem contact op met uw Alma-verkoper als u dit wilt wijzigen)',
     group: 'Alma [[installments]]x @ D [[deferredDays]]'
-  }
+  },
+  almaRefundedAmount: { name: 'ALMA Terugbetaald bedrag' },
+  almaWantedRefundAmount: { name: 'ALMA Restitutiebedrag (indien gedeeltelijk)' },
+  almaRefundType: {
+    name: 'Alma Restitutietype',
+    description: 'Restitueer deze bestelling met de Alma module. Dit zal automatisch worden toegepast in uw alma dashboard. Het maximumbedrag dat kan worden terugbetaald is inclusief de kosten die de klant moet betalen.',
+    valueDefinitions: {
+      total: 'Totaal',
+      partial: 'Gedeeltelijk'
+    }
+  },
+  AlmaRefund: { name: 'Alma Refund (Refund deze bestelling met de Alma module. Dit zal automatisch worden toegepast in uw alma dashboard. Het maximale bedrag dat kan worden terugbetaald is inclusief de kosten die de klant moet betalen)' }
 };

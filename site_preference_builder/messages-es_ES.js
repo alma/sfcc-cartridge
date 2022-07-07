@@ -23,5 +23,16 @@ exports.messages = {
     max: 'Importe máximo del pedido para permitir [[installments]]x pago a plazos @ [[deferredDays]] días',
     max_disclamer: 'No se puede introducir una cantidad superior a [[amount]] (por favor, ponte en contacto con tu vendedor de Alma si quieres cambiarlo)',
     group: 'Alma [[installments]]x @ D [[deferredDays]]'
-  }
+  },
+  almaRefundedAmount: { name: 'ALMA Importe reembolsado' },
+  almaWantedRefundAmount: { name: 'Importe del reembolso ALMA (si es parcial)' },
+  almaRefundType: {
+    name: 'Alma Tipo de reembolso',
+    description: 'Reembolsa este pedido con el módulo Alma. Esto se aplicará en tu panel de control de alma automáticamente. La cantidad máxima que se puede reembolsar incluye los costes que el cliente tiene que pagar.',
+    valueDefinitions: {
+      total: 'Total',
+      partial: 'Parcialmente'
+    }
+  },
+  AlmaRefund: { name: 'Alma Refund (Reembolsa este pedido con el módulo Alma. Esto se aplicará en tu panel de control de alma automáticamente. La cantidad máxima que se puede reembolsar incluye los costes que el cliente tiene que pagar)' }
 };
