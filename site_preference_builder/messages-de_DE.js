@@ -2,26 +2,26 @@
 exports.messages = {
   x_times_payment: {
     title: 'Activate or deactivate [[installments]]x installment payment',
-    min: 'Min order amount to allow [[installments]]x installment payment',
-    min_disclamer: 'N.B. you can\'t go lower than [[amount]] (please contact your Alma Salesperson if you want to change it)',
-    max: 'Max order amount to allow [[installments]]x installment payment',
-    max_disclamer: 'N.B. you can\'t go higher than [[amount]] (please contact your Alma Salesperson if you want to change it)',
+    min: 'Mindestbestellwert, um [[installments]]x Ratenzahlung zu ermöglichen',
+    min_disclamer: 'N.B. Sie können nicht tiefer gehen als [[amount]] (bitte wenden Sie sich an Ihren Alma-Verkäufer, wenn Sie den Wert ändern möchten)',
+    max: 'Maximaler Bestellbetrag, um [[installments]]x Ratenzahlung zu ermöglichen',
+    max_disclamer: 'N.B. Sie können nicht höher gehen als [[amount]] (bitte wenden Sie sich an Ihren Alma-Verkäufer, wenn Sie den Wert ändern möchten)',
     group: 'Alma [[installments]]x'
   },
   deferred_payment: {
     title: 'Activate or deactivate payment @ +[[deferredDays]] days',
-    min: 'Min order amount to allow payment @ +[[deferredDays]] days',
-    min_disclamer: 'N.B. you can\'t go lower than [[amount]] (please contact your Alma Salesperson if you want to change it)',
-    max: 'Max order amount to allow payment @ +[[deferredDays]] days',
-    max_disclamer: 'N.B. you can\'t go higher than [[amount]] (please contact your Alma Salesperson if you want to change it)',
+    min: 'Mindestbestellwert für die Zahlung @ +[[deferredDays]] Tage',
+    min_disclamer: 'N.B. Sie können nicht tiefer gehen als [[amount]] (bitte wenden Sie sich an Ihren Alma-Verkäufer, wenn Sie den Wert ändern möchten)',
+    max: 'Maximaler Bestellbetrag, um die Zahlung zu ermöglichen @ +[[deferredDays]] Tage',
+    max_disclamer: 'N.B. Sie können nicht höher gehen als [[amount]] (bitte wenden Sie sich an Ihren Alma-Verkäufer, wenn Sie den Wert ändern möchten)',
     group: 'Alma D+[[deferredDays]]'
   },
   x_times_deferred_payment: {
     title: 'Activate or deactivate [[installments]]x installment payment @ +[[deferredDays]] days',
-    min: 'Min order amount to allow [[installments]]x installment payment @ +[[deferredDays]] days',
-    min_disclamer: 'N.B. you can\'t go lower than [[amount]] (please contact your Alma Salesperson if you want to change it)',
-    max: 'Max order amount to allow [[installments]]x installment payment @ +[[deferredDays]] days',
-    max_disclamer: 'N.B. you can\'t go higher than [[amount]] (please contact your Alma Salesperson if you want to change it)',
+    min: 'Mindestbestellwert für [[installments]]x Ratenzahlung @ +[[deferredDays]] Tage',
+    min_disclamer: 'N.B. Sie können nicht tiefer gehen als [[amount]] (bitte wenden Sie sich an Ihren Alma-Verkäufer, wenn Sie den Wert ändern möchten)',
+    max: 'Maximaler Bestellbetrag für [[installments]]x Ratenzahlung @ +[[deferredDays]] Tage',
+    max_disclamer: 'N.B. Sie können nicht höher gehen als [[amount]] (bitte wenden Sie sich an Ihren Alma-Verkäufer, wenn Sie den Wert ändern möchten)',
     group: 'Alma [[installments]]x @ D+[[deferredDays]]'
   },
   almaRefundedAmount: { name: 'ALMA Erstatteter Betrag' },
