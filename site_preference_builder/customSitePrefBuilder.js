@@ -18,7 +18,7 @@ if (locale !== 'en_GB') {
   localisationFile += `-${locale}`;
 }
 // eslint-disable-next-line no-path-concat
-if (!fs.existsSync(__dirname + localisationFile) + '.json') {
+if (!fs.existsSync(__dirname + localisationFile + '.json')) {
   localisationFile = '/message';
 }
 
