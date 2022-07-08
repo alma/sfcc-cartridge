@@ -11,20 +11,18 @@ require('dotenv').config({
   path: path.resolve(__dirname, '../.env')
 });
 
-let localisationFile = '/messages';
+let localisationFile = '/message';
 
 const locale = process.env.LOCALE;
 if (locale !== 'en_GB') {
   localisationFile += `-${locale}`;
 }
 // eslint-disable-next-line no-path-concat
-if (!fs.existsSync(__dirname + localisationFile) + '.js') {
-  localisationFile = '/messages';
+if (!fs.existsSync(__dirname + localisationFile) + '.json') {
+  localisationFile = '/message';
 }
 
-const {
-  messages
-} = require('.' + localisationFile);
+const messages = require('.' + localisationFile + '.json');
 
 const { merchantHasOnShipment } = require('./jobs');
 

@@ -13,7 +13,7 @@ files: [
     "translation" : "/cartridges/int_alma/cartridge/templates/resources/alma_%locale_with_underscore%.properties",
   },
   {
-    "source" : "/site_preference_builder/messages.js",
-    "translation" : "/site_preference_builder/messages-%locale_with_underscore%.js",
+    "source" : "/site_preference_builder/message.json",
+    "translation" : "/site_preference_builder/message-%locale_with_underscore%.json",
   }
 ]
