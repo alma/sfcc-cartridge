@@ -1,18 +1,30 @@
 /* eslint-disable max-len */
+const fs = require('fs');
 
 const xml2js = require('xml2js');
 const {
   ConfigException
 } = require('./error');
 
-let localisationFile = './messages';
-const locale = 'en_GB';
+const path = require('path');
+require('dotenv').config({
+  path: path.resolve(__dirname, '../.env')
+});
+
+let localisationFile = 'messages';
+
+const locale = process.env.LOCALE;
 if (locale !== 'en_GB') {
   localisationFile += `-${locale}`;
 }
-const {
-  messages
-} = require(localisationFile);
+// eslint-disable-next-line no-path-concat
+if (!fs.existsSync(__dirname + '/' + localisationFile + '.json')) {
+  localisationFile = 'messages';
+}
+
+// eslint-disable-next-line no-path-concat
+const messages = require(__dirname + '/' + localisationFile + '.json');
+
 const { merchantHasOnShipment } = require('./jobs');
 
 // we also remove 1x that isn't deferred, as the api will provide it but we don't want to display it
