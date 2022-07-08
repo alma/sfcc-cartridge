@@ -14,6 +14,6 @@ files: [
   },
   {
     "source" : "/site_preference_builder/messages.json",
-    "translation" : "/site_preference_builder/message-%locale_with_underscore%.json",
+    "translation" : "/site_preference_builder/messages-%locale_with_underscore%.json",
   }
 ]
