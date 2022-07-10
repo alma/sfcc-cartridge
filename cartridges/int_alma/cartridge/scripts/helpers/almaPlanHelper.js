@@ -12,7 +12,7 @@ var almaWidgetHelper = require('*/cartridge/scripts/helpers/almaWidgetHelper');
  * @returns {array} plans
  */
 function getFeePlans() {
-    var plansString = Site.getCurrent().getCustomPreferenceValue('ALMA_FEEPLANS');
+    var plansString = Site.getCurrent().getCustomPreferenceValue('ALMA_FEE_PLANS');
     try {
         return JSON.parse(plansString);
     } catch (e) {
