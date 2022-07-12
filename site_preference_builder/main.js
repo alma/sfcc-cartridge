@@ -13,7 +13,7 @@ const {
   addCustomGroupFromPlan,
   addFeePlans,
   addAPIInfo,
-  addOnShipingOption,
+  addOnShippingOption,
   addRefundCustomAttributes,
   addRefundCustomAttributesGroup
 } = require('./customSitePrefBuilder.js');
@@ -70,7 +70,7 @@ async function main() {
   updatedSitePref = addCustomGroupFromPlan(updatedSitePref, plans);
   updatedSitePref = addFeePlans(updatedSitePref, plans);
   updatedSitePref = addAPIInfo(updatedSitePref, url, apiKey, merchantId);
-  updatedSitePref = addOnShipingOption(updatedSitePref, plans);
+  updatedSitePref = addOnShippingOption(updatedSitePref, plans);
 
   if (process.env.TOGGLE_REFUND !== REFUND_IS_DISABLED) {
     updatedSitePref = addRefundCustomAttributes(updatedSitePref);
