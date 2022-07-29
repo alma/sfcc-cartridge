@@ -169,6 +169,13 @@ server.get('IPN', function (req, res, next) {
         });
         return next();
     }
+    if (order.amount !== paymentObj.amount) {
+        res.setStatusCode(500);
+        paymentHelper.flagAsPotentialFraud(paymentObj.id);
+        res.json({
+            error: 'payment and order amount mismatch'
+        });
+    }
 
     try {
         affectOrderIPN(paymentObj, order);
