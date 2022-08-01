@@ -58,7 +58,7 @@ var planCredit = {
     ]
 };
 
-var planDeferred = {
+var plansDeferred = {
     installments_count: 1,
     deferred_days: 15,
     purchase_amount: 35000,
@@ -89,7 +89,6 @@ describe('almaCheckoutHelpers', function () {
             var checkoutData = almaCheckoutHelpers.formatForCheckout(plan, currencyCode);
             assert.equal(checkoutData.selector, 'alma_general_3_0');
 
-            // eslint-disable-next-line no-shadow
             var planDeferred = Object.assign({}, plan, {
                 installments_count: 1,
                 deferred_days: 15
@@ -127,7 +126,7 @@ describe('almaCheckoutHelpers', function () {
         });
 
         it('check payment method DEFERRED', function () {
-            var checkoutData = almaCheckoutHelpers.formatForCheckout(planDeferred, currencyCode);
+            var checkoutData = almaCheckoutHelpers.formatForCheckout(plansDeferred, currencyCode);
             assert.equal(checkoutData.payment_method, 'ALMA_DEFERRED');
         });
     });
