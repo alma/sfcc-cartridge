@@ -5,6 +5,10 @@ var formatCurrency = require('*/cartridge/scripts/util/formatting').formatCurren
 var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
 var PaymentMgr = require('dw/order/PaymentMgr');
 
+var PNX_NAME = 'ALMA_PNX';
+var CREDIT_NAME = 'ALMA_CREDIT';
+var DEFERRED_NAME = 'ALMA_DEFERRED';
+
 /**
  * Build the selectorName used in isml
  * @param  {Object} plan any alma plan
@@ -161,20 +165,22 @@ function isFragmentActivated() {
 }
 
 /**
- * Get methods payment ID
+ * Return true if plan is activated
  * @param {Object} paymentMethod payment method
  * @param {Object} plan plan
- * @returns {string} payment method ID
+ * @returns {boolean} payment method ID
  */
-function getMethodsActivated(paymentMethod, plan) {
+function planIsActivated(paymentMethod, plan) {
     var almaActivated = paymentMethod.getCustom().almaActivated.split(' | ');
-    var paymentMethodId = '';
+    var isActivated = false;
+
     almaActivated.forEach(function (element) {
         if (element.includes(plan.installments_count || plan.deferred_days)) {
-            paymentMethodId = paymentMethod.ID;
+            isActivated = true;
         }
     });
-    return paymentMethodId;
+
+    return isActivated;
 }
 
 /**
@@ -182,15 +188,19 @@ function getMethodsActivated(paymentMethod, plan) {
  * @returns {string} method payment
  * @param {Object} plan plan
  */
-function planPaymentMethod(plan) {
-    var paymentMethodId = getMethodsActivated(PaymentMgr.getPaymentMethod('ALMA_PNX'), plan);
+function getPlanPaymentMethodID(plan) {
+    var paymentMethodId = '';
 
-    if (plan.installments_count >= 5) {
-        paymentMethodId = getMethodsActivated(PaymentMgr.getPaymentMethod('ALMA_CREDIT'), plan);
+    if (plan.installments_count < 5 && planIsActivated(PaymentMgr.getPaymentMethod(PNX_NAME), plan)) {
+        paymentMethodId = PNX_NAME;
     }
-    if (plan.deferred_days > 0) {
-        paymentMethodId = getMethodsActivated(PaymentMgr.getPaymentMethod('ALMA_DEFERRED'), plan);
+    if (plan.installments_count >= 5 && planIsActivated(PaymentMgr.getPaymentMethod(CREDIT_NAME), plan)) {
+        paymentMethodId = CREDIT_NAME;
     }
+    if (plan.deferred_days > 0 && planIsActivated(PaymentMgr.getPaymentMethod(DEFERRED_NAME), plan)) {
+        paymentMethodId = DEFERRED_NAME;
+    }
+
     return paymentMethodId;
 }
 
@@ -210,7 +220,7 @@ function formatPlanForCheckout(plan, currencyCode) {
         customer_fee: plan.customer_fee,
         payment_plan: plan.payment_plan,
         properties: getPropertiesForPlan(plan, currencyCode),
-        payment_method: planPaymentMethod(plan)
+        payment_method: getPlanPaymentMethodID(plan)
     };
 }
 
