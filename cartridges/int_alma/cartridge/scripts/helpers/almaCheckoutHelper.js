@@ -5,10 +5,6 @@ var formatCurrency = require('*/cartridge/scripts/util/formatting').formatCurren
 var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
 var PaymentMgr = require('dw/order/PaymentMgr');
 
-var PNX_NAME = 'ALMA_PNX';
-var CREDIT_NAME = 'ALMA_CREDIT';
-var DEFERRED_NAME = 'ALMA_DEFERRED';
-
 /**
  * Build the selectorName used in isml
  * @param  {Object} plan any alma plan
@@ -189,6 +185,9 @@ function planIsActivated(paymentMethod, plan) {
  * @param {Object} plan plan
  */
 function getPlanPaymentMethodID(plan) {
+    var PNX_NAME = 'ALMA_PNX';
+    var CREDIT_NAME = 'ALMA_CREDIT';
+    var DEFERRED_NAME = 'ALMA_DEFERRED';
     var paymentMethodId = '';
 
     if (plan.installments_count < 5 && planIsActivated(PaymentMgr.getPaymentMethod(PNX_NAME), plan)) {
