@@ -22,13 +22,34 @@ var site = {
     }
 };
 
+var paymentMgr = {
+    getPaymentMethod: function (str) {
+        return {
+            getCustom: function () {
+                return {
+                    almaActivated: 'p3x | p4x'
+                };
+            }
+        };
+    }
+};
+
 
 function proxyModel() {
     return proxyquire('../../../cartridges/int_alma/cartridge/scripts/helpers/almaCheckoutHelper', {
         'dw/web/Resource': resource,
-        '*/cartridge/scripts/util/formatting': { formatCurrency: function (str) { return str; } },
-        '*/cartridge/scripts/helpers/almaOnShipmentHelper': { isOnShipmentPaymentEnabled: function (installmentsCount, deferredDays) { return false; } },
-        'dw/system/Site': site
+        '*/cartridge/scripts/util/formatting': {
+            formatCurrency: function (str) {
+                return str;
+            }
+        },
+        '*/cartridge/scripts/helpers/almaOnShipmentHelper': {
+            isOnShipmentPaymentEnabled: function (installmentsCount, deferredDays) {
+                return false;
+            }
+        },
+        'dw/system/Site': site,
+        'dw/order/PaymentMgr': paymentMgr
     });
 }
 
