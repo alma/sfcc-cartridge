@@ -23,12 +23,25 @@ var site = {
 };
 
 var paymentMgr = {
-    getPaymentMethod: function () {
+    getPaymentMethod: function (str) {
         return {
+            // eslint-disable-next-line consistent-return
             getCustom: function () {
-                return {
-                    almaActivated: 'p3x | p4x'
-                };
+                if (str === 'ALMA_PNX') {
+                    return {
+                        almaActivated: 'p3x | p4x'
+                    };
+                }
+                if (str === 'ALMA_CREDIT') {
+                    return {
+                        almaActivated: 'p6x | p10x | p12x'
+                    };
+                }
+                if (str === 'ALMA_DEFERRED') {
+                    return {
+                        almaActivated: 'd+15 | d+30'
+                    };
+                }
             }
         };
     }
