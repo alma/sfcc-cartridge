@@ -15,7 +15,7 @@ var resource = {
 var site = {
     getCurrent: function () {
         return {
-            getCustomPreferenceValue: function (str) {
+            getCustomPreferenceValue: function () {
                 return true;
             }
         };
@@ -23,7 +23,7 @@ var site = {
 };
 
 var paymentMgr = {
-    getPaymentMethod: function (str) {
+    getPaymentMethod: function () {
         return {
             getCustom: function () {
                 return {
@@ -44,7 +44,7 @@ function proxyModel() {
             }
         },
         '*/cartridge/scripts/helpers/almaOnShipmentHelper': {
-            isOnShipmentPaymentEnabled: function (installmentsCount, deferredDays) {
+            isOnShipmentPaymentEnabled: function () {
                 return false;
             }
         },
