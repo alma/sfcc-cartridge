@@ -1,5 +1,5 @@
 <li class="nav-item alma-tab" data-method-id="${paymentOption.ID}">
-    <a class="nav-link credit-card-tab" data-toggle="tab" href="#alma-content" role="tab">
+    <a class="nav-link credit-card-tab" data-toggle="tab" href="${'#alma-content-' + paymentOption.ID}" role="tab">
         <img class="credit-card-option"
             src="${URLUtils.staticURL('/images/alma.png')}"
             height="32"

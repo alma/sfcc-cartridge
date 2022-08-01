@@ -3,6 +3,7 @@
 var Resource = require('dw/web/Resource');
 var formatCurrency = require('*/cartridge/scripts/util/formatting').formatCurrency;
 var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
+var PaymentMgr = require('dw/order/PaymentMgr');
 
 /**
  * Build the selectorName used in isml
@@ -160,6 +161,40 @@ function isFragmentActivated() {
 }
 
 /**
+ * Get methods payment ID
+ * @param {Object} paymentMethod payment method
+ * @param {Object} plan plan
+ * @returns {string} payment method ID
+ */
+function getMethodsActivated(paymentMethod, plan) {
+    var almaActivated = paymentMethod.getCustom().almaActivated.split(' | ');
+    var paymentMethodId = '';
+    almaActivated.forEach(function (element) {
+        if (element.includes(plan.installments_count || plan.deferred_days)) {
+            paymentMethodId = paymentMethod.ID;
+        }
+    });
+    return paymentMethodId;
+}
+
+/**
+ * Add payment method to plans
+ * @returns {string} method payment
+ * @param {Object} plan plan
+ */
+function planPaymentMethod(plan) {
+    var paymentMethodId = getMethodsActivated(PaymentMgr.getPaymentMethod('ALMA_PNX'), plan);
+
+    if (plan.installments_count >= 5) {
+        paymentMethodId = getMethodsActivated(PaymentMgr.getPaymentMethod('ALMA_CREDIT'), plan);
+    }
+    if (plan.deferred_days > 0) {
+        paymentMethodId = getMethodsActivated(PaymentMgr.getPaymentMethod('ALMA_DEFERRED'), plan);
+    }
+    return paymentMethodId;
+}
+
+/**
  * Format plan data to fit in Checkout view data
  * @param  {Object} plan any alma plan
  * @param  {string} currencyCode e.g. 'EUR'
@@ -174,7 +209,8 @@ function formatPlanForCheckout(plan, currencyCode) {
         purchase_amount: plan.purchase_amount,
         customer_fee: plan.customer_fee,
         payment_plan: plan.payment_plan,
-        properties: getPropertiesForPlan(plan, currencyCode)
+        properties: getPropertiesForPlan(plan, currencyCode),
+        payment_method: planPaymentMethod(plan)
     };
 }
 

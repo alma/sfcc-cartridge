@@ -129,7 +129,7 @@ function getPlansForCheckout(locale, currentBasket) {
 
     var plans = almaEligibilityHelper.getEligibility(plansForEligibility, locale, currentBasket);
 
-    // remove non eligible plan ?
+ // remove non eligible plan ?
     plans = almaUtilsHelpers.filter(plans, function (plan) {
         return plan.eligible === true && !(plan.deferred_days === 0 && plan.installments_count === 1);
     });
