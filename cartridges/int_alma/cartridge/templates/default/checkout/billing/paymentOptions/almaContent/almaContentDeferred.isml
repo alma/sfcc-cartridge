@@ -1,0 +1,5 @@
+<div class="tab-pane alma-content" id="${'alma-content-ALMA_DEFERRED'}" role="tabpanel">
+
+    <isinclude template="checkout/billing/paymentOptions/almaContent/almaContent"/>
+
+</div>

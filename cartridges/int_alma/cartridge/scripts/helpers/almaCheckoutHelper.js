@@ -5,9 +5,9 @@ var formatCurrency = require('*/cartridge/scripts/util/formatting').formatCurren
 var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
 var PaymentMgr = require('dw/order/PaymentMgr');
 
-var PNX_NAME = 'ALMA_PNX';
-var CREDIT_NAME = 'ALMA_CREDIT';
-var DEFERRED_NAME = 'ALMA_DEFERRED';
+var ALMA_PNX_ID = 'ALMA_PNX';
+var ALMA_CREDIT_ID = 'ALMA_CREDIT';
+var ALMA_DEFERRED_ID = 'ALMA_DEFERRED';
 var paymentMethodId = '';
 
 /**
@@ -190,14 +190,14 @@ function planIsActivated(paymentMethod, plan) {
  * @param {Object} plan plan
  */
 function getPlanPaymentMethodID(plan) {
-    if (plan.installments_count < 5 && planIsActivated(PaymentMgr.getPaymentMethod(PNX_NAME), plan)) {
-        paymentMethodId = PNX_NAME;
+    if (plan.installments_count < 5 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PNX_ID), plan)) {
+        paymentMethodId = ALMA_PNX_ID;
     }
-    if (plan.installments_count >= 5 && planIsActivated(PaymentMgr.getPaymentMethod(CREDIT_NAME), plan)) {
-        paymentMethodId = CREDIT_NAME;
+    if (plan.installments_count >= 5 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_CREDIT_ID), plan)) {
+        paymentMethodId = ALMA_CREDIT_ID;
     }
-    if (plan.deferred_days > 0 && planIsActivated(PaymentMgr.getPaymentMethod(DEFERRED_NAME), plan)) {
-        paymentMethodId = DEFERRED_NAME;
+    if (plan.deferred_days > 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_DEFERRED_ID), plan)) {
+        paymentMethodId = ALMA_DEFERRED_ID;
     }
 
     return paymentMethodId;
