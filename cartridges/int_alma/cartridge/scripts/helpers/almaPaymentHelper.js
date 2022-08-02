@@ -265,6 +265,22 @@ function buildPaymentData(order, installmentsCount, deferredDays, locale) {
     };
 }
 
+/**
+ * Call API to potential fraud
+ * @param {string} pid payment id
+ * @param {string} reason reason for potential fraud
+ */
+function flagAsPotentialFraud(pid, reason) {
+    var service = require('*/cartridge/scripts/services/alma');
+    var param = {
+        pid: pid,
+        reason: reason
+    };
+
+    var potentialFraudService = service.potentialFraud();
+    potentialFraudService.call(param);
+}
+
 
 module.exports = {
     orderStatusEquals: orderStatusEquals,
@@ -277,5 +293,6 @@ module.exports = {
     getUserProfile: getUserProfile,
     createOrderFromBasket: createOrderFromBasket,
     createPayment: createPayment,
-    buildPaymentData: buildPaymentData
+    buildPaymentData: buildPaymentData,
+    flagAsPotentialFraud: flagAsPotentialFraud
 };

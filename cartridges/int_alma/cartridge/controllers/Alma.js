@@ -1,6 +1,7 @@
 'use strict';
 
 var server = require('server');
+var logger = require('dw/system/Logger').getLogger('alma');
 
 /**
  * Helper that build the view params for Alma controller
@@ -42,10 +43,11 @@ function buildViewParams(paymentObj, order, localeId, reqProfile) {
  * @param {Object} paymentObj the payment to describe
  * @param {dw/order/Order} order the current order
  */
-function affectOrderIPN(paymentObj, order) {
+function affectOrder(paymentObj, order) {
     var Transaction = require('dw/system/Transaction');
     var OrderMgr = require('dw/order/OrderMgr');
     var Order = require('dw/order/Order');
+    var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
     var acceptOrder = require('*/cartridge/scripts/helpers/almaPaymentHelper').acceptOrder;
 
     var orderTotal = Math.round(order.totalGrossPrice.multiply(100).value);
@@ -55,7 +57,11 @@ function affectOrderIPN(paymentObj, order) {
             order.trackOrderChange('Total or status is wrong');
             OrderMgr.failOrder(order, true);
         });
-        throw new Error('Total or status is wrong');
+
+        var reason = paymentObj.purchase_amount !== orderTotal ? 'amount_mismatch' : 'state_error';
+        almaPaymentHelper.flagAsPotentialFraud(paymentObj.id, reason);
+        logger.warn('Flag potential fraud id:{0} | reason:{1}', [paymentObj.id, reason]);
+        throw new Error(reason);
     }
 
     var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
@@ -66,7 +72,6 @@ function affectOrderIPN(paymentObj, order) {
 server.get('PaymentSuccess', function (req, res, next) {
     var Transaction = require('dw/system/Transaction');
     var OrderMgr = require('dw/order/OrderMgr');
-    var Order = require('dw/order/Order');
     var paymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
     var paymentObj = null;
 
@@ -90,9 +95,7 @@ server.get('PaymentSuccess', function (req, res, next) {
     if (order) {
         paymentHelper.authorizePaymentProcessor(order);
         try {
-            var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
-            var paymentStatus = isOnShipmentPaymentEnabled(paymentObj.installments_count) ? Order.PAYMENT_STATUS_NOTPAID : Order.PAYMENT_STATUS_PAID;
-            paymentHelper.acceptOrder(order, paymentStatus);
+            affectOrder(paymentObj, order);
         } catch (e) {
             res.setStatusCode(500);
             res.render('error', {
@@ -171,7 +174,7 @@ server.get('IPN', function (req, res, next) {
     }
 
     try {
-        affectOrderIPN(paymentObj, order);
+        affectOrder(paymentObj, order);
 
         Transaction.wrap(function () {
             order.custom.almaPaymentId = req.querystring.pid;
