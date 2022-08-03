@@ -172,16 +172,11 @@ function isFragmentActivated() {
  * @returns {boolean} payment method ID
  */
 function planIsActivated(paymentMethod, plan) {
-    var almaActivated = paymentMethod.getCustom().almaActivated.split(' | ');
-    var isActivated = false;
+    var almaActivated = paymentMethod.getCustom().almaActivated.trim().split('|');
 
-    almaActivated.forEach(function (element) {
-        if (element.includes(plan.installments_count || plan.deferred_days)) {
-            isActivated = true;
-        }
+    return almaActivated.some(function (element) {
+        return element.includes(plan.installments_count) || element.includes(plan.deferred_days);
     });
-
-    return isActivated;
 }
 
 /**
