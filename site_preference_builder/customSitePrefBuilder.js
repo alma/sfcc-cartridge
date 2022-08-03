@@ -172,7 +172,7 @@ exports.addFeePlans = (file, plans) => {
 
   file.metadata['type-extension'][2]['custom-attribute-definitions'][0]['attribute-definition'].push(
     buildCustomSitePrefObject({
-      id: 'ALMA_FEEPLANS',
+      id: 'ALMA_FEE_PLANS',
       name: 'Advanced Alma plan management',
       type: 'string',
       description: 'Can be used to update your alma plans',

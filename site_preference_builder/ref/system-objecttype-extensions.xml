@@ -101,7 +101,7 @@
                 <attribute attribute-id="cartSelector"/>
                 <attribute attribute-id="isProductWidgetEnable"/>
                 <attribute attribute-id="productSelector"/>
-                <attribute attribute-id="ALMA_FEEPLANS"/>
+                <attribute attribute-id="ALMA_FEE_PLANS"/>
             </attribute-group>
         </group-definitions>
     </type-extension>
