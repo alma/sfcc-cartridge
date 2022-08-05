@@ -124,7 +124,7 @@
                 document.body.style.cursor = 'default';
 
             } else {
-                document.getElementById(t.id + "_fragment").remove();
+               await document.getElementById(t.id + "_fragment").firstChild.remove();
             }
         }
 
