@@ -1,6 +1,16 @@
 CHANGELOG
 =========
 
+v3.1.1
+------
+* Added PT translations
+
+v3.1.0
+------
+* Added refund feature
+* Added a environment variable for toggle refund or not
+* Added unit tests
+
 v3.0.3
 ------
 * Repository is now public

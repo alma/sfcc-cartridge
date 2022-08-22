@@ -95,10 +95,30 @@ function refundPayment() {
     });
 }
 
+/**
+ * Build service for potential fraud
+ * @returns {dw.svc.LocalServiceRegistry} service instances
+ */
+function flagAsPotentialFraud() {
+    return LocalServiceRegistry.createService('alma', {
+        createRequest: function (service, params) {
+            service.setRequestMethod('POST');
+            service.URL = almaHelpers.getUrl('/v1/payments/' + params.pid + '/potential-fraud'); // eslint-disable-line no-param-reassign
+            almaHelpers.addHeaders(service);
+
+            return JSON.stringify(params);
+        },
+        parseResponse: function (svc, client) {
+            return client;
+        }
+    });
+}
+
 module.exports = {
     getPaymentDetails: getPaymentDetails,
     checkEligibility: checkEligibility,
     triggerPayment: triggerPayment,
     refundPayment: refundPayment,
-    createPayment: createPayment
+    createPayment: createPayment,
+    potentialFraud: flagAsPotentialFraud
 };

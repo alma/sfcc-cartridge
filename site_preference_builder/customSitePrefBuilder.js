@@ -1,21 +1,28 @@
 /* eslint-disable max-len */
+const fs = require('fs');
 
 const xml2js = require('xml2js');
 const {
   ConfigException
 } = require('./error');
 
-let localisationFile = './messages';
-const locale = 'en_GB';
-if (locale !== 'en_GB') {
-  localisationFile += `-${locale}`;
+const path = require('path');
+require('dotenv').config({
+  path: path.resolve(__dirname, '../.env')
+});
+
+let localisationFile = './messages.json';
+
+const locale = process.env.LOCALE;
+if (locale !== 'en_GB' && fs.existsSync(path.join(__dirname, `messages-${locale}.json`))) {
+  localisationFile = `./messages-${locale}.json`;
 }
-const {
-  messages
-} = require(localisationFile);
+
+const messages = require(localisationFile);
+
 const { merchantHasOnShipment } = require('./jobs');
 
-// we also remove 1x that isn't deferred, as the api will provide it but we don't want to display it
+// we also remove 1x that isn't deferred, as the api will provide it, but we don't want to display it
 const filterAllowedPlan = (plan) => {
   return plan.allowed && !(plan.installments_count === 1 && plan.deferred_days === 0);
 };
@@ -53,9 +60,9 @@ const getSitePrefDisplayInfos = (plan) => {
     lang: 'x-default',
     text: currentMessage.title,
     min: currentMessage.min,
-    min_disclamer: currentMessage.min_disclamer.replace('[[amount]]', minAmount),
+    min_disclaimer: currentMessage.min_disclaimer.replace('[[amount]]', minAmount),
     max: currentMessage.max,
-    max_disclamer: currentMessage.max_disclamer.replace('[[amount]]', maxAmount),
+    max_disclaimer: currentMessage.max_disclaimer.replace('[[amount]]', maxAmount),
     group: currentMessage.group,
     group_id: `ALMA_${installments}_${deferredDays}`
   };
@@ -68,8 +75,9 @@ const getSitePrefDisplayInfos = (plan) => {
  * @returns {Object} the created custom site preference
  */
 const buildCustomSitePrefObject = (sitePref) => {
-  /*  Site pref attributes need to be inputed in a specific order
-   ** and js is not very good with that
+  /**
+   * Site pref attributes need to be inputted in a specific order
+   * and js is not very good with that
    */
   const customSitePref = {
     $: {
@@ -146,16 +154,12 @@ const buildCustomGroupObject = (id, name, attributes) => {
   });
   return group;
 };
-const xmlToJson = async (fileContent) => xml2js.parseStringPromise(fileContent);
+exports.xmlToJson = async (fileContent) => xml2js.parseStringPromise(fileContent);
 
-exports.xmlToJson = xmlToJson;
-
-const jsonToXML = (jsonSitePref) => {
+exports.jsonToXML = (jsonSitePref) => {
   const builder = new xml2js.Builder();
   return builder.buildObject(jsonSitePref);
 };
-
-exports.jsonToXML = jsonToXML;
 
 exports.addFeePlans = (file, plans) => {
   // only keep needed fields
@@ -225,7 +229,7 @@ exports.addAPIInfo = (file, url, key, merchantId) => {
   return file;
 };
 
-exports.addOnShipingOption = (file, plans) => {
+exports.addOnShippingOption = (file, plans) => {
   if (merchantHasOnShipment(plans)) {
     file.metadata['type-extension'][2]['custom-attribute-definitions'][0]['attribute-definition'].push(
       buildCustomSitePrefObject({
@@ -249,8 +253,8 @@ exports.addCustomAttrFromPlan = (file, plans) => {
         text,
         min,
         max,
-        min_disclamer,
-        max_disclamer
+        min_disclaimer,
+        max_disclaimer
       } = getSitePrefDisplayInfos(plan);
 
       file.metadata['type-extension'][2]['custom-attribute-definitions'][0]['attribute-definition'].push(
@@ -265,7 +269,7 @@ exports.addCustomAttrFromPlan = (file, plans) => {
           id: `${id}_min`,
           name: min,
           type: 'double',
-          description: min_disclamer
+          description: min_disclaimer
         })
       );
       file.metadata['type-extension'][2]['custom-attribute-definitions'][0]['attribute-definition'].push(
@@ -273,7 +277,7 @@ exports.addCustomAttrFromPlan = (file, plans) => {
           id: `${id}_max`,
           name: max,
           type: 'double',
-          description: max_disclamer
+          description: max_disclaimer
         })
       );
     });
