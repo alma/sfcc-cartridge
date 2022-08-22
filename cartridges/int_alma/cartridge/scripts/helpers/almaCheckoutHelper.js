@@ -3,6 +3,12 @@
 var Resource = require('dw/web/Resource');
 var formatCurrency = require('*/cartridge/scripts/util/formatting').formatCurrency;
 var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
+var PaymentMgr = require('dw/order/PaymentMgr');
+
+var ALMA_PNX_ID = 'ALMA_PNX';
+var ALMA_CREDIT_ID = 'ALMA_CREDIT';
+var ALMA_DEFERRED_ID = 'ALMA_DEFERRED';
+var paymentMethodId = '';
 
 /**
  * Build the selectorName used in isml
@@ -160,22 +166,86 @@ function isFragmentActivated() {
 }
 
 /**
+ * Return true if plan is activated
+ * @param {Object} paymentMethod payment method
+ * @param {Object} plan plan
+ * @returns {boolean} payment method ID
+ */
+function planIsActivated(paymentMethod, plan) {
+    var almaActivated = paymentMethod.getCustom().almaActivated.trim().split('|');
+
+    return almaActivated.some(function (element) {
+        return element.includes(plan.installments_count) || element.includes(plan.deferred_days);
+    });
+}
+
+/**
+ * Add payment method to plans
+ * @returns {string} method payment
+ * @param {Object} plan plan
+ */
+function getPlanPaymentMethodID(plan) {
+    if (plan.installments_count < 5 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PNX_ID), plan)) {
+        paymentMethodId = ALMA_PNX_ID;
+    }
+    if (plan.installments_count >= 5 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_CREDIT_ID), plan)) {
+        paymentMethodId = ALMA_CREDIT_ID;
+    }
+    if (plan.deferred_days > 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_DEFERRED_ID), plan)) {
+        paymentMethodId = ALMA_DEFERRED_ID;
+    }
+
+    return paymentMethodId;
+}
+
+/**
  * Format plan data to fit in Checkout view data
  * @param  {Object} plan any alma plan
  * @param  {string} currencyCode e.g. 'EUR'
  * @returns {array} a plan Object understandable for Eligibility
  */
 function formatPlanForCheckout(plan, currencyCode) {
-    return {
-        in_page: isPnx(plan) && isFragmentActivated(),
-        selector: getSelectorNameFromPlan(plan),
-        installments_count: plan.installments_count,
-        deferred_days: plan.deferred_days,
-        purchase_amount: plan.purchase_amount,
-        customer_fee: plan.customer_fee,
-        payment_plan: plan.payment_plan,
-        properties: getPropertiesForPlan(plan, currencyCode)
-    };
+    var formatPlan = {};
+    if (plan.installments_count < 5 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PNX_ID), plan)) {
+        formatPlan = {
+            in_page: isPnx(plan) && isFragmentActivated(),
+            selector: getSelectorNameFromPlan(plan),
+            installments_count: plan.installments_count,
+            deferred_days: plan.deferred_days,
+            purchase_amount: plan.purchase_amount,
+            customer_fee: plan.customer_fee,
+            payment_plan: plan.payment_plan,
+            properties: getPropertiesForPlan(plan, currencyCode),
+            payment_method: getPlanPaymentMethodID(plan)
+        };
+    }
+    if (plan.installments_count >= 5 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_CREDIT_ID), plan)) {
+        formatPlan = {
+            in_page: isPnx(plan) && isFragmentActivated(),
+            selector: getSelectorNameFromPlan(plan),
+            installments_count: plan.installments_count,
+            deferred_days: plan.deferred_days,
+            purchase_amount: plan.purchase_amount,
+            customer_fee: plan.customer_fee,
+            payment_plan: plan.payment_plan,
+            properties: getPropertiesForPlan(plan, currencyCode),
+            payment_method: getPlanPaymentMethodID(plan)
+        };
+    }
+    if (plan.deferred_days > 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_DEFERRED_ID), plan)) {
+        formatPlan = {
+            in_page: isPnx(plan) && isFragmentActivated(),
+            selector: getSelectorNameFromPlan(plan),
+            installments_count: plan.installments_count,
+            deferred_days: plan.deferred_days,
+            purchase_amount: plan.purchase_amount,
+            customer_fee: plan.customer_fee,
+            payment_plan: plan.payment_plan,
+            properties: getPropertiesForPlan(plan, currencyCode),
+            payment_method: getPlanPaymentMethodID(plan)
+        };
+    }
+    return formatPlan;
 }
 
 module.exports = {

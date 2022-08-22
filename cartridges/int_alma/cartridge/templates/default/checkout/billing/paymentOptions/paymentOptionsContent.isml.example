@@ -1,8 +1,16 @@
+<isinclude template="checkout/billing/paymentOptions/almaIncludes" />
+
 <isloop items="${pdict.order.billing.payment.applicablePaymentMethods}" var="paymentOption">
     <isif condition="${paymentOption.ID === 'CREDIT_CARD'}">
         <isinclude template="checkout/billing/paymentOptions/creditCardContent" />
     </isif>
-    <isif condition="${pdict.isAlmaEnable && paymentOption.ID === 'ALMA'}">
-        <isinclude template="checkout/billing/paymentOptions/almaContent" />
+    <isif condition="${pdict.isAlmaEnable && paymentOption.ID === 'ALMA_DEFERRED'}">
+        <isinclude template="checkout/billing/paymentOptions/almaContent/almaContentDeferred" />
+    </isif>
+    <isif condition="${pdict.isAlmaEnable && paymentOption.ID === 'ALMA_PNX'}">
+        <isinclude template="checkout/billing/paymentOptions/almaContent/almaContentPnx" />
+    </isif>
+    <isif condition="${pdict.isAlmaEnable && paymentOption.ID === 'ALMA_CREDIT'}">
+        <isinclude template="checkout/billing/paymentOptions/almaContent/almaContentCredit" />
     </isif>
 </isloop>

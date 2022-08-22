@@ -1,13 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <payment-settings  xmlns="http://www.demandware.com/xml/impex/paymentsettings/2009-09-15">
-	
-	<payment-method method-id="ALMA">
-        <name xml:lang="x-default">ALMA</name>
+
+	<payment-method method-id="ALMA_DEFERRED">
+        <name xml:lang="x-default">Alma Deferred Payment</name>
         <enabled-flag>true</enabled-flag>
         <processor-id>ALMA</processor-id>
         <countries>
             <country country-code="FR"/>
         </countries>
+        <currencies>
+            <currency>EUR</currency>
+        </currencies>
+        <custom-attributes>
+            <custom-attribute attribute-id="almaActivated">d+15 | d+30</custom-attribute>
+        </custom-attributes>
+    </payment-method>
+
+    <payment-method method-id="ALMA_PNX">
+        <name xml:lang="x-default">Alma Pay in 2-3-4 installments</name>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>ALMA</processor-id>
+        <countries>
+            <country country-code="FR"/>
+        </countries>
+        <currencies>
+            <currency>EUR</currency>
+        </currencies>
+        <custom-attributes>
+            <custom-attribute attribute-id="almaActivated">p2x | p3x | p4x</custom-attribute>
+        </custom-attributes>
+    </payment-method>
+
+    <payment-method method-id="ALMA_CREDIT">
+        <name xml:lang="x-default">Alma Pay 5+ installments</name>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>ALMA</processor-id>
+        <countries>
+            <country country-code="FR"/>
+        </countries>
+        <currencies>
+            <currency>EUR</currency>
+        </currencies>
+        <custom-attributes>
+            <custom-attribute attribute-id="almaActivated">p6x | p10x | p12x</custom-attribute>
+        </custom-attributes>
     </payment-method>
 
 </payment-settings>

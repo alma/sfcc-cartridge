@@ -24,6 +24,52 @@ var plan = {
         }
     ]
 };
+
+var planCredit = {
+    installments_count: 6,
+    deferred_days: 0,
+    purchase_amount: 36000,
+    customer_fee: 0,
+    payment_plan: [
+        {
+            customer_fee: 0,
+            purchase_amount: 6000
+        },
+        {
+            customer_fee: 0,
+            purchase_amount: 6000
+        },
+        {
+            customer_fee: 0,
+            purchase_amount: 6000
+        },
+        {
+            customer_fee: 0,
+            purchase_amount: 6000
+        },
+        {
+            customer_fee: 0,
+            purchase_amount: 6000
+        },
+        {
+            customer_fee: 0,
+            purchase_amount: 6000
+        }
+    ]
+};
+
+var plansDeferred = {
+    installments_count: 1,
+    deferred_days: 15,
+    purchase_amount: 35000,
+    customer_fee: 0,
+    payment_plan: [
+        {
+            customer_fee: 0,
+            purchase_amount: 35000
+        }
+    ]
+};
 var currencyCode = 'EUR';
 
 describe('almaCheckoutHelpers', function () {
@@ -66,6 +112,22 @@ describe('almaCheckoutHelpers', function () {
                 },
                 payment_installments: '117 alma.pay.in_x_installment.installments  2x116'
             });
+        });
+
+        it('check payment method PNX', function () {
+            var checkoutData = almaCheckoutHelpers.formatForCheckout(plan, currencyCode);
+            assert.equal(checkoutData.payment_method, 'ALMA_PNX'
+            );
+        });
+
+        it('check payment method CREDIT', function () {
+            var checkoutData = almaCheckoutHelpers.formatForCheckout(planCredit, currencyCode);
+            assert.equal(checkoutData.payment_method, 'ALMA_CREDIT');
+        });
+
+        it('check payment method DEFERRED', function () {
+            var checkoutData = almaCheckoutHelpers.formatForCheckout(plansDeferred, currencyCode);
+            assert.equal(checkoutData.payment_method, 'ALMA_DEFERRED');
         });
     });
 });
