@@ -1,16 +1,59 @@
 <li class="nav-item alma-tab" data-method-id="${paymentOption.ID}">
     <a class="nav-link credit-card-tab" data-toggle="tab" href="${'#alma-content-' + paymentOption.ID}" role="tab">
         <img class="credit-card-option"
-            src="${URLUtils.staticURL('/images/alma.png')}"
-            height="32"
-            alt="${paymentOption.name}"
-            title="${paymentOption.name}"
+             src="${URLUtils.staticURL('/images/alma_min.png')}"
+             height="50"
+             alt="${paymentOption.name}"
+             title="${paymentOption.name}"
         >
+        <isset name="pdict" value="${pdict}" scope="page"/>
+        <span class="alma-tab-plans">
+            <span class="alma-tab-plans-span">
+                <isloop iterator="${pdict.plans}" var="plan" status="planStatus">
+                    <isif condition="${plan.payment_method === paymentOption.ID}">
+                        <isprint value="${plan.properties.img}" encoding="off"/>
+                    </isif>
+                </isloop>
+            </span>
+        </span>
+
+
     </a>
 </li>
 
 <style>
-.nav-item.disabled {
-    opacity: 0.3
-}
+    .nav-item.disabled {
+        opacity: 0.3
+    }
+
+    .alma-tab-plans {
+        width: 161px;
+        height: 69.14px;
+        background: #FFFFFF;
+        border: 1px solid #E1E4E6;
+        border-radius: 8px;
+        flex: none;
+        order: 1;
+        flex-grow: 0;
+        padding: 15px 10px 10px;
+        color: #00425D;
+    }
+
+    .alma-tab-plans-span {
+        width: 118px;
+        height: 48px;
+        left: calc(50% - 118px/2 + 0.5px);
+        top: calc(50% - 48px/2 + 1.43px);
+        font-size: 20px;
+        line-height: 150%;
+        align-items: center;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .nav-link.credit-card-tab.active .alma-tab-plans {
+        background: #00425D;
+        color: #FFFFFF;
+    }
+
 </style>

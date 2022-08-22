@@ -205,17 +205,47 @@ function getPlanPaymentMethodID(plan) {
  * @returns {array} a plan Object understandable for Eligibility
  */
 function formatPlanForCheckout(plan, currencyCode) {
-    return {
-        in_page: isPnx(plan) && isFragmentActivated(),
-        selector: getSelectorNameFromPlan(plan),
-        installments_count: plan.installments_count,
-        deferred_days: plan.deferred_days,
-        purchase_amount: plan.purchase_amount,
-        customer_fee: plan.customer_fee,
-        payment_plan: plan.payment_plan,
-        properties: getPropertiesForPlan(plan, currencyCode),
-        payment_method: getPlanPaymentMethodID(plan)
-    };
+    var formatPlan = {};
+    if (plan.installments_count < 5 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PNX_ID), plan)) {
+        formatPlan = {
+            in_page: isPnx(plan) && isFragmentActivated(),
+            selector: getSelectorNameFromPlan(plan),
+            installments_count: plan.installments_count,
+            deferred_days: plan.deferred_days,
+            purchase_amount: plan.purchase_amount,
+            customer_fee: plan.customer_fee,
+            payment_plan: plan.payment_plan,
+            properties: getPropertiesForPlan(plan, currencyCode),
+            payment_method: getPlanPaymentMethodID(plan)
+        };
+    }
+    if (plan.installments_count >= 5 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_CREDIT_ID), plan)) {
+        formatPlan = {
+            in_page: isPnx(plan) && isFragmentActivated(),
+            selector: getSelectorNameFromPlan(plan),
+            installments_count: plan.installments_count,
+            deferred_days: plan.deferred_days,
+            purchase_amount: plan.purchase_amount,
+            customer_fee: plan.customer_fee,
+            payment_plan: plan.payment_plan,
+            properties: getPropertiesForPlan(plan, currencyCode),
+            payment_method: getPlanPaymentMethodID(plan)
+        };
+    }
+    if (plan.deferred_days > 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_DEFERRED_ID), plan)) {
+        formatPlan = {
+            in_page: isPnx(plan) && isFragmentActivated(),
+            selector: getSelectorNameFromPlan(plan),
+            installments_count: plan.installments_count,
+            deferred_days: plan.deferred_days,
+            purchase_amount: plan.purchase_amount,
+            customer_fee: plan.customer_fee,
+            payment_plan: plan.payment_plan,
+            properties: getPropertiesForPlan(plan, currencyCode),
+            payment_method: getPlanPaymentMethodID(plan)
+        };
+    }
+    return formatPlan;
 }
 
 module.exports = {
