@@ -1,6 +1,6 @@
 {
   "name": "alma-sfcc-plugin",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "Alma SFCC integration plugin",
   "main": "index.js",
   "engines": {
@@ -31,8 +31,8 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-subset": "^1.6.0",
-    "del": "^6.0.0",
-    "dotenv": "^16.0.0",
+    "del": "^6.1.1",
+    "dotenv": "^16.0.2",
     "dw": "^1.0.1",
     "eslint": "^3.19.0",
     "eslint-config-airbnb-base": "^5.0.3",
@@ -41,7 +41,7 @@
     "gulp": "^4.0.2",
     "gulp-zip": "^5.1.0",
     "husky": "^4.2.5",
-    "isml-linter": "^5.26.4",
+    "isml-linter": "^5.40.3",
     "istanbul": "^0.4.5",
     "mocha": "^5.2.0",
     "mocha-junit-reporter": "^1.23.1",
@@ -52,7 +52,7 @@
     "proxyquire": "1.7.4",
     "request-promise": "^4.2.4",
     "sass-loader": "^7.3.1",
-    "sgmf-scripts": "^2.3.0",
+    "sgmf-scripts": "^2.4.2",
     "sinon": "^1.17.7",
     "style-loader": "^0.21.0",
     "stylelint": "^8.4.0",
@@ -65,7 +65,7 @@
     "cleave.js": "^1.5.3",
     "flag-icon-css": "^2.9.0",
     "font-awesome": "^4.7.0",
-    "jquery": "^3.5.1"
+    "jquery": "^3.6.1"
   },
   "browserslist": [
     "last 2 versions",
