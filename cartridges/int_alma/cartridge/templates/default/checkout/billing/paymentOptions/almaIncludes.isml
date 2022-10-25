@@ -69,7 +69,7 @@
                 },
             })
 
-                paymentForm.mount(document.getElementById(container));
+            paymentForm.mount(document.getElementById(container));
 
             document
                 .querySelector('.submit-payment')
