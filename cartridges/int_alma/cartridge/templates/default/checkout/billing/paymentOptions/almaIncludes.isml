@@ -4,9 +4,8 @@
 <script>
     window.addEventListener('DOMContentLoaded', function () {
         var fragments = new Alma.Fragments("${pdict.merchantId}", {
-            mode: '${pdict.mode}' == 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST,
+            mode: '${pdict.mode}' === 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST,
         });
-        var orderId = '';
 
         /**
          * Returns the data formatted for inpage payment

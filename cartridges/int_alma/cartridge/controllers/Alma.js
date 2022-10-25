@@ -201,7 +201,6 @@ server.get('BasketData', server.middleware.https, function (req, res, next) {
     var formatAddress = require('*/cartridge/scripts/helpers/almaAddressHelper').formatAddress;
     var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
     var formatCustomerData = require('*/cartridge/scripts/helpers/almaHelpers').formatCustomerData;
-    var createOrderFromBasket = require('*/cartridge/scripts/helpers/almaPaymentHelper').createOrderFromBasket;
 
     var currentBasket = BasketMgr.getCurrentBasket();
     var profile = currentBasket.getCustomer().profile;
@@ -230,8 +229,8 @@ server.get('BasketData', server.middleware.https, function (req, res, next) {
         billing_address: formatAddress(currentBasket.getBillingAddress()),
         customer: formatCustomerData(profile, currentBasket.getCustomerEmail()),
         isEnableOnShipment: isOnShipmentPaymentEnabled(req.querystring.installment),
-        orderId: orderId,
-        orderToken: orderToken
+        orderId: '',
+        orderToken: ''
     });
 
     return next();
@@ -261,7 +260,6 @@ server.post('CreatePaymentUrl', server.middleware.https, function (req, res, nex
     }
 
     var paymentData = almaPaymentHelper.buildPaymentData(
-        order,
         req.querystring.installments,
         req.querystring.deferred_days,
         getLocale(req)
