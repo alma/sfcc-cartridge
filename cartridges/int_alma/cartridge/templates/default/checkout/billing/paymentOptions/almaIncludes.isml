@@ -58,7 +58,8 @@
 
             var paymentData = getPaymentData(data, installments_count, deferred_days)
 
-            fragments.createPaymentForm(paymentData, {
+            const paymentForm = fragments.createPaymentForm(paymentData, {
+                showPayButton: false,
                 onSuccess: function (returnedData) {
                     window.location = returnedData.return_url;
                 },
@@ -66,7 +67,17 @@
                 },
                 onPopupClose: function (returnedData) {
                 },
-            }).mount(document.getElementById(container));
+            })
+
+                paymentForm.mount(document.getElementById(container));
+
+            document
+                .querySelector('.submit-payment')
+                .addEventListener('click', async () => {
+                    // Trigger Alma's payment process
+                    console.log('Payement with new button');
+                    paymentForm.pay();
+                })
         }
 
         /**
