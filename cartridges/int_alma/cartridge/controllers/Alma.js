@@ -201,31 +201,17 @@ server.get('BasketData', server.middleware.https, function (req, res, next) {
     var formatAddress = require('*/cartridge/scripts/helpers/almaAddressHelper').formatAddress;
     var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
     var formatCustomerData = require('*/cartridge/scripts/helpers/almaHelpers').formatCustomerData;
-    var createOrderFromBasket = require('*/cartridge/scripts/helpers/almaPaymentHelper').createOrderFromBasket;
 
     var currentBasket = BasketMgr.getCurrentBasket();
     var profile = currentBasket.getCustomer().profile;
-
-    var order = null;
-    if (req.querystring.oid) {
-        var OrderMgr = require('dw/order/OrderMgr');
-        order = OrderMgr.searchOrder('orderNo={0}', req.querystring.oid);
-    }
-
-    if (!order) {
-        order = createOrderFromBasket();
-    }
-
-    var orderToken = order.getOrderToken();
-    var orderId = order.orderNo;
 
     res.json({
         shipping_address: formatAddress(currentBasket.getDefaultShipment().shippingAddress),
         billing_address: formatAddress(currentBasket.getBillingAddress()),
         customer: formatCustomerData(profile, currentBasket.getCustomerEmail()),
         isEnableOnShipment: isOnShipmentPaymentEnabled(req.querystring.installment),
-        orderId: orderId,
-        orderToken: orderToken
+        orderId: '',
+        orderToken: ''
     });
 
     return next();
@@ -245,10 +231,7 @@ server.post('CreatePaymentUrl', server.middleware.https, function (req, res, nex
     var getLocale = require('*/cartridge/scripts/helpers/almaHelpers').getLocale;
     var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
 
-    var order = almaPaymentHelper.createOrderFromBasket();
-
     var paymentData = almaPaymentHelper.buildPaymentData(
-        order,
         req.querystring.installments,
         req.querystring.deferred_days,
         getLocale(req)

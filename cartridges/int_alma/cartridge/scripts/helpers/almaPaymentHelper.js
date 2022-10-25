@@ -218,13 +218,12 @@ function createPayment(param) {
 
 /**
  * Build the data to give to the payment endpoint
- * @param {dw.order.Order} order the order to pay
  * @param {number} installmentsCount number of installments to pay
  * @param {number} deferredDays number of days to the first payment
  * @param {string} locale the user locale
  * @returns {Object} to give to the payment endpoint
  */
-function buildPaymentData(order, installmentsCount, deferredDays, locale) {
+function buildPaymentData(installmentsCount, deferredDays, locale) {
     var BasketMgr = require('dw/order/BasketMgr');
     var URLUtils = require('dw/web/URLUtils');
 
@@ -234,9 +233,6 @@ function buildPaymentData(order, installmentsCount, deferredDays, locale) {
 
     var currentBasket = BasketMgr.getCurrentBasket();
     var isEnableOnShipment = isOnShipmentPaymentEnabled(installmentsCount);
-    var orderToken = order.getOrderToken();
-    var orderId = order.orderNo;
-
     return {
         payment: {
             purchase_amount: Math.round(currentBasket.totalGrossPrice.multiply(100).value),
@@ -253,13 +249,13 @@ function buildPaymentData(order, installmentsCount, deferredDays, locale) {
             deferred: isEnableOnShipment ? 'trigger' : '',
             deferred_description: isEnableOnShipment ? require('dw/web/Resource').msg('alma.at_shipping', 'alma', null) : '',
             custom_data: {
-                order_id: orderId,
-                order_token: orderToken
+                order_id: '',
+                order_token: ''
             }
         },
         customer: formatCustomerData(currentBasket.getCustomer().profile, currentBasket.getCustomerEmail()),
         order: {
-            merchant_reference: orderId
+            merchant_reference: ''
         }
     };
 }

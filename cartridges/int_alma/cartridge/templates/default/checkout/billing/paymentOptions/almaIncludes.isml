@@ -4,9 +4,8 @@
 <script>
     window.addEventListener('DOMContentLoaded', function () {
         var fragments = new Alma.Fragments("${pdict.merchantId}", {
-            mode: '${pdict.mode}' == 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST,
+            mode: '${pdict.mode}' === 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST,
         });
-        var orderId = '';
 
         /**
          * Returns the data formatted for inpage payment
@@ -53,7 +52,7 @@
             installments_count,
             deferred_days
         ) {
-            const response = await fetch('${pdict.data_url}?oid=' + orderId + '&installment=' + installments_count);
+            const response = await fetch('${pdict.data_url}?installment=' + installments_count);
             const data = await response.json();
 
             var paymentData = getPaymentData(data, installments_count, deferred_days)
