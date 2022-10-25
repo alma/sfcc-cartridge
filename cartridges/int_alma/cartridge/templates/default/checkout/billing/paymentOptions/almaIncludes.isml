@@ -72,7 +72,8 @@
                         }
                         var paymentData = getPaymentData(json, installments_count, deferred_days)
 
-                        fragments.createPaymentForm(paymentData, {
+                        const paymentForm = fragments.createPaymentForm(paymentData, {
+                            showPayButton: false,
                             onSuccess: function (returnedData) {
                                 window.location = returnedData.return_url;
                             },
@@ -81,6 +82,12 @@
                             onPopupClose: function (returnedData) {
                             },
                         }).mount(document.getElementById(container));
+
+                        document
+                            .querySelector('.submit-payment')
+                            .addEventListener('click', async () => {
+                                paymentForm.pay();
+                            })
                     }
                 ).catch((error) => {
                     displayError('alma_general_' + installments_count + '_' + deferred_days, error.message)

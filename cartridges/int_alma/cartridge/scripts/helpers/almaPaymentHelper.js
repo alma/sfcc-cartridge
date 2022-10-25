@@ -205,7 +205,6 @@ function createOrderFromBasket(almaPaymentMethod) {
         );
     });
     var order = COHelpers.createOrder(currentBasket);
-
     Transaction.wrap(function () {
         OrderMgr.failOrder(order, true);
     });
