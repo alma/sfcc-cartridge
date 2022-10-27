@@ -72,10 +72,11 @@
 
             document
                 .querySelector('.submit-payment')
-                .addEventListener('click', async () => {
+                .addEventListener('click', async (event) => {
                     // Trigger Alma's payment process
+                    event.stopPropagation();
                     console.log('Payement with new button');
-                    paymentForm.pay();
+                    //paymentForm.pay();
                 })
         }
 
@@ -164,7 +165,7 @@
             pm.addEventListener("click", (event) => {
                 const isAlmaTab = event.target.getAttribute("href") === '#alma-content';
                 if (isAlmaTab) {
-                    checkoutBtn.setAttribute('disabled', true);
+                    // checkoutBtn.setAttribute('disabled', true);
                 } else {
                     checkoutBtn.removeAttribute('disabled');
                 }
