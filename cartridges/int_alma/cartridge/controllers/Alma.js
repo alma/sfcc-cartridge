@@ -70,9 +70,9 @@ function affectOrder(paymentObj, order) {
 }
 
 server.get('PaymentSuccess', function (req, res, next) {
-    var Transaction = require('dw/system/Transaction');
     var OrderMgr = require('dw/order/OrderMgr');
     var paymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
+    var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
     var paymentObj = null;
 
     try {
@@ -106,10 +106,8 @@ server.get('PaymentSuccess', function (req, res, next) {
     }
     paymentHelper.emptyCurrentBasket();
 
-    Transaction.wrap(function () {
-        order.custom.almaPaymentId = req.querystring.pid;
-        order.custom.ALMA_ResponseDetails = payDetail;
-    });
+    orderHelper.addPidToOrder(order, req.querystring.pid);
+    orderHelper.addAlmaPaymentDetails(order, payDetail);
 
     res.render('checkout/confirmation/confirmation',
         buildViewParams(paymentObj, order, req.locale.id, req.currentCustomer.profile)
@@ -145,8 +143,8 @@ server.get(
 
 server.get('IPN', function (req, res, next) {
     var OrderMgr = require('dw/order/OrderMgr');
-    var Transaction = require('dw/system/Transaction');
     var paymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
+    var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
 
     var paymentObj = null;
     try {
@@ -176,10 +174,8 @@ server.get('IPN', function (req, res, next) {
     try {
         affectOrder(paymentObj, order);
 
-        Transaction.wrap(function () {
-            order.custom.almaPaymentId = req.querystring.pid;
-            order.custom.ALMA_ResponseDetails = payDetail;
-        });
+        orderHelper.addPidToOrder(order, req.querystring.pid);
+        orderHelper.addAlmaPaymentDetails(order, payDetail);
     } catch (e) {
         res.setStatusCode(500);
         res.json({
@@ -279,5 +275,29 @@ server.post(
         return next();
     }
 );
+
+server.get(
+    'FragmentCheckout',
+    server.middleware.https,
+    function (req, res, next) {
+        logger.warn('FragmentCheckout {0}', []);
+        var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
+        var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
+
+        var order = almaPaymentHelper.createOrderFromBasket();
+
+        orderHelper.addPidToOrder(order, req.querystring.pid);
+        logger.warn('order create {0}', [order.custom.almaPaymentId]);
+
+        try {
+            res.json(order);
+        } catch (e) {
+            res.setStatusCode(500);
+            res.json({
+                error: e.message
+            });
+        }
+        return next();
+    });
 
 module.exports = server.exports();

@@ -52,7 +52,7 @@
             installments_count,
             deferred_days
         ) {
-            const response = await fetch('${pdict.data_url}?installment=' + installments_count);
+            const response = await fetch('${pdict.data_url}?oid=' + '&installment=' + installments_count);
             const data = await response.json();
 
             var paymentData = getPaymentData(data, installments_count, deferred_days)
@@ -72,10 +72,13 @@
 
             document
                 .querySelector('.submit-payment')
-                .addEventListener('click', async (event) => {
-                    // Trigger Alma's payment process
-                    event.stopPropagation();
-                    console.log('Payement with new button');
+                .addEventListener('click', (e) => {
+                    const ajaxResponse = fetch('${pdict.checkout_fragment_url}?pid=' + paymentForm.currentPayment.id);
+                    console.log(ajaxResponse);
+                    //send order id to fragment
+                    //add payment id to order
+                    //pop up
+                    //redirect
                     //paymentForm.pay();
                 })
         }
