@@ -199,7 +199,7 @@
             pm.addEventListener("click", (event) => {
                 const isAlmaTab = event.target.getAttribute("href") === '#alma-content';
                 if (isAlmaTab) {
-                    checkoutBtn.setAttribute('disabled', true);
+                    // checkoutBtn.setAttribute('disabled', true);
                 } else {
                     checkoutBtn.removeAttribute('disabled');
                 }
