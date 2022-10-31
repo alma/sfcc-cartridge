@@ -86,9 +86,9 @@ server.get('PaymentSuccess', function (req, res, next) {
     }
     var payDetail = paymentHelper.getPaymentDetails(paymentObj);
 
-    var order = OrderMgr.searchOrder(
-        'orderNo={0}',
-        paymentObj.custom_data.order_id
+    var order = OrderMgr.queryOrder(
+        'custom.almaPaymentId={0}',
+        req.querystring.pid
     );
 
     // we probably should throw an error if we don't have an order
@@ -158,9 +158,9 @@ server.get('IPN', function (req, res, next) {
     }
     var payDetail = paymentHelper.getPaymentDetails(paymentObj);
 
-    var order = OrderMgr.getOrder(
-        paymentObj.custom_data.order_id,
-        paymentObj.custom_data.order_token
+    var order = OrderMgr.queryOrder(
+        'custom.almaPaymentId={0}',
+        req.querystring.pid
     );
 
     if (!order) {
@@ -280,14 +280,12 @@ server.get(
     'FragmentCheckout',
     server.middleware.https,
     function (req, res, next) {
-        logger.warn('FragmentCheckout {0}', []);
         var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
         var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
 
         var order = almaPaymentHelper.createOrderFromBasket();
 
         orderHelper.addPidToOrder(order, req.querystring.pid);
-        logger.warn('order create {0}', [order.custom.almaPaymentId]);
 
         try {
             res.json(order);

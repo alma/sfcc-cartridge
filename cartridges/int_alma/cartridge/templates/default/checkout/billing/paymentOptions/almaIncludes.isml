@@ -29,13 +29,13 @@
                     deferred: data.isEnableOnShipment ? "trigger" : "",
                     deferred_description: data.isEnableOnShipment ? decodeHtml("${Resource.msg('alma.at_shipping', 'alma', null)}") : "",
                     custom_data: {
-                        order_id: data.orderId,
-                        order_token: data.orderToken
+                        order_id: '',
+                        order_token: ''
                     }
                 },
                 customer: data.customer,
                 order: {
-                    merchant_reference: data.orderId
+                    merchant_reference: ''
                 }
             };
         }
@@ -72,14 +72,12 @@
 
             document
                 .querySelector('.submit-payment')
-                .addEventListener('click', (e) => {
-                    const ajaxResponse = fetch('${pdict.checkout_fragment_url}?pid=' + paymentForm.currentPayment.id);
-                    console.log(ajaxResponse);
-                    //send order id to fragment
-                    //add payment id to order
-                    //pop up
-                    //redirect
-                    //paymentForm.pay();
+                .addEventListener('click', async () => {
+                    const ajaxResponse = await fetch('${pdict.checkout_fragment_url}?pid=' + paymentForm.currentPayment.id);
+                    const orderFragment = await ajaxResponse.json();
+                    if (orderFragment.getStatusCode !== 500){
+                        paymentForm.pay();
+                    }
                 })
         }
 
