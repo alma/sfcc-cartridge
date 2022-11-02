@@ -13,6 +13,7 @@ function orderStatusEquals(order, status) {
 /**
  * Return payment info from Alma API
  * @param {string} almaPaymentId PaymentId of an alma payment
+ * @throw Error
  * @returns {Object} info from Alma API payment
  */
 function getPaymentObj(almaPaymentId) {
@@ -171,6 +172,7 @@ function getUserProfile(email) {
 
 /**
  * create an order from a Basket
+ * @throw Error
  * @returns {dw.order.Order} the created order
  */
 function createOrderFromBasket() {
@@ -181,6 +183,10 @@ function createOrderFromBasket() {
     var COHelpers = require('*/cartridge/scripts/checkout/checkoutHelpers');
 
     var currentBasket = BasketMgr.getCurrentBasket();
+
+    if (currentBasket == null) {
+        throw new Error('Current basket is null');
+    }
 
     Transaction.wrap(function () {
         currentBasket.removeAllPaymentInstruments();

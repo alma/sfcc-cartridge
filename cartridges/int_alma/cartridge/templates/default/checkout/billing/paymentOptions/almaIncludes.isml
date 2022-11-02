@@ -70,15 +70,32 @@
 
             paymentForm.mount(document.getElementById(container));
 
+            var checkoutFragmentCall = async function () {
+                const ajaxResponse = await fetch('${pdict.checkout_fragment_url}?pid=' + paymentForm.currentPayment.id);
+                const orderFragment = await ajaxResponse.json();
+                if (ajaxResponse.status === 200) {
+                    paymentForm.pay();
+                }
+                if (ajaxResponse.status === 500) {
+                    // display error
+                    alert(orderFragment.error)
+                }
+            }
+
             document
                 .querySelector('.submit-payment')
-                .addEventListener('click', async () => {
-                    const ajaxResponse = await fetch('${pdict.checkout_fragment_url}?pid=' + paymentForm.currentPayment.id);
-                    const orderFragment = await ajaxResponse.json();
-                    if (orderFragment.getStatusCode !== 500){
-                        paymentForm.pay();
+                .addEventListener('click', checkoutFragmentCall)
+
+            document
+                .querySelector('.payment-options')
+                .addEventListener(
+                    'click',
+                    () => {
+                        document
+                            .querySelector('.submit-payment')
+                            .removeEventListener('click', checkoutFragmentCall)
                     }
-                })
+                )
         }
 
         /**
@@ -136,7 +153,7 @@
                 document.body.style.cursor = 'default';
 
             } else {
-               await document.getElementById(t.id + "_fragment").firstChild.remove();
+                await document.getElementById(t.id + "_fragment").firstChild.remove();
             }
         }
 

@@ -283,12 +283,10 @@ server.get(
         var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
         var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
 
-        var order = almaPaymentHelper.createOrderFromBasket();
-
-        orderHelper.addPidToOrder(order, req.querystring.pid);
-
         try {
-            res.json(order);
+            var order = almaPaymentHelper.createOrderFromBasket();
+            orderHelper.addPidToOrder(order, req.querystring.pid);
+            res.json(JSON.stringify(order));
         } catch (e) {
             res.setStatusCode(500);
             res.json({
