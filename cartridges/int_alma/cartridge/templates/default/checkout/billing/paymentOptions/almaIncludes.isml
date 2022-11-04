@@ -30,7 +30,8 @@
                     deferred_description: data.isEnableOnShipment ? decodeHtml("${Resource.msg('alma.at_shipping', 'alma', null)}") : "",
                     custom_data: {
                         order_id: '',
-                        order_token: ''
+                        order_token: '',
+                        basket_id: data.basket_id
                     }
                 },
                 customer: data.customer,

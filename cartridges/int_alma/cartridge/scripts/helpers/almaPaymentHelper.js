@@ -171,6 +171,40 @@ function getUserProfile(email) {
 }
 
 /**
+ * Create an order from a Basket UUID
+ * @param {string} UUID uuid
+ * @returns {dw.order.Order} order
+ */
+function createOrderFromBasketUUID(UUID) {
+    var PaymentMgr = require('dw/order/PaymentMgr');
+    var BasketMgr = require('dw/order/BasketMgr');
+    var OrderMgr = require('dw/order/OrderMgr');
+    var Transaction = require('dw/system/Transaction');
+    var COHelpers = require('*/cartridge/scripts/checkout/checkoutHelpers');
+
+    // error here because don't have session
+    var basket = BasketMgr.getBasket(UUID);
+
+    Transaction.wrap(function () {
+        basket.removeAllPaymentInstruments();
+        var paymentProcessor = PaymentMgr.getPaymentMethod('ALMA_CREDIT').paymentProcessor;
+        var paymentInstrument = basket.createPaymentInstrument(
+            'ALMA',
+            basket.totalGrossPrice
+        );
+
+        paymentInstrument.paymentTransaction.setPaymentProcessor(
+            paymentProcessor
+        );
+    });
+    var order = COHelpers.createOrder(basket);
+    Transaction.wrap(function () {
+        OrderMgr.failOrder(order, true);
+    });
+    return order;
+}
+
+/**
  * create an order from a Basket
  * @param {string} almaPaymentMethod payment metyhod ID
  * @throw Error
@@ -265,7 +299,8 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
             deferred_description: isEnableOnShipment ? require('dw/web/Resource').msg('alma.at_shipping', 'alma', null) : '',
             custom_data: {
                 order_id: '',
-                order_token: ''
+                order_token: '',
+                basket_id: currentBasket.getUUID()
             }
         },
         customer: formatCustomerData(currentBasket.getCustomer().profile, currentBasket.getCustomerEmail()),
@@ -304,5 +339,6 @@ module.exports = {
     createOrderFromBasket: createOrderFromBasket,
     createPayment: createPayment,
     buildPaymentData: buildPaymentData,
-    flagAsPotentialFraud: flagAsPotentialFraud
+    flagAsPotentialFraud: flagAsPotentialFraud,
+    createOrderFromBasketUUID: createOrderFromBasketUUID
 };
