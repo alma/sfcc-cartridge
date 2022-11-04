@@ -124,8 +124,6 @@ server.get('PaymentSuccess', function (req, res, next) {
         }
     }
     paymentHelper.emptyCurrentBasket();
-
-    orderHelper.addPidToOrder(order, req.querystring.pid);
     orderHelper.addAlmaPaymentDetails(order, payDetail);
 
     res.render('checkout/confirmation/confirmation',
