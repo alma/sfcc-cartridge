@@ -91,6 +91,11 @@ server.get('PaymentSuccess', function (req, res, next) {
         req.querystring.pid
     );
 
+    if (!order) {
+        order = paymentHelper.createOrderFromBasket();
+        orderHelper.addPidToOrder(order, req.querystring.pid);
+    }
+
     // we probably should throw an error if we don't have an order
     if (order) {
         paymentHelper.authorizePaymentProcessor(order);
@@ -105,8 +110,6 @@ server.get('PaymentSuccess', function (req, res, next) {
         }
     }
     paymentHelper.emptyCurrentBasket();
-
-    orderHelper.addPidToOrder(order, req.querystring.pid);
     orderHelper.addAlmaPaymentDetails(order, payDetail);
 
     res.render('checkout/confirmation/confirmation',
@@ -157,11 +160,16 @@ server.get('IPN', function (req, res, next) {
         return next();
     }
     var payDetail = paymentHelper.getPaymentDetails(paymentObj);
-
     var order = OrderMgr.queryOrder(
         'custom.almaPaymentId={0}',
         req.querystring.pid
     );
+
+    if (!order) {
+        var basketUuid = paymentObj.custom_data.basket_id;
+        order = paymentHelper.createOrderFromBasketUUID(basketUuid);
+        orderHelper.addPidToOrder(order, req.querystring.pid);
+    }
 
     if (!order) {
         res.setStatusCode(500);
@@ -207,7 +215,8 @@ server.get('BasketData', server.middleware.https, function (req, res, next) {
         customer: formatCustomerData(profile, currentBasket.getCustomerEmail()),
         isEnableOnShipment: isOnShipmentPaymentEnabled(req.querystring.installment),
         orderId: '',
-        orderToken: ''
+        orderToken: '',
+        basket_id: currentBasket.getUUID()
     });
 
     return next();

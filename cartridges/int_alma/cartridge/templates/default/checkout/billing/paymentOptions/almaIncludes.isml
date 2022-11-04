@@ -30,7 +30,8 @@
                     deferred_description: data.isEnableOnShipment ? decodeHtml("${Resource.msg('alma.at_shipping', 'alma', null)}") : "",
                     custom_data: {
                         order_id: '',
-                        order_token: ''
+                        order_token: '',
+                        basket_id: data.basket_id
                     }
                 },
                 customer: data.customer,
@@ -52,7 +53,7 @@
             installments_count,
             deferred_days
         ) {
-            const response = await fetch('${pdict.data_url}?oid=' + '&installment=' + installments_count);
+            const response = await fetch('${pdict.data_url}?installment=' + installments_count);
             const data = await response.json();
 
             var paymentData = getPaymentData(data, installments_count, deferred_days)
