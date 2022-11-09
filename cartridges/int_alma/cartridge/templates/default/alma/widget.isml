@@ -1,7 +1,7 @@
 <isif condition="${pdict.isAlmaEnable && pdict.isWidgetEnabled}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@alma/widgets@3.x/dist/widgets.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.min.css" />
 
-    <script src="https://cdn.jsdelivr.net/npm/@alma/widgets@3.x/dist/widgets.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.umd.js"></script>
 
     <script>
         window.addEventListener('DOMContentLoaded', () => {
