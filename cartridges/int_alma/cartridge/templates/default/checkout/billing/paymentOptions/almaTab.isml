@@ -2,7 +2,7 @@
     <a class="nav-link credit-card-tab" data-toggle="tab" href="${'#alma-content-' + paymentOption.ID}" role="tab">
         <img class="credit-card-option"
              src="${URLUtils.staticURL('/images/alma_min.png')}"
-             height="50"
+             height="35"
              alt="${paymentOption.name}"
              title="${paymentOption.name}"
         >
