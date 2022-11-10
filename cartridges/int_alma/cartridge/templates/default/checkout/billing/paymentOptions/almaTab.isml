@@ -1,6 +1,6 @@
 <li class="nav-item alma-tab" data-method-id="${paymentOption.ID}">
     <a class="nav-link credit-card-tab" data-toggle="tab" href="${'#alma-content-' + paymentOption.ID}" role="tab">
-        <img class="credit-card-option"
+        <img class="credit-card-option-alma"
              src="${URLUtils.staticURL('/images/alma_min.png')}"
              alt="${paymentOption.name}"
              title="${paymentOption.name}"
@@ -26,25 +26,20 @@
     }
 
     .alma-tab-plans {
-        width: 161px;
-        height: 69.14px;
+        height: 32px;
         background: #FFFFFF;
         border: 1px solid #E1E4E6;
         border-radius: 8px;
         flex: none;
         order: 1;
         flex-grow: 0;
-        padding: 10px 10px 10px;
+        padding: 4px 5px;
         color: #00425D;
     }
 
     .alma-tab-plans-span {
         width: 118px;
-        height: 48px;
-        left: calc(50% - 118px/2 + 0.5px);
-        top: calc(50% - 48px/2 + 1.43px);
         font-size: 20px;
-        line-height: 150%;
         align-items: center;
         text-align: center;
         font-weight: bold;
@@ -55,12 +50,9 @@
         color: #FFFFFF;
     }
 
-    .credit-card-option {
-        max-height: 2.3rem;
-    }
-
-    .credit-card-tab {
-        margin-top: 5px;
+    .credit-card-option-alma {
+        height: 30px;
+        margin-top: -2px;
     }
 
 </style>
