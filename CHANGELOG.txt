@@ -3,7 +3,7 @@ CHANGELOG
 
 v3.3.0
 ------
-* Rebranding20221114
+* Rebranding 2022
 
 v3.2.1
 ------
