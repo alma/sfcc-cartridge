@@ -184,7 +184,7 @@ function createOrderFromBasket() {
 
     Transaction.wrap(function () {
         currentBasket.removeAllPaymentInstruments();
-        var paymentProcessor = PaymentMgr.getPaymentMethod('ALMA_CREDIT').paymentProcessor;
+        var paymentProcessor = PaymentMgr.getPaymentMethod('ALMA').paymentProcessor;
         var paymentInstrument = currentBasket.createPaymentInstrument(
             'ALMA',
             currentBasket.totalGrossPrice
@@ -195,6 +195,7 @@ function createOrderFromBasket() {
         );
     });
     var order = COHelpers.createOrder(currentBasket);
+
     Transaction.wrap(function () {
         OrderMgr.failOrder(order, true);
     });
