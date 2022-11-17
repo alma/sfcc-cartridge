@@ -171,9 +171,11 @@ function getUserProfile(email) {
 
 /**
  * create an order from a Basket
+ * @param {string} almaPaymentMethod payment metyhod ID
  * @returns {dw.order.Order} the created order
+ * @throws Error
  */
-function createOrderFromBasket() {
+function createOrderFromBasket(almaPaymentMethod) {
     var PaymentMgr = require('dw/order/PaymentMgr');
     var BasketMgr = require('dw/order/BasketMgr');
     var OrderMgr = require('dw/order/OrderMgr');
@@ -184,7 +186,13 @@ function createOrderFromBasket() {
 
     Transaction.wrap(function () {
         currentBasket.removeAllPaymentInstruments();
-        var paymentProcessor = PaymentMgr.getPaymentMethod('ALMA').paymentProcessor;
+        var paymentMethod = PaymentMgr.getPaymentMethod(almaPaymentMethod);
+
+        if (!paymentMethod) {
+            throw new Error('Unable to process payment: payment method not found ' + almaPaymentMethod);
+        }
+
+        var paymentProcessor = paymentMethod.paymentProcessor;
         var paymentInstrument = currentBasket.createPaymentInstrument(
             'ALMA',
             currentBasket.totalGrossPrice

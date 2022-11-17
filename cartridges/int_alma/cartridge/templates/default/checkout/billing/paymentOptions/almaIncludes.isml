@@ -47,13 +47,15 @@
          * @param  {string} container the div elem where the form will be built
          * @param  {number} installments_count number of installments
          * @param  {number} deferred_days number of days before the 1st payment
+         * @param  {string} alma_payment_method payment method ID
          */
         async function renderInPage(
             container,
             installments_count,
-            deferred_days
+            deferred_days,
+            alma_payment_method
         ) {
-            const response = await fetch('${pdict.data_url}?oid=' + orderId + '&installment=' + installments_count);
+            const response = await fetch('${pdict.data_url}?oid=' + orderId + '&installment=' + installments_count + '&alma_payment_method=' + alma_payment_method);
             const data = await response.json();
 
             var paymentData = getPaymentData(data, installments_count, deferred_days)
@@ -85,13 +87,17 @@
          * @param  {number} installments_count number of installments
          * @param  {number} deferred_days number of days before the 1st payment
          */
-        async function redirectToPaymentPage(installments_count, deferred_days) {
-            const response = await fetch(
-                '${pdict.create_payment_url}?deferred_days=' + deferred_days + '&installments=' + installments_count,
+        async function redirectToPaymentPage(installments_count, deferred_days, alma_payment_method) {
+            fetch(
+                '${pdict.create_payment_url}?deferred_days=' + deferred_days + '&installments=' + installments_count + '&alma_payment_method=' + alma_payment_method,
                 { method: 'POST' }
-            );
-            const body = await response.json();
-            window.location = body.url;
+            ).then((response) => {
+                const body = response.json();
+                window.location = body.url;
+            }).catch((error) => {
+                console.log(error)
+            });
+
         }
 
         /**
@@ -112,19 +118,20 @@
 
                 const installments_count = parseInt(t.getAttribute('data-installments'));
                 const deferred_days = parseInt(t.getAttribute('data-deferred-days'));
+                const alma_payment_method = t.getAttribute('data-alma-payment-method');
                 const in_page = t.getAttribute('data-in-page') === 'true';
 
                 document.body.style.cursor = 'wait';
                 if (in_page) {
-                    await renderInPage(t.id + "_fragment", installments_count, deferred_days);
+                    await renderInPage(t.id + "_fragment", installments_count, deferred_days, alma_payment_method);
                 } else {
                     activeElt.parentNode.innerHTML = '<div class="alma-lds-ring"><div></div><div></div><div></div><div></div></div>';
-                    await redirectToPaymentPage(installments_count, deferred_days);
+                    await redirectToPaymentPage(installments_count, deferred_days, alma_payment_method);
                 }
                 document.body.style.cursor = 'default';
 
             } else {
-               await document.getElementById(t.id + "_fragment").firstChild.remove();
+                await document.getElementById(t.id + "_fragment").firstChild.remove();
             }
         }
 

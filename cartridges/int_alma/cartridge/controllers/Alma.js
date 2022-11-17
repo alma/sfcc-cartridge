@@ -201,7 +201,7 @@ server.get('BasketData', server.middleware.https, function (req, res, next) {
     var formatAddress = require('*/cartridge/scripts/helpers/almaAddressHelper').formatAddress;
     var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
     var formatCustomerData = require('*/cartridge/scripts/helpers/almaHelpers').formatCustomerData;
-    var createOrderFromBasket = require('*/cartridge/scripts/helpers/almaPaymentHelper').createOrderFromBasket;
+    var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
 
     var currentBasket = BasketMgr.getCurrentBasket();
     var profile = currentBasket.getCustomer().profile;
@@ -213,7 +213,14 @@ server.get('BasketData', server.middleware.https, function (req, res, next) {
     }
 
     if (!order) {
-        order = createOrderFromBasket();
+        try {
+            order = almaPaymentHelper.createOrderFromBasket(req.querystring.alma_payment_method);
+        } catch (e) {
+            res.setStatusCode(400);
+            res.render('error', {
+                message: e.message
+            });
+        }
     }
 
     var orderToken = order.getOrderToken();
@@ -244,8 +251,16 @@ server.get('OrderAmount', server.middleware.https, function (req, res, next) {
 server.post('CreatePaymentUrl', server.middleware.https, function (req, res, next) {
     var getLocale = require('*/cartridge/scripts/helpers/almaHelpers').getLocale;
     var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
+    var order;
 
-    var order = almaPaymentHelper.createOrderFromBasket();
+    try {
+        order = almaPaymentHelper.createOrderFromBasket(req.querystring.alma_payment_method);
+    } catch (e) {
+        res.setStatusCode(400);
+        res.render('error', {
+            message: e.message
+        });
+    }
 
     var paymentData = almaPaymentHelper.buildPaymentData(
         order,
@@ -258,7 +273,7 @@ server.post('CreatePaymentUrl', server.middleware.https, function (req, res, nex
         var result = almaPaymentHelper.createPayment(paymentData);
         res.json(result);
     } catch (e) {
-        res.setStatusCode(500);
+        res.setStatusCode(503);
         res.render('error', {
             message: 'Could not create payment on Alma side'
         });
