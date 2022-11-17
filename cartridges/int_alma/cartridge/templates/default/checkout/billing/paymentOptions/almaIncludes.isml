@@ -74,8 +74,6 @@
             document
                 .querySelector('.submit-payment')
                 .addEventListener('click', async () => {
-                    // Trigger Alma's payment process
-                    console.log('Payement with new button');
                     paymentForm.pay();
                 })
         }
