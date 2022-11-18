@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+v3.3.1
+------
+* Fixed payment processor Alma
+
 v3.3.0
 ------
 * Rebranding 2022
