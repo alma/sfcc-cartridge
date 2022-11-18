@@ -4,6 +4,7 @@
              data-installments="${plan.installments_count}"
              data-deferred-days="${plan.deferred_days}"
              data-in-page="${plan.in_page}"
+             data-alma-payment-method="${paymentOption.ID}"
         >
             <div class="col-2 img-content">
                 <div class="img">
