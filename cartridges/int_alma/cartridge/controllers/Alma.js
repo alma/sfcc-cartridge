@@ -201,7 +201,7 @@ server.get('BasketData', server.middleware.https, function (req, res, next) {
     var formatAddress = require('*/cartridge/scripts/helpers/almaAddressHelper').formatAddress;
     var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
     var formatCustomerData = require('*/cartridge/scripts/helpers/almaHelpers').formatCustomerData;
-    var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
+    var createOrderFromBasket = require('*/cartridge/scripts/helpers/almaPaymentHelper').createOrderFromBasket;
 
     var currentBasket = BasketMgr.getCurrentBasket();
     var profile = currentBasket.getCustomer().profile;
@@ -214,12 +214,11 @@ server.get('BasketData', server.middleware.https, function (req, res, next) {
 
     if (!order) {
         try {
-            order = almaPaymentHelper.createOrderFromBasket(req.querystring.alma_payment_method);
+            order = createOrderFromBasket(req.querystring.alma_payment_method);
         } catch (e) {
             res.setStatusCode(400);
-            res.render('error', {
-                message: e.message
-            });
+            res.json({ errorTest: e.message });
+            return next();
         }
     }
 

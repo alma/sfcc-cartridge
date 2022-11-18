@@ -55,4 +55,11 @@
         margin-top: -2px;
     }
 
+    .alma-error {
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 80%;
+        color: #c00;
+    }
+
 </style>

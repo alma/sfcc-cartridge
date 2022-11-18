@@ -55,20 +55,33 @@
             deferred_days,
             alma_payment_method
         ) {
-            const response = await fetch('${pdict.data_url}?oid=' + orderId + '&installment=' + installments_count + '&alma_payment_method=' + alma_payment_method);
-            const data = await response.json();
+            fetch('${pdict.data_url}?oid=' + orderId + '&installment=' + installments_count + '&alma_payment_method=' + alma_payment_method)
+                .then(
+                    async (response) => {
+                        var json = await response.json();
+                        if (response.status === 400) {
+                            var errorDiv = document.createElement("div");
+                            errorDiv.textContent = json.errorTest;
+                            errorDiv.className = 'alma-error';
+                            document.getElementById('alma_general_' + installments_count + '_' + deferred_days).append(errorDiv);
+                            return;
+                        }
+                        var paymentData = getPaymentData(json, installments_count, deferred_days)
 
-            var paymentData = getPaymentData(data, installments_count, deferred_days)
-
-            fragments.createPaymentForm(paymentData, {
-                onSuccess: function (returnedData) {
-                    window.location = returnedData.return_url;
-                },
-                onFailure: function (returnedData) {
-                },
-                onPopupClose: function (returnedData) {
-                },
-            }).mount(document.getElementById(container));
+                        fragments.createPaymentForm(paymentData, {
+                            onSuccess: function (returnedData) {
+                                window.location = returnedData.return_url;
+                            },
+                            onFailure: function (returnedData) {
+                            },
+                            onPopupClose: function (returnedData) {
+                            },
+                        }).mount(document.getElementById(container));
+                    }
+                ).catch((error) => {
+                    console.log(error.message)
+                }
+            );
         }
 
         /**
@@ -94,8 +107,6 @@
             ).then((response) => {
                 const body = response.json();
                 window.location = body.url;
-            }).catch((error) => {
-                console.log(error)
             });
 
         }
@@ -105,6 +116,7 @@
          * @param  {Object} t a JS selector
          */
         async function toggle(t) {
+            await document.querySelectorAll(".alma-error").forEach(el => el.remove());
             const activeElt = document.querySelector("#" + t.id + " .fa");
             const isAlreadyOpen = activeElt.classList.contains("fa-chevron-down");
 
@@ -131,7 +143,11 @@
                 document.body.style.cursor = 'default';
 
             } else {
-                await document.getElementById(t.id + "_fragment").firstChild.remove();
+                const fragmentParent = await document.getElementById(t.id + "_fragment");
+                const child = await fragmentParent.firstChild;
+                if (!!child) {
+                    await fragmentParent.removeChild(child);
+                }
             }
         }
 

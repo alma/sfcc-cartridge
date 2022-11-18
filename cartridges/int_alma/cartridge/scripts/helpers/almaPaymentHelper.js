@@ -189,7 +189,7 @@ function createOrderFromBasket(almaPaymentMethod) {
         var paymentMethod = PaymentMgr.getPaymentMethod(almaPaymentMethod);
 
         if (!paymentMethod) {
-            throw new Error('Unable to process payment: payment method not found ' + almaPaymentMethod);
+            throw new Error('Unable to process payment: payment method not found');
         }
 
         var paymentProcessor = paymentMethod.paymentProcessor;
