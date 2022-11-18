@@ -217,7 +217,7 @@ server.get('BasketData', server.middleware.https, function (req, res, next) {
             order = createOrderFromBasket(req.querystring.alma_payment_method);
         } catch (e) {
             res.setStatusCode(400);
-            res.json({ errorTest: e.message });
+            res.json({ errorMessage: e.message });
             return next();
         }
     }
@@ -256,9 +256,8 @@ server.post('CreatePaymentUrl', server.middleware.https, function (req, res, nex
         order = almaPaymentHelper.createOrderFromBasket(req.querystring.alma_payment_method);
     } catch (e) {
         res.setStatusCode(400);
-        res.render('error', {
-            message: e.message
-        });
+        res.json({ errorMessage: e.message });
+        return next();
     }
 
     var paymentData = almaPaymentHelper.buildPaymentData(
