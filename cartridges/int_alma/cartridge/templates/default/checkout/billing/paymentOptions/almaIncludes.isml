@@ -118,7 +118,6 @@
             }).catch((error) => {
                 displayError('alma_general_' + installments_count + '_' + deferred_days, error.message)
             });
-
         }
 
         /**
