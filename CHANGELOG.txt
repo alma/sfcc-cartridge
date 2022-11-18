@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+v3.3.2
+------
+* Fixed creating alma plans ineligible case
+
 v3.3.1
 ------
 * Fixed payment processor Alma
