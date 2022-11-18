@@ -129,6 +129,10 @@ function getPlansForCheckout(locale, currentBasket) {
 
     var plans = almaEligibilityHelper.getEligibility(plansForEligibility, locale, currentBasket);
 
+    if (!Array.isArray(plans)) {
+        plans = [plans];
+    }
+
     // remove non eligible plan ?
     plans = almaUtilsHelpers.filter(plans, function (plan) {
         return plan.eligible === true && !(plan.deferred_days === 0 && plan.installments_count === 1);
@@ -139,7 +143,15 @@ function getPlansForCheckout(locale, currentBasket) {
         return almaCheckoutHelper.formatForCheckout(plan, currentBasket.currencyCode);
     });
 
-    return plans;
+    var orderedPlans = {};
+    for (var i = 0; i < plans.length; i++) {
+        if (!orderedPlans[plans[i].payment_method]) {
+            orderedPlans[plans[i].payment_method] = [];
+        }
+        orderedPlans[plans[i].payment_method].push(plans[i]);
+    }
+
+    return orderedPlans;
 }
 
 module.exports = {

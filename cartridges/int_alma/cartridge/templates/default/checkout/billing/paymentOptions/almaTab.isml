@@ -1,25 +1,22 @@
-<li class="nav-item alma-tab" data-method-id="${paymentOption.ID}">
-    <a class="nav-link credit-card-tab" data-toggle="tab" href="${'#alma-content-' + paymentOption.ID}" role="tab">
-        <img class="credit-card-option-alma"
-             src="${URLUtils.staticURL('/images/alma_min.png')}"
-             alt="${paymentOption.name}"
-             title="${paymentOption.name}"
-        >
-        <isset name="pdict" value="${pdict}" scope="page"/>
-        <span class="alma-tab-plans">
-            <span class="alma-tab-plans-span">
-                <isloop iterator="${pdict.plans}" var="plan" status="planStatus">
-                    <isif condition="${plan.payment_method === paymentOption.ID}">
+<isif condition="${pdict.plans[paymentOption.ID]}">
+    <li class="nav-item alma-tab" data-method-id="${paymentOption.ID}">
+        <a class="nav-link credit-card-tab" data-toggle="tab" href="${'#alma-content-' + paymentOption.ID}" role="tab">
+            <img class="credit-card-option-alma"
+                 src="${URLUtils.staticURL('/images/alma_min.png')}"
+                 alt="${paymentOption.name}"
+                 title="${paymentOption.name}"
+            >
+            <isset name="pdict" value="${pdict}" scope="page"/>
+            <span class="alma-tab-plans">
+                <span class="alma-tab-plans-span">
+                    <isloop iterator="${pdict.plans[paymentOption.ID]}" var="plan" status="planStatus">
                         <isprint value="${plan.properties.img}" encoding="off"/>
-                    </isif>
-                </isloop>
+                    </isloop>
+                </span>
             </span>
-        </span>
-
-
-    </a>
-</li>
-
+        </a>
+    </li>
+</isif>
 <style>
     .nav-item.disabled {
         opacity: 0.3

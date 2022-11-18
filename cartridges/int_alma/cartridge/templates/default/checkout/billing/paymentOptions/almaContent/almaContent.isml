@@ -1,54 +1,52 @@
-<isloop iterator="${pdict.plans}" var="plan" status="planStatus">
-    <isif condition="${plan.payment_method === paymentOption.ID}">
-        <div class="row pay-type alma-payment-method" id="${plan.selector}"
-             data-installments="${plan.installments_count}"
-             data-deferred-days="${plan.deferred_days}"
-             data-in-page="${plan.in_page}"
-             data-alma-payment-method="${paymentOption.ID}"
-        >
-            <div class="col-2 img-content">
-                <div class="img">
-                    <div class="img-text">
-                        <isprint value="${plan.properties.img}" encoding="off"/>
-                    </div>
-                    <img alt="" src="${URLUtils.staticURL('/images/alma.png')}" title="ALMA" style="height: 20px;"/>
+<isloop iterator="${pdict.plans[paymentOption.ID]}" var="plan" status="planStatus">
+    <div class="row pay-type alma-payment-method" id="${plan.selector}"
+         data-installments="${plan.installments_count}"
+         data-deferred-days="${plan.deferred_days}"
+         data-in-page="${plan.in_page}"
+         data-alma-payment-method="${paymentOption.ID}"
+    >
+        <div class="col-2 img-content">
+            <div class="img">
+                <div class="img-text">
+                    <isprint value="${plan.properties.img}" encoding="off"/>
                 </div>
-            </div>
-            <div class="col-9">
-                <h4>
-                    <isprint value="${plan.properties.title}" encoding="off"/>
-                </h4>
-                <p>
-                    <isprint value="${plan.properties.description}" encoding="off"/>
-                </p>
-                <p class="no-margin">
-                    <isprint value="${plan.properties.payment_installments}" encoding="off"/>
-                </p>
-                <isif condition="${plan.installments_count > 4}">
-                    <p class="no-margin">
-                        <isprint value="${plan.properties.credit.basket_cost}"/>
-                    </p>
-                    <p class="no-margin">
-                        <isprint value="${plan.properties.credit.rate}"/>
-                    </p>
-                    <p class="no-margin">
-                        <isprint value="${plan.properties.credit.amount}"/>
-                    </p>
-                    <p>
-                        <isprint value="${plan.properties.credit.total_cost}"/>
-                    </p>
-                    <iselse/>
-                    <p class="pt-30">
-                        <isprint value="${plan.properties.fees}"/>
-                    </p>
-                </isif>
-            </div>
-            <div class="col-1 icon">
-                <span class="fa fa-chevron-right"></span>
+                <img alt="" src="${URLUtils.staticURL('/images/alma.png')}" title="ALMA" style="height: 20px;"/>
             </div>
         </div>
-        <div id="${plan.selector}_fragment"></div>
-    </isif>
+        <div class="col-9">
+            <h4>
+                <isprint value="${plan.properties.title}" encoding="off"/>
+            </h4>
+            <p>
+                <isprint value="${plan.properties.description}" encoding="off"/>
+            </p>
+            <p class="no-margin">
+                <isprint value="${plan.properties.payment_installments}" encoding="off"/>
+            </p>
+            <isif condition="${plan.installments_count > 4}">
+                <p class="no-margin">
+                    <isprint value="${plan.properties.credit.basket_cost}"/>
+                </p>
+                <p class="no-margin">
+                    <isprint value="${plan.properties.credit.rate}"/>
+                </p>
+                <p class="no-margin">
+                    <isprint value="${plan.properties.credit.amount}"/>
+                </p>
+                <p>
+                    <isprint value="${plan.properties.credit.total_cost}"/>
+                </p>
+                <iselse/>
+                <p class="pt-30">
+                    <isprint value="${plan.properties.fees}"/>
+                </p>
+            </isif>
+        </div>
+        <div class="col-1 icon">
+            <span class="fa fa-chevron-right"></span>
+        </div>
+    </div>
+    <div id="${plan.selector}_fragment"></div>
 </isloop>
 
 <fieldset class="payment-form-fields">
