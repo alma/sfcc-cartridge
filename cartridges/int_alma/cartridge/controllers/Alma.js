@@ -247,10 +247,7 @@ server.get('BasketData', server.middleware.https, function (req, res, next) {
         shipping_address: formatAddress(currentBasket.getDefaultShipment().shippingAddress),
         billing_address: formatAddress(currentBasket.getBillingAddress()),
         customer: formatCustomerData(profile, currentBasket.getCustomerEmail()),
-        isEnableOnShipment: isOnShipmentPaymentEnabled(req.querystring.installment),
-        orderId: '',
-        orderToken: '',
-        basket_id: currentBasket.getUUID()
+        isEnableOnShipment: isOnShipmentPaymentEnabled(req.querystring.installment)
     });
 
     return next();

@@ -296,17 +296,9 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
             shipping_address: formatAddress(currentBasket.getDefaultShipment().shippingAddress),
             billing_address: formatAddress(currentBasket.getBillingAddress()),
             deferred: isEnableOnShipment ? 'trigger' : '',
-            deferred_description: isEnableOnShipment ? require('dw/web/Resource').msg('alma.at_shipping', 'alma', null) : '',
-            custom_data: {
-                order_id: '',
-                order_token: '',
-                basket_id: currentBasket.getUUID()
-            }
+            deferred_description: isEnableOnShipment ? require('dw/web/Resource').msg('alma.at_shipping', 'alma', null) : ''
         },
-        customer: formatCustomerData(currentBasket.getCustomer().profile, currentBasket.getCustomerEmail()),
-        order: {
-            merchant_reference: ''
-        }
+        customer: formatCustomerData(currentBasket.getCustomer().profile, currentBasket.getCustomerEmail())
     };
 }
 
