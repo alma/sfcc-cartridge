@@ -206,11 +206,10 @@ function createOrderFromBasketUUID(UUID) {
 
 /**
  * create an order from a Basket
- * @param {string} almaPaymentMethod payment metyhod ID
  * @throw Error
  * @returns {dw.order.Order} the created order
  */
-function createOrderFromBasket(almaPaymentMethod) {
+function createOrderFromBasket() {
     var PaymentMgr = require('dw/order/PaymentMgr');
     var BasketMgr = require('dw/order/BasketMgr');
     var OrderMgr = require('dw/order/OrderMgr');
@@ -225,15 +224,7 @@ function createOrderFromBasket(almaPaymentMethod) {
 
     Transaction.wrap(function () {
         currentBasket.removeAllPaymentInstruments();
-        var paymentMethod = PaymentMgr.getPaymentMethod(almaPaymentMethod);
-
-        if (!paymentMethod) {
-            var Logger = require('dw/system/Logger').getLogger('alma');
-            Logger.error('Unable to process payment: payment method not found {0}', [almaPaymentMethod]);
-            throw new Error('Unable to process payment: payment method not found');
-        }
-
-        var paymentProcessor = paymentMethod.paymentProcessor;
+        var paymentProcessor = PaymentMgr.getPaymentMethod('ALMA_CREDIT').paymentProcessor;
         var paymentInstrument = currentBasket.createPaymentInstrument(
             'ALMA',
             currentBasket.totalGrossPrice
