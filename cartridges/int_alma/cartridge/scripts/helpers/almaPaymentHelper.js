@@ -319,28 +319,6 @@ function flagAsPotentialFraud(pid, reason) {
 }
 
 /**
- *  Call API to set custom_data in payment
- * @param {string} pid payment id
- * @param {Order} order to give to the payment endpoint
- */
-function setPaymentCustomData(pid, order) {
-    var service = require('*/cartridge/scripts/services/alma');
-    var Logger = require('dw/system/Logger').getLogger('alma');
-    Logger.warn('order {0}', [order.getOrderNo()]);
-    var param = {
-        pid: pid,
-        payment: {
-            custom_data: {
-                order_id: order.getOrderNo()
-            }
-        }
-    };
-
-    var setPaymentCustomDataAPI = service.setPaymentCustomDataAPI();
-    setPaymentCustomDataAPI.call(param);
-}
-
-/**
  *  Call API to set merchant_reference in order
  * @param {string} pid payment id
  * @param {Order} order to give to the payment endpoint
@@ -374,6 +352,5 @@ module.exports = {
     buildPaymentData: buildPaymentData,
     flagAsPotentialFraud: flagAsPotentialFraud,
     createOrderFromBasketUUID: createOrderFromBasketUUID,
-    setPaymentCustomData: setPaymentCustomData,
     setOrderMerchantReference: setOrderMerchantReference
 };
