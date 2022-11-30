@@ -115,25 +115,6 @@ function flagAsPotentialFraud() {
 }
 
 /**
- * Add order_id in custom_data
- * @returns {dw.svc.LocalServiceRegistry} service instances
- */
-function setPaymentCustomDataAPI() {
-    return LocalServiceRegistry.createService('alma', {
-        createRequest: function (service, params) {
-            service.setRequestMethod('POST');
-            service.URL = almaHelpers.getUrl('/v1/payments/' + params.pid); // eslint-disable-line no-param-reassign
-            almaHelpers.addHeaders(service);
-
-            return JSON.stringify(params);
-        },
-        parseResponse: function (svc, client) {
-            return client;
-        }
-    });
-}
-
-/**
  * Add order_id in merchant_reference
  * @returns {dw.svc.LocalServiceRegistry} service instances
  */
@@ -159,6 +140,5 @@ module.exports = {
     refundPayment: refundPayment,
     createPayment: createPayment,
     potentialFraud: flagAsPotentialFraud,
-    setPaymentCustomDataAPI: setPaymentCustomDataAPI,
     setOrderMerchantReferenceAPI: setOrderMerchantReferenceAPI
 };

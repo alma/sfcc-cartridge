@@ -49,7 +49,6 @@ function synchOrderAndPaymentDetails(pid, order) {
     var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
 
     orderHelper.addPidToOrder(order, pid);
-    almaPaymentHelper.setPaymentCustomData(pid, order);
     almaPaymentHelper.setOrderMerchantReference(pid, order);
 }
 
