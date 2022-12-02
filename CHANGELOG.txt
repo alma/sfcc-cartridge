@@ -1,6 +1,13 @@
 CHANGELOG
 =========
 
+v4.0.0
+------
+* Extract payment button from Fragment
+* Create order on payment
+* Manage errors from Fragment
+* Change order_id location in payload
+
 v3.3.2
 ------
 * Fixed creating alma plans ineligible case
