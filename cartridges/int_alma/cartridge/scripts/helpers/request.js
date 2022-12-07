@@ -1,6 +1,7 @@
 'use strict';
 
 var URLUtils = require('dw/web/URLUtils');
+var pkg = require('../../../package.json');
 
 /**
  * Creates json objects for request
@@ -27,7 +28,10 @@ function createPaymentRequest(lineItemCtnr) {
                 postal_code: shippingAddress.postalCode,
                 city: shippingAddress.city
             },
-            locale: shippingAddress.countryCode.value
+            locale: shippingAddress.countryCode.value,
+            custom_data: {
+                plugin_version: pkg.version
+            }
         },
         customer: {
             first_name: shippingAddress.firstName,

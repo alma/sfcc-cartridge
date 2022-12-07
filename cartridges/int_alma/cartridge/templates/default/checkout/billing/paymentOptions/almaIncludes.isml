@@ -27,7 +27,10 @@
                     locale: data.locale.split("_")[0],
                     shipping_address: data.shipping_address,
                     deferred: data.isEnableOnShipment ? "trigger" : "",
-                    deferred_description: data.isEnableOnShipment ? decodeHtml("${Resource.msg('alma.at_shipping', 'alma', null)}") : ""
+                    deferred_description: data.isEnableOnShipment ? decodeHtml("${Resource.msg('alma.at_shipping', 'alma', null)}") : "",
+                    custom_data: {
+                        plugin_version: "${pdict.plugin_version}"
+                    }
                 },
                 customer: data.customer
             };
