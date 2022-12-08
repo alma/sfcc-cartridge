@@ -30,6 +30,7 @@ function createPaymentRequest(lineItemCtnr) {
             },
             locale: shippingAddress.countryCode.value,
             custom_data: {
+                cms: 'SFCC',
                 plugin_version: pkg.version
             }
         },

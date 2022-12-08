@@ -290,6 +290,7 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
             deferred: isEnableOnShipment ? 'trigger' : '',
             deferred_description: isEnableOnShipment ? require('dw/web/Resource').msg('alma.at_shipping', 'alma', null) : '',
             custom_data: {
+                cms: 'SFCC',
                 plugin_version: pkg.version
             }
         },
