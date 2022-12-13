@@ -4,6 +4,17 @@ var Site = require('dw/system/Site');
 var System = require('dw/system/System');
 var logger = require('dw/system/Logger').getLogger('alma');
 var pkg = require('../../../package.json');
+
+/**
+ * Builds SFCC current version.
+ * @returns {string} current version.
+ */
+function getSfccVersion() {
+    var sfccMajor = Math.trunc(System.getCompatibilityMode() / 100);
+    var sfccMinor = (System.getCompatibilityMode() % 100) / 10;
+    return sfccMajor + '.' + sfccMinor;
+}
+
 /**
  * Adds common headres to request
  * @param {dw.svc.Service} service - current service instance
@@ -11,10 +22,6 @@ var pkg = require('../../../package.json');
  */
 function addHeaders(service) {
     var apiKey = Site.getCurrent().getCustomPreferenceValue('ALMA_APIKey');
-    var sfccMajor = Math.trunc(System.getCompatibilityMode() / 100);
-    var sfccMinor = (System.getCompatibilityMode() % 100) / 10;
-    var sfccVersion = sfccMajor + '.' + sfccMinor;
-
     if (!apiKey) {
         logger.error('Alma api key is not configured');
         return service;
@@ -22,7 +29,7 @@ function addHeaders(service) {
 
     service.addHeader('Authorization', 'Alma-Auth ' + apiKey);
     service.addHeader('Content-Type', 'application/json');
-    service.addHeader('User-Agent', 'SFCC/' + sfccVersion + '; Alma for SFCC/' + pkg.version);
+    service.addHeader('User-Agent', 'SFCC/' + getSfccVersion() + '; Alma for SFCC/' + pkg.version);
 
     return service;
 }
@@ -120,5 +127,6 @@ module.exports = {
     getMode: getMode,
     getUrl: getUrl,
     isAlmaEnable: isAlmaEnable,
-    isAlmaOnShipment: isAlmaOnShipment
+    isAlmaOnShipment: isAlmaOnShipment,
+    getSfccVersion: getSfccVersion
 };

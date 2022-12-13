@@ -29,8 +29,9 @@
                     deferred: data.isEnableOnShipment ? "trigger" : "",
                     deferred_description: data.isEnableOnShipment ? decodeHtml("${Resource.msg('alma.at_shipping', 'alma', null)}") : "",
                     custom_data: {
-                        cms: "SFCC",
-                        plugin_version: "${pdict.plugin_version}"
+                        cms_name: "${pdict.cms_name}",
+                        cms_version: "${pdict.cms_version}",
+                        alma_plugin_version: "${pdict.alma_plugin_version}"
                     }
                 },
                 customer: data.customer

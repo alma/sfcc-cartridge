@@ -267,6 +267,7 @@ function createPayment(param) {
 function buildPaymentData(installmentsCount, deferredDays, locale) {
     var BasketMgr = require('dw/order/BasketMgr');
     var URLUtils = require('dw/web/URLUtils');
+    var almaHelper = require('*/cartridge/scripts/helpers/almaHelpers');
 
     var formatAddress = require('*/cartridge/scripts/helpers/almaAddressHelper').formatAddress;
     var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
@@ -290,8 +291,9 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
             deferred: isEnableOnShipment ? 'trigger' : '',
             deferred_description: isEnableOnShipment ? require('dw/web/Resource').msg('alma.at_shipping', 'alma', null) : '',
             custom_data: {
-                cms: 'SFCC',
-                plugin_version: pkg.version
+                cms_name: 'SFCC',
+                cms_version: almaHelper.getSfccVersion(),
+                alma_plugin_version: pkg.version
             }
         },
         customer: formatCustomerData(currentBasket.getCustomer().profile, currentBasket.getCustomerEmail())

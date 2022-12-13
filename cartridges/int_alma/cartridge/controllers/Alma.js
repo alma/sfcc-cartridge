@@ -227,6 +227,7 @@ server.get('IPN', function (req, res, next) {
 });
 
 server.get('BasketData', server.middleware.https, function (req, res, next) {
+    var almaHelper = require('*/cartridge/scripts/helpers/almaHelpers');
     var BasketMgr = require('dw/order/BasketMgr');
     var formatAddress = require('*/cartridge/scripts/helpers/almaAddressHelper').formatAddress;
     var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
@@ -241,7 +242,9 @@ server.get('BasketData', server.middleware.https, function (req, res, next) {
         billing_address: formatAddress(currentBasket.getBillingAddress()),
         customer: formatCustomerData(profile, currentBasket.getCustomerEmail()),
         isEnableOnShipment: isOnShipmentPaymentEnabled(req.querystring.installment),
-        plugin_version: pkg.version
+        cms_name: 'SFCC',
+        cms_version: almaHelper.getSfccVersion(),
+        alma_plugin_version: pkg.version
     });
 
     return next();

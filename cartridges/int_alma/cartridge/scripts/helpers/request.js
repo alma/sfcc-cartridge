@@ -11,8 +11,9 @@ var pkg = require('../../../package.json');
 function createPaymentRequest(lineItemCtnr) {
     var shipment = lineItemCtnr.defaultShipment;
     var shippingAddress = shipment.shippingAddress;
+    var almaHelper = require('*/cartridge/scripts/helpers/almaHelpers');
 
-    var requestObject = {
+    return {
         payment: {
             installment_counts: 3, // ou 1 pour le payement en 1+15jours
             deferred_days: 0, // for 3 times payement or 15 if not,
@@ -30,8 +31,9 @@ function createPaymentRequest(lineItemCtnr) {
             },
             locale: shippingAddress.countryCode.value,
             custom_data: {
-                cms: 'SFCC',
-                plugin_version: pkg.version
+                cms_name: 'SFCC',
+                cms_version: almaHelper.getSfccVersion(),
+                alma_plugin_version: pkg.version
             }
         },
         customer: {
@@ -44,8 +46,6 @@ function createPaymentRequest(lineItemCtnr) {
             merchant_reference: lineItemCtnr.orderNo
         }
     };
-
-    return requestObject;
 }
 
 exports.createPaymentRequest = createPaymentRequest;
