@@ -44,7 +44,7 @@ function buildViewParams(paymentObj, order, localeId, reqProfile) {
  * @param {Object} order order
  * @throw Error
  */
-function synchOrderAndPaymentDetails(pid, order) {
+function syncOrderAndPaymentDetails(pid, order) {
     var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
     var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
 
@@ -53,7 +53,7 @@ function synchOrderAndPaymentDetails(pid, order) {
 }
 
 /**
- * Ensure that Alma received the right amount and that SFCC order is sync'd
+ * Ensure that Alma received the right amount and that SFCC order is synced
  * @param {Object} paymentObj the payment to describe
  * @param {dw/order/Order} order the current order
  */
@@ -124,7 +124,7 @@ server.get('PaymentSuccess', function (req, res, next) {
 
     if (!order) {
         order = paymentHelper.createOrderFromBasket();
-        synchOrderAndPaymentDetails(req.querystring.pid, order);
+        syncOrderAndPaymentDetails(req.querystring.pid, order);
     }
 
     // we probably should throw an error if we don't have an order
@@ -310,7 +310,7 @@ server.get(
 
         try {
             var order = almaPaymentHelper.createOrderFromBasket();
-            synchOrderAndPaymentDetails(req.querystring.pid, order);
+            syncOrderAndPaymentDetails(req.querystring.pid, order);
             res.json(JSON.stringify(order));
         } catch (e) {
             res.setStatusCode(500);
