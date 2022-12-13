@@ -84,19 +84,35 @@ function affectOrder(paymentObj, order) {
 }
 
 /**
- * Helper fot build order, payDetail and paymentObj
+ * Request order from OrderMgr
  * @param {string} pid payment id
- * @param {Object} res res
- * @param {Object} next next
- * @returns {Array} multiple var
+ * @returns {Object} order
  */
-function buildOrderPaydetailPaymentobj(pid, res, next) {
+function buildOrder(pid) {
     var OrderMgr = require('dw/order/OrderMgr');
+    return OrderMgr.queryOrder(
+        'custom.almaPaymentId={0}',
+        pid
+    );
+}
+
+/**
+ * Helper for build paymentObj
+ * @param {string} pid payment id
+ * @returns {Object} an Alma payment object
+ */
+function buildPaymentObj(pid) {
     var paymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
+    return paymentHelper.getPaymentObj(pid);
+}
+
+server.get('PaymentSuccess', function (req, res, next) {
+    var paymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
+    var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
     var paymentObj = null;
 
     try {
-        paymentObj = paymentHelper.getPaymentObj(pid);
+        paymentObj = buildPaymentObj(req.querystring.pid);
     } catch (e) {
         res.setStatusCode(500);
         res.render('error', {
@@ -104,23 +120,7 @@ function buildOrderPaydetailPaymentobj(pid, res, next) {
         });
         return next();
     }
-    var payDetail = paymentHelper.getPaymentDetails(paymentObj);
-
-    var order = OrderMgr.queryOrder(
-        'custom.almaPaymentId={0}',
-        pid
-    );
-
-    return [order, payDetail, paymentObj];
-}
-
-server.get('PaymentSuccess', function (req, res, next) {
-    var paymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
-    var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
-
-    var order = buildOrderPaydetailPaymentobj(req.querystring.pid, res, next)[0];
-    var payDetail = buildOrderPaydetailPaymentobj(req.querystring.pid, res, next)[1];
-    var paymentObj = buildOrderPaydetailPaymentobj(req.querystring.pid, res, next)[2];
+    var order = buildOrder(req.querystring.pid);
 
     if (!order) {
         order = paymentHelper.createOrderFromBasket();
@@ -141,7 +141,7 @@ server.get('PaymentSuccess', function (req, res, next) {
         }
     }
     paymentHelper.emptyCurrentBasket();
-    orderHelper.addAlmaPaymentDetails(order, payDetail);
+    orderHelper.addAlmaPaymentDetails(order, paymentHelper.getPaymentDetails(paymentObj));
 
     res.render('checkout/confirmation/confirmation',
         buildViewParams(paymentObj, order, req.locale.id, req.currentCustomer.profile)
@@ -178,10 +178,18 @@ server.get(
 server.get('IPN', function (req, res, next) {
     var paymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
     var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
+    var paymentObj = null;
 
-    var order = buildOrderPaydetailPaymentobj(req.querystring.pid, res, next)[0];
-    var payDetail = buildOrderPaydetailPaymentobj(req.querystring.pid, res, next)[1];
-    var paymentObj = buildOrderPaydetailPaymentobj(req.querystring.pid, res, next)[2];
+    try {
+        paymentObj = buildPaymentObj(req.querystring.pid);
+    } catch (e) {
+        res.setStatusCode(500);
+        res.render('error', {
+            message: 'Can not find any payment for this order. Your order will fail.'
+        });
+        return next();
+    }
+    var order = buildOrder(req.querystring.pid);
 
     if (!order) {
         var basketUuid = paymentObj.custom_data.basket_id;
@@ -201,7 +209,7 @@ server.get('IPN', function (req, res, next) {
         affectOrder(paymentObj, order);
 
         orderHelper.addPidToOrder(order, req.querystring.pid);
-        orderHelper.addAlmaPaymentDetails(order, payDetail);
+        orderHelper.addAlmaPaymentDetails(order, paymentHelper.getPaymentDetails(paymentObj));
     } catch (e) {
         res.setStatusCode(500);
         res.json({
