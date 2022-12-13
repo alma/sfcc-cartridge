@@ -331,8 +331,8 @@ function setOrderMerchantReference(pid, order) {
         }
     };
 
-    var setPaymentCustomDataAPI = service.setOrderMerchantReferenceAPI();
-    setPaymentCustomDataAPI.call(param);
+    var setOrderMerchantReferenceAPI = service.setOrderMerchantReferenceAPI();
+    setOrderMerchantReferenceAPI.call(param);
 }
 
 
