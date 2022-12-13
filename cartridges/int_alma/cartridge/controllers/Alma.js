@@ -223,7 +223,7 @@ server.get('BasketData', server.middleware.https, function (req, res, next) {
     var formatAddress = require('*/cartridge/scripts/helpers/almaAddressHelper').formatAddress;
     var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
     var formatCustomerData = require('*/cartridge/scripts/helpers/almaHelpers').formatCustomerData;
-    var pkg = require('../../../package.json');
+    var pkg = require('../../package.json');
 
     var currentBasket = BasketMgr.getCurrentBasket();
     var profile = currentBasket.getCustomer().profile;
