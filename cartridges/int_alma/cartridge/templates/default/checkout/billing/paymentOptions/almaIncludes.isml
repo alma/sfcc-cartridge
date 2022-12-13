@@ -80,9 +80,22 @@
                 }
             }
 
+            var almaPaymentMethods = document.getElementsByClassName("alma-payment-method");
+
+            for (let i = 0; i < almaPaymentMethods.length; i++) {
+                almaPaymentMethods[i].addEventListener(
+                    'click',
+                    () => {
+                        document
+                            .querySelector('.submit-payment')
+                            .removeEventListener('click', checkoutFragmentCall)
+                    }
+                )
+            }
+
             document
                 .querySelector('.submit-payment')
-                .addEventListener('click', checkoutFragmentCall)
+                .addEventListener('click', checkoutFragmentCall, { once: true })
 
             document
                 .querySelector('.payment-options')
@@ -94,6 +107,7 @@
                             .removeEventListener('click', checkoutFragmentCall)
                     }
                 )
+
         }
 
         /**
