@@ -4,7 +4,7 @@ CHANGELOG
 v4.0.0
 ------
 * Extract payment button from Fragment
-* Create order on payment
+* Create order on payment only
 * Manage errors from Fragment
 * Change order_id location in payload
 
