@@ -209,11 +209,19 @@
         }
 
         function createMismatchMessage(orderFragment){
-            var errorMismatchMessage = document.createTextNode(orderFragment.error + ' Please refresh the page to try to pay again.');
+            var errorLink = document.createElement('a');
+            var errorLinkText = document.createTextNode("Please refresh the page to try to pay again.");
+            errorLink.href ='';
+            errorLink.appendChild(errorLinkText);
+
+
+            var errorMismatchMessage = document.createTextNode(orderFragment.error);
             var errorDiv = document.createElement('div');
             errorDiv.classList.add ('col-12', 'alma-error-message');
             errorDiv.id = 'mismatch-message';
             errorDiv.appendChild(errorMismatchMessage);
+            errorDiv.appendChild(document.createElement('br'));
+            errorDiv.appendChild(errorLink);
             return errorDiv;
         }
     });
