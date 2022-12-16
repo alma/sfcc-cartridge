@@ -2,10 +2,28 @@
 <script src="https://cdn.jsdelivr.net/npm/@alma/fragments@1.x/dist/alma-fragments.umd.js"></script>
 
 <script>
+
+
     window.addEventListener('DOMContentLoaded', function () {
         var fragments = new Alma.Fragments("${pdict.merchantId}", {
             mode: '${pdict.mode}' === 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST,
         });
+
+        var checkoutEvents = [];
+
+        function removeCheckoutEvents() {
+            checkoutEvents.forEach((checkoutEvent) => {
+                document
+                    .querySelector('.submit-payment')
+                    .removeEventListener('click', checkoutEvent)
+            })
+        }
+
+        var paymentOptions = document.getElementsByClassName("payment-options");
+
+        for (const paymentOption of paymentOptions) {
+            paymentOption.addEventListener('click', removeCheckoutEvents)
+        }
 
         /**
          * Returns the data formatted for inpage payment
@@ -66,48 +84,8 @@
                 },
             })
 
-            paymentForm.mount(document.getElementById(container));
-
-            var checkoutFragmentCall = async function () {
-                const ajaxResponse = await fetch('${pdict.checkout_fragment_url}?pid=' + paymentForm.currentPayment.id);
-                const orderFragment = await ajaxResponse.json();
-                if (ajaxResponse.status === 200) {
-                    paymentForm.pay();
-                }
-                if (ajaxResponse.status === 500) {
-                    // display error
-                    alert(orderFragment.error)
-                }
-            }
-
-            var almaPaymentMethods = document.getElementsByClassName("alma-payment-method");
-
-            for (let i = 0; i < almaPaymentMethods.length; i++) {
-                almaPaymentMethods[i].addEventListener(
-                    'click',
-                    () => {
-                        document
-                            .querySelector('.submit-payment')
-                            .removeEventListener('click', checkoutFragmentCall)
-                    }
-                )
-            }
-
-            document
-                .querySelector('.submit-payment')
-                .addEventListener('click', checkoutFragmentCall, { once: true })
-
-            document
-                .querySelector('.payment-options')
-                .addEventListener(
-                    'click',
-                    () => {
-                        document
-                            .querySelector('.submit-payment')
-                            .removeEventListener('click', checkoutFragmentCall)
-                    }
-                )
-
+            await paymentForm.mount(document.getElementById(container));
+            return paymentForm;
         }
 
         /**
@@ -140,6 +118,7 @@
          * @param  {Object} t a JS selector
          */
         async function toggle(t) {
+            removeCheckoutEvents();
             const activeElt = document.querySelector("#" + t.id + " .fa");
             const isAlreadyOpen = activeElt.classList.contains("fa-chevron-down");
 
@@ -157,7 +136,26 @@
 
                 document.body.style.cursor = 'wait';
                 if (in_page) {
-                    await renderInPage(t.id + "_fragment", installments_count, deferred_days);
+                    await renderInPage(t.id + "_fragment", installments_count, deferred_days)
+                        .then((paymentForm) => {
+                            var checkoutFragmentCall = async function () {
+                                const ajaxResponse = await fetch('${pdict.checkout_fragment_url}?pid=' + paymentForm.currentPayment.id);
+                                const orderFragment = await ajaxResponse.json();
+                                if (ajaxResponse.status === 200) {
+                                    paymentForm.pay();
+                                }
+                                if (ajaxResponse.status === 500) {
+                                    // display error
+                                    alert(orderFragment.error) //TODO remove
+                                }
+                            }
+
+                            checkoutEvents.push(checkoutFragmentCall);
+
+                            document
+                                .querySelector('.submit-payment')
+                                .addEventListener('click', checkoutFragmentCall, { once: true })
+                        });
                 } else {
                     activeElt.parentNode.innerHTML = '<div class="alma-lds-ring"><div></div><div></div><div></div><div></div></div>';
                     await redirectToPaymentPage(installments_count, deferred_days);
