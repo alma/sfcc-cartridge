@@ -139,10 +139,13 @@
                     await renderInPage(t.id + "_fragment", installments_count, deferred_days)
                         .then((paymentForm) => {
                             var checkoutFragmentCall = async function () {
-                                const ajaxResponse = await fetch('${pdict.checkout_fragment_url}?pid=' + paymentForm.currentPayment.id);
+                                const ajaxResponse = await fetch('${pdict.checkout_fragment_url}?pid=' + paymentForm.currentPayment.id + '&amount=' + paymentForm.currentPayment.purchase_amount);
                                 const orderFragment = await ajaxResponse.json();
                                 if (ajaxResponse.status === 200) {
                                     paymentForm.pay();
+                                }
+                                if (ajaxResponse.status === 400) {
+                                    addMismatchMessage(orderFragment)
                                 }
                                 if (ajaxResponse.status === 500) {
                                     // display error
@@ -198,6 +201,20 @@
                     checkoutBtn.removeAttribute('disabled');
                 }
             });
+        }
+
+        function addMismatchMessage(orderFragment){
+            var errorMessagePosition = document.getElementsByClassName('next-step-button')[0];
+            errorMessagePosition.before(createMismatchMessage(orderFragment));
+        }
+
+        function createMismatchMessage(orderFragment){
+            var errorMismatchMessage = document.createTextNode(orderFragment.error + ' Please refresh the page to try to pay again.');
+            var errorDiv = document.createElement('div');
+            errorDiv.classList.add ('col-12', 'alma-error-message');
+            errorDiv.id = 'mismatch-message';
+            errorDiv.appendChild(errorMismatchMessage);
+            return errorDiv;
         }
     });
 </script>

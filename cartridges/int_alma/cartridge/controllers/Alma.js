@@ -318,11 +318,23 @@ server.get(
     server.middleware.https,
     function (req, res, next) {
         var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
+        var BasketMgr = require('dw/order/BasketMgr');
 
         try {
+            var basketAmount = Math.round(BasketMgr.getCurrentBasket().totalGrossPrice.multiply(100).value);
+            var paymentFormAmount = parseInt(req.querystring.amount, 10);
+            if (basketAmount !== paymentFormAmount) {
+                logger.warn('Mismatch error  {0}', []);
+                res.setStatusCode(400);
+                res.json({
+                    error: 'The amount of the shopping cart was changed.'
+                });
+            }
             var order = almaPaymentHelper.createOrderFromBasket();
             syncOrderAndPaymentDetails(req.querystring.pid, order);
-            res.json(JSON.stringify(order));
+            res.json({
+                order: JSON.stringify(order)
+            });
         } catch (e) {
             res.setStatusCode(500);
             res.json({
