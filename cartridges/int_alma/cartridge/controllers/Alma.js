@@ -319,6 +319,7 @@ server.get(
     function (req, res, next) {
         var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
         var BasketMgr = require('dw/order/BasketMgr');
+        var OrderMgr = require('dw/order/OrderMgr');
 
         try {
             var basketAmount = Math.round(BasketMgr.getCurrentBasket().totalGrossPrice.multiply(100).value);
@@ -330,8 +331,16 @@ server.get(
                     error: 'The amount of the shopping cart was changed.'
                 });
             }
-            var order = almaPaymentHelper.createOrderFromBasket();
-            syncOrderAndPaymentDetails(req.querystring.pid, order);
+
+            var order;
+
+            if (req.querystring.orderId === 0) {
+                order = almaPaymentHelper.createOrderFromBasket();
+                syncOrderAndPaymentDetails(req.querystring.pid, order);
+            } else {
+                order = OrderMgr.getOrder(req.querystring.orderId);
+            }
+
             res.json({
                 order: JSON.stringify(order)
             });

@@ -139,7 +139,11 @@
                     await renderInPage(t.id + "_fragment", installments_count, deferred_days)
                         .then((paymentForm) => {
                             var checkoutFragmentCall = async function () {
-                                const ajaxResponse = await fetch('${pdict.checkout_fragment_url}?pid=' + paymentForm.currentPayment.id + '&amount=' + paymentForm.currentPayment.purchase_amount);
+                                var orderId = 0
+                                if (typeof await paymentForm.currentPayment.orders[0] !== 'undefined') {
+                                    orderId = await paymentForm.currentPayment.orders[0].merchant_reference
+                                }
+                                const ajaxResponse = await fetch('${pdict.checkout_fragment_url}?pid=' + paymentForm.currentPayment.id + '&amount=' + paymentForm.currentPayment.purchase_amount + '&orderId=' + orderId);
                                 const orderFragment = await ajaxResponse.json();
                                 if (ajaxResponse.status === 200) {
                                     paymentForm.pay();
@@ -157,7 +161,7 @@
 
                             document
                                 .querySelector('.submit-payment')
-                                .addEventListener('click', checkoutFragmentCall, { once: true })
+                                .addEventListener('click', checkoutFragmentCall)
                         });
                 } else {
                     activeElt.parentNode.innerHTML = '<div class="alma-lds-ring"><div></div><div></div><div></div><div></div></div>';
