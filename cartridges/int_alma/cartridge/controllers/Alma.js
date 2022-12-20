@@ -319,7 +319,6 @@ server.get(
     function (req, res, next) {
         var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
         var BasketMgr = require('dw/order/BasketMgr');
-        var OrderMgr = require('dw/order/OrderMgr');
 
         try {
             var basketAmount = Math.round(BasketMgr.getCurrentBasket().totalGrossPrice.multiply(100).value);
@@ -332,13 +331,11 @@ server.get(
                 });
             }
 
-            var order;
+            var order = buildOrder(req.querystring.pid);
 
-            if (req.querystring.orderId === 0) {
+            if (!order) {
                 order = almaPaymentHelper.createOrderFromBasket();
                 syncOrderAndPaymentDetails(req.querystring.pid, order);
-            } else {
-                order = OrderMgr.getOrder(req.querystring.orderId);
             }
 
             res.json({

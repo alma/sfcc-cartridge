@@ -11,13 +11,28 @@
 
         var checkoutEvents = [];
 
-        function removeCheckoutEvents() {
-            checkoutEvents.forEach((checkoutEvent) => {
+            function addCheckoutEvent(event) {
                 document
                     .querySelector('.submit-payment')
-                    .removeEventListener('click', checkoutEvent)
-            })
-        }
+                    .addEventListener('click', event)
+            }
+
+            function removeCheckoutEvents() {
+                let lastEvent;
+                let event = checkoutEvents.shift()
+                while (event) {
+                    lastEvent = event;
+                    document
+                        .querySelector('.submit-payment')
+                        .removeEventListener('click', event)
+
+                    event = checkoutEvents.shift()
+                }
+
+                if (lastEvent) {
+                    checkoutEvents.push(lastEvent);
+                }
+            }
 
         var paymentOptions = document.getElementsByClassName("payment-options");
 
@@ -73,16 +88,18 @@
 
             var paymentData = getPaymentData(data, installments_count, deferred_days)
 
-            const paymentForm = fragments.createPaymentForm(paymentData, {
-                showPayButton: false,
-                onSuccess: function (returnedData) {
-                    window.location = returnedData.return_url;
-                },
-                onFailure: function (returnedData) {
-                },
-                onPopupClose: function (returnedData) {
-                },
-            })
+                const paymentForm = fragments.createPaymentForm(paymentData, {
+                    showPayButton: false,
+                    onSuccess: function (returnedData) {
+                        window.location = returnedData.return_url;
+                    },
+                    onFailure: function (returnedData) {
+                        addCheckoutEvent(checkoutEvents.at(-1));
+                    },
+                    onPopupClose: function (returnedData) {
+                        addCheckoutEvent(checkoutEvents.at(-1));
+                    },
+                })
 
             await paymentForm.mount(document.getElementById(container));
             return paymentForm;
@@ -134,40 +151,34 @@
                 const deferred_days = parseInt(t.getAttribute('data-deferred-days'));
                 const in_page = t.getAttribute('data-in-page') === 'true';
 
-                document.body.style.cursor = 'wait';
-                if (in_page) {
-                    await renderInPage(t.id + "_fragment", installments_count, deferred_days)
-                        .then((paymentForm) => {
-                            var checkoutFragmentCall = async function () {
-                                var orderId = 0
-                                if (typeof await paymentForm.currentPayment.orders[0] !== 'undefined') {
-                                    orderId = await paymentForm.currentPayment.orders[0].merchant_reference
+                    document.body.style.cursor = 'wait';
+                    if (in_page) {
+                        await renderInPage(t.id + "_fragment", installments_count, deferred_days)
+                            .then((paymentForm) => {
+                                var checkoutFragmentCall = async function () {
+                                    const ajaxResponse = await fetch('${pdict.checkout_fragment_url}?pid=' + paymentForm.currentPayment.id + '&amount=' + paymentForm.currentPayment.purchase_amount);
+                                    const orderFragment = await ajaxResponse.json();
+                                    if (ajaxResponse.status === 200) {
+                                        paymentForm.pay();
+                                        removeCheckoutEvents();
+                                    }
+                                    if (ajaxResponse.status === 400) {
+                                        addMismatchMessage(orderFragment)
+                                    }
+                                    if (ajaxResponse.status === 500) {
+                                        addPaymentMethodNotFound(orderFragment)
+                                    }
                                 }
-                                const ajaxResponse = await fetch('${pdict.checkout_fragment_url}?pid=' + paymentForm.currentPayment.id + '&amount=' + paymentForm.currentPayment.purchase_amount + '&orderId=' + orderId);
-                                const orderFragment = await ajaxResponse.json();
-                                if (ajaxResponse.status === 200) {
-                                    paymentForm.pay();
-                                }
-                                if (ajaxResponse.status === 400) {
-                                    addMismatchMessage(orderFragment)
-                                }
-                                if (ajaxResponse.status === 500) {
-                                    // display error
-                                    alert(orderFragment.error) //TODO remove
-                                }
-                            }
 
                             checkoutEvents.push(checkoutFragmentCall);
 
-                            document
-                                .querySelector('.submit-payment')
-                                .addEventListener('click', checkoutFragmentCall)
-                        });
-                } else {
-                    activeElt.parentNode.innerHTML = '<div class="alma-lds-ring"><div></div><div></div><div></div><div></div></div>';
-                    await redirectToPaymentPage(installments_count, deferred_days);
-                }
-                document.body.style.cursor = 'default';
+                                addCheckoutEvent(checkoutFragmentCall);
+                            });
+                    } else {
+                        activeElt.parentNode.innerHTML = '<div class="alma-lds-ring"><div></div><div></div><div></div><div></div></div>';
+                        await redirectToPaymentPage(installments_count, deferred_days);
+                    }
+                    document.body.style.cursor = 'default';
 
             } else {
                 await document.getElementById(t.id + "_fragment").firstChild.remove();
