@@ -123,7 +123,7 @@ server.get('PaymentSuccess', function (req, res, next) {
     var order = buildOrder(req.querystring.pid);
 
     if (!order) {
-        order = paymentHelper.createOrderFromBasket();
+        order = paymentHelper.createOrderFromBasket(req.querystring.alma_payment_method);
         syncOrderAndPaymentDetails(req.querystring.pid, order);
     }
 
@@ -334,7 +334,7 @@ server.get(
             var order = buildOrder(req.querystring.pid);
 
             if (!order) {
-                order = almaPaymentHelper.createOrderFromBasket();
+                order = almaPaymentHelper.createOrderFromBasket(req.querystring.alma_payment_method);
                 syncOrderAndPaymentDetails(req.querystring.pid, order);
             }
 

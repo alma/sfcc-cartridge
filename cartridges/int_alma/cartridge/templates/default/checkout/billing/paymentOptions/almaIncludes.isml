@@ -148,6 +148,7 @@
 
                     const installments_count = parseInt(t.getAttribute('data-installments'));
                     const deferred_days = parseInt(t.getAttribute('data-deferred-days'));
+                    const alma_payment_method = t.getAttribute('data-alma-payment-method');
                     const in_page = t.getAttribute('data-in-page') === 'true';
 
                     document.body.style.cursor = 'wait';
@@ -155,7 +156,7 @@
                         await renderInPage(t.id + "_fragment", installments_count, deferred_days)
                             .then((paymentForm) => {
                                 var checkoutFragmentCall = async function () {
-                                    const ajaxResponse = await fetch('${pdict.checkout_fragment_url}?pid=' + paymentForm.currentPayment.id + '&amount=' + paymentForm.currentPayment.purchase_amount);
+                                    const ajaxResponse = await fetch('${pdict.checkout_fragment_url}?pid=' + paymentForm.currentPayment.id + '&amount=' + paymentForm.currentPayment.purchase_amount + '&alma_payment_method=' + alma_payment_method);
                                     const orderFragment = await ajaxResponse.json();
                                     if (ajaxResponse.status === 200) {
                                         paymentForm.pay();
