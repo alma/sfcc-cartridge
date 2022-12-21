@@ -238,4 +238,20 @@ window.addEventListener('DOMContentLoaded',
             return errorDiv;
         }
 
+        const checkoutBtn = document.querySelector(context.selector.submitPayment);
+        const paymentMethodsTabs = document.querySelectorAll(context.selector.paymentOptions);
+        const nextStepButton = checkoutBtn.parentElement.parentElement;
+        for (let pm of paymentMethodsTabs) {
+            pm.addEventListener("click", (event) => {
+                const isAlmaTab = event.target.closest('li').classList.contains("alma-tab");
+                if (isAlmaTab) {
+                    nextStepButton.classList.remove('next-step-button');
+                    checkoutBtn.setAttribute('type', 'button');
+                } else {
+                    nextStepButton.classList.add('next-step-button');
+                    checkoutBtn.setAttribute('type', 'submit');
+                }
+            });
+        }
+
     });
