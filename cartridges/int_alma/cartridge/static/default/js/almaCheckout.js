@@ -4,6 +4,8 @@ window.addEventListener('DOMContentLoaded',
             mode: context.almaMode === 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST,
         });
 
+        var checkoutFragmentCallInProgress = false;
+
         var checkoutEvents = [];
 
         function addCheckoutEvent(event) {
@@ -90,9 +92,11 @@ window.addEventListener('DOMContentLoaded',
                 },
                 onFailure: function (returnedData) {
                     addCheckoutEvent(checkoutEvents.at(-1));
+                    checkoutFragmentCallInProgress = false;
                 },
                 onPopupClose: function (returnedData) {
                     addCheckoutEvent(checkoutEvents.at(-1));
+                    checkoutFragmentCallInProgress = false;
                 },
             })
 
@@ -152,10 +156,13 @@ window.addEventListener('DOMContentLoaded',
                     await renderInPage(t.id + "_fragment", installments_count, deferred_days)
                         .then((paymentForm) => {
                             var checkoutFragmentCall = async function () {
+                                if (checkoutFragmentCallInProgress) {
+                                    return;
+                                }
+                                checkoutFragmentCallInProgress = true;
                                 const ajaxResponse = await fetch(context.almaUrl.checkoutFragmentUrl + '?pid=' + paymentForm.currentPayment.id + '&amount=' + paymentForm.currentPayment.purchase_amount + '&alma_payment_method=' + alma_payment_method);
                                 const orderFragment = await ajaxResponse.json();
                                 if (ajaxResponse.status === 200) {
-                                    paymentForm.pay();
                                     removeCheckoutEvents();
                                 }
                                 if (ajaxResponse.status === 400) {
