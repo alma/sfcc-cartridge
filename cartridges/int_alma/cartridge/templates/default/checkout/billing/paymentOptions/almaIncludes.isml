@@ -9,7 +9,7 @@
         selector: {
             submitPayment: ".submit-payment",
             paymentOptions: ".payment-options",
-            fragmentErrors: ".next-step-button"
+            fragmentErrors: ".payment-form"
         },
         payment: {
             purchaseAmount: "${pdict.purchase_amount}",

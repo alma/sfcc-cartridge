@@ -164,12 +164,16 @@ window.addEventListener('DOMContentLoaded',
                                 const orderFragment = await ajaxResponse.json();
                                 if (ajaxResponse.status === 200) {
                                     removeCheckoutEvents();
-                                }
-                                if (ajaxResponse.status === 400) {
-                                    addMismatchMessage(orderFragment)
-                                }
-                                if (ajaxResponse.status === 500) {
-                                    addPaymentMethodNotFound(orderFragment)
+                                    paymentForm.pay();
+                                } else if (ajaxResponse.status === 400) {
+                                    displayMismatchMessage(orderFragment)
+                                    checkoutFragmentCallInProgress = false;
+                                } else if (ajaxResponse.status === 500) {
+                                    displayPaymentMethodNotFound(orderFragment)
+                                    checkoutFragmentCallInProgress = false;
+                                } else {
+                                    displayPaymentError(ajaxResponse.status);
+                                    checkoutFragmentCallInProgress = false;
                                 }
                             }
 
@@ -208,9 +212,9 @@ window.addEventListener('DOMContentLoaded',
             });
         }
 
-        function addMismatchMessage(orderFragment) {
+        function displayMismatchMessage(orderFragment) {
             var errorMessagePosition = document.querySelectorAll(context.selector.fragmentErrors)[0];
-            errorMessagePosition.before(createMismatchMessage(orderFragment));
+            errorMessagePosition.after(createMismatchMessage(orderFragment));
         }
 
         function createMismatchMessage(orderFragment) {
@@ -230,19 +234,30 @@ window.addEventListener('DOMContentLoaded',
             return errorDiv;
         }
 
-        function addPaymentMethodNotFound(orderFragment) {
+        function displayPaymentMethodNotFound(orderFragment) {
             var errorMessagePosition = document.querySelectorAll(context.selector.fragmentErrors)[0];
-            errorMessagePosition.before(createPaymentMethodNotFound(orderFragment));
+            errorMessagePosition.after(createPaymentMethodNotFound(orderFragment));
         }
 
         function createPaymentMethodNotFound(orderFragment) {
-            var errorMismatchMessage = document.createTextNode(orderFragment.error);
+            var errorMessage = document.createTextNode(orderFragment.error);
             var errorDiv = document.createElement('div');
             errorDiv.classList.add('col-12', 'alma-error-message');
             errorDiv.id = 'payment-method-not-found-message';
-            errorDiv.appendChild(errorMismatchMessage);
+            errorDiv.appendChild(errorMessage);
             errorDiv.appendChild(document.createElement('br'));
             return errorDiv;
+        }
+
+        function displayPaymentError(status) {
+            var errorMessagePosition = document.querySelectorAll(context.selector.fragmentErrors)[0];
+            var errorMessage = document.createTextNode(status);
+            var errorDiv = document.createElement('div');
+            errorDiv.classList.add('col-12', 'alma-error-message');
+            errorDiv.id = 'payment-error';
+            errorDiv.appendChild(errorMessage);
+            errorDiv.appendChild(document.createElement('br'));
+            errorMessagePosition.after(errorDiv);
         }
 
     });
