@@ -60,8 +60,8 @@ window.addEventListener('DOMContentLoaded',
                     deferred_description: data.isEnableOnShipment ? decodeHtml(context.payment.deferredDescription) : "",
                     custom_data: {
                         cms_name: context.payment.customData.cmsName,
-                        cms_version:context.payment.customData.cmsVersion,
-                        alma_plugin_version:context.payment.customData.almaPluginVersion
+                        cms_version: context.payment.customData.cmsVersion,
+                        alma_plugin_version: context.payment.customData.almaPluginVersion
                     }
                 },
                 customer: data.customer
@@ -208,7 +208,7 @@ window.addEventListener('DOMContentLoaded',
         const almaPaymentMethods = document.querySelectorAll(".alma-payment-method");
         for (let pm of almaPaymentMethods) {
             pm.addEventListener("click", async function (e) {
-                 await handlePaymentMethodClick(e);
+                await handlePaymentMethodClick(e);
             });
         }
 
