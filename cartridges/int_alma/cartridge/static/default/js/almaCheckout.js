@@ -1,8 +1,5 @@
 window.addEventListener('DOMContentLoaded',
     function () {
-        var fragments = new Alma.Fragments(context.merchantId, {
-            mode: context.almaMode === 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST,
-        });
 
         var checkoutFragmentCallInProgress = false;
 
@@ -84,6 +81,10 @@ window.addEventListener('DOMContentLoaded',
             const data = await response.json();
 
             var paymentData = getPaymentData(data, installments_count, deferred_days)
+
+            var fragments = new Alma.Fragments(context.merchantId, {
+                mode: context.almaMode === 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST,
+            });
 
             const paymentForm = fragments.createPaymentForm(paymentData, {
                 showPayButton: false,
