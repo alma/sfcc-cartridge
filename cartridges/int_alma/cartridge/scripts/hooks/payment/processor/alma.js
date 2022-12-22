@@ -8,7 +8,7 @@ var collections = require('*/cartridge/scripts/util/collections');
 
 /**
  * Hook for submit payment
- * @param {dw.order.Basket} basket - Current users's basket
+ * @param {dw.order.Basket} basket - Current users basket
  * @param {Object} paymentInformation - the payment information
  * @param {Object} paymentMethodID - unused
  * @param {Object} contactInfoFields - unused

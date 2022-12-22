@@ -3,7 +3,7 @@
 /**
  * Check if we should trigger the payment for an Order that have been shipped
  * @param {dw.order.Order} order to be paid
- * @returns {bool} should we trigger this order payment
+ * @returns {boolean} should we trigger this order payment
  */
 function isOrderToBePaidOnShipment(order) {
     var Order = require('dw/order/Order');

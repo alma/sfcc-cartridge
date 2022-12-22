@@ -4,7 +4,7 @@
  * Returns true if 'On shipment' payment is Enabled
  * @param  {number} installmentsCount number of installments
  * @param  {number} deferredDays (optional) number of days before payment
- * @returns {Bolean} true or false
+ * @returns {boolean} true or false
  */
 function isOnShipmentPaymentEnabled(installmentsCount, deferredDays) {
     var Site = require('dw/system/Site');

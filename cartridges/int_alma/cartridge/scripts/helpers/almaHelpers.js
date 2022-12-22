@@ -16,7 +16,7 @@ function getSfccVersion() {
 }
 
 /**
- * Adds common headres to request
+ * Adds common headers to request
  * @param {dw.svc.Service} service - current service instance
  * @returns {dw.svc.Service} service
  */
@@ -56,15 +56,15 @@ function getUrl(path) {
 
 /**
  * Returns is Alma Enable
- * @returns {Bolean} true or false
+ * @returns {boolean} true or false
  */
 function isAlmaEnable() {
     return Site.getCurrent().getCustomPreferenceValue('isAlmaEnable');
 }
 
 /**
- * Get mercant id from custome site preferences
- * @returns {string} stringified json
+ * Get merchant id from customer site preferences
+ * @returns {string} json as string
  */
 function getMerchantId() {
     return Site.getCurrent().getCustomPreferenceValue('ALMA_Merchant_Id');
@@ -72,7 +72,7 @@ function getMerchantId() {
 
 /**
  * Returns is Alma On shipment Enable
- * @returns {Bolean} true or false
+ * @returns {boolean} true or false
  */
 function isAlmaOnShipment() {
     return Site.getCurrent().getCustomPreferenceValue('ALMA_On_Shipment_Payment');
@@ -91,7 +91,7 @@ function getMode() {
  * Get customer data for init payment
  * @param {Object} profile customer profile
  * @param {string} customerEmail customer email
- * @returns {Object} custormer data
+ * @returns {Object} customer data
  */
 function formatCustomerData(profile, customerEmail) {
     if (profile) {

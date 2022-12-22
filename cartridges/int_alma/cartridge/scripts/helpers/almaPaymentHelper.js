@@ -5,7 +5,7 @@ var pkg = require('../../../package.json');
  * Allow to check an order status
  * @param {dw.order.Order} order the order to check
  * @param {number} status status to check
- * @returns {bool} if the order is at the requested status
+ * @returns {boolean} if the order is at the requested status
  */
 function orderStatusEquals(order, status) {
     return parseInt(order.status, 10) === parseInt(status, 10);
@@ -36,7 +36,7 @@ function getPaymentObj(almaPaymentId) {
 /**
  * Once Alma API return a success for the Order payment, accept the Order
  * @param {dw.order.Order} order the order to accept
- * @param {bool} paymentStatus the payment status, should be PAYMENT_STATUS_NOTPAID if we use payment on shipment
+ * @param {boolean} paymentStatus the payment status, should be PAYMENT_STATUS_NOTPAID if we use payment on shipment
  */
 function acceptOrder(order, paymentStatus) {
     var Transaction = require('dw/system/Transaction');

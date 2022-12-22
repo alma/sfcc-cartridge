@@ -12,8 +12,8 @@ window.addEventListener('DOMContentLoaded',
         }
 
         function removeCheckoutEvents() {
-            let lastEvent;
-            let event = checkoutEvents.shift()
+            var lastEvent;
+            var event = checkoutEvents.shift()
             while (event) {
                 lastEvent = event;
                 document
@@ -30,12 +30,12 @@ window.addEventListener('DOMContentLoaded',
 
         var paymentOptions = document.querySelectorAll(context.selector.paymentOptions);
 
-        for (const paymentOption of paymentOptions) {
+        paymentOptions.forEach(function (paymentOption) {
             paymentOption.addEventListener('click', removeCheckoutEvents)
-        }
+        });
 
         /**
-         * Returns the data formatted for inpage payment
+         * Returns the data formatted for in-page payment
          * @param  {Object} data an alma plan
          * @param  {number} installments_count number of installments
          * @param  {number} deferred_days number of days before the 1st payment
@@ -66,7 +66,7 @@ window.addEventListener('DOMContentLoaded',
         }
 
         /**
-         * Build an inpage payment form to allow the customer to pay
+         * Build an in-page payment form to allow the customer to pay
          * This option is only available when installments_count is 2 or 3
          * @param  {string} container the div elem where the form will be built
          * @param  {number} installments_count number of installments
@@ -77,28 +77,28 @@ window.addEventListener('DOMContentLoaded',
             installments_count,
             deferred_days
         ) {
-            const response = await fetch(context.almaUrl.dataUrl + '?installment=' + installments_count);
-            const data = await response.json();
+            var response = await fetch(context.almaUrl.dataUrl + '?installment=' + installments_count);
+            var data = await response.json();
 
             var paymentData = getPaymentData(data, installments_count, deferred_days)
 
             var fragments = new Alma.Fragments(context.merchantId, {
-                mode: context.almaMode === 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST,
+                mode: context.almaMode === 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST
             });
 
-            const paymentForm = fragments.createPaymentForm(paymentData, {
+            var paymentForm = fragments.createPaymentForm(paymentData, {
                 showPayButton: false,
                 onSuccess: function (returnedData) {
                     window.location = returnedData.return_url;
                 },
-                onFailure: function (returnedData) {
+                onFailure: function () {
                     addCheckoutEvent(checkoutEvents.at(-1));
                     checkoutFragmentCallInProgress = false;
                 },
-                onPopupClose: function (returnedData) {
+                onPopupClose: function () {
                     addCheckoutEvent(checkoutEvents.at(-1));
                     checkoutFragmentCallInProgress = false;
-                },
+                }
             })
 
             await paymentForm.mount(document.getElementById(container));
@@ -122,11 +122,11 @@ window.addEventListener('DOMContentLoaded',
          * @param  {number} deferred_days number of days before the 1st payment
          */
         async function redirectToPaymentPage(installments_count, deferred_days) {
-            const response = await fetch(
+            var response = await fetch(
                 context.almaUrl.createPaymentUrl + '?deferred_days=' + deferred_days + '&installments=' + installments_count,
                 { method: 'POST' }
             );
-            const body = await response.json();
+            var body = await response.json();
             window.location = body.url;
         }
 
@@ -136,10 +136,10 @@ window.addEventListener('DOMContentLoaded',
          */
         async function toggle(t) {
             removeCheckoutEvents();
-            const activeElt = document.querySelector("#" + t.id + " .fa");
-            const isAlreadyOpen = activeElt.classList.contains("fa-chevron-down");
+            var activeElt = document.querySelector("#" + t.id + " .fa");
+            var isAlreadyOpen = activeElt.classList.contains("fa-chevron-down");
 
-            const icons = document.querySelectorAll(".alma-payment-method .fa");
+            var icons = document.querySelectorAll(".alma-payment-method .fa");
             [].forEach.call(icons, function (icon) {
                 icon.classList.remove("fa-chevron-down");
             });
@@ -147,34 +147,38 @@ window.addEventListener('DOMContentLoaded',
             if (!isAlreadyOpen) {
                 activeElt.classList.add("fa-chevron-down");
 
-                const installments_count = parseInt(t.getAttribute('data-installments'));
-                const deferred_days = parseInt(t.getAttribute('data-deferred-days'));
-                const alma_payment_method = t.getAttribute('data-alma-payment-method');
-                const in_page = t.getAttribute('data-in-page') === 'true';
+                var installments_count = parseInt(t.getAttribute('data-installments'));
+                var deferred_days = parseInt(t.getAttribute('data-deferred-days'));
+                var alma_payment_method = t.getAttribute('data-alma-payment-method');
+                var in_page = t.getAttribute('data-in-page') === 'true';
 
                 document.body.style.cursor = 'wait';
                 if (in_page) {
                     await renderInPage(t.id + "_fragment", installments_count, deferred_days)
-                        .then((paymentForm) => {
+                        .then(function (paymentForm) {
                             var checkoutFragmentCall = async function () {
                                 if (checkoutFragmentCallInProgress) {
                                     return;
                                 }
                                 checkoutFragmentCallInProgress = true;
-                                const ajaxResponse = await fetch(context.almaUrl.checkoutFragmentUrl + '?pid=' + paymentForm.currentPayment.id + '&amount=' + paymentForm.currentPayment.purchase_amount + '&alma_payment_method=' + alma_payment_method);
-                                const orderFragment = await ajaxResponse.json();
-                                if (ajaxResponse.status === 200) {
-                                    removeCheckoutEvents();
-                                    paymentForm.pay();
-                                } else if (ajaxResponse.status === 400) {
-                                    displayMismatchMessage(orderFragment)
-                                    checkoutFragmentCallInProgress = false;
-                                } else if (ajaxResponse.status === 500) {
-                                    displayPaymentMethodNotFound(orderFragment)
-                                    checkoutFragmentCallInProgress = false;
-                                } else {
-                                    displayPaymentError(ajaxResponse.status);
-                                    checkoutFragmentCallInProgress = false;
+                                var ajaxResponse = await fetch(context.almaUrl.checkoutFragmentUrl + '?pid=' + paymentForm.currentPayment.id + '&amount=' + paymentForm.currentPayment.purchase_amount + '&alma_payment_method=' + alma_payment_method);
+                                var orderFragment = await ajaxResponse.json();
+                                switch (ajaxResponse.status) {
+                                    case 200:
+                                        removeCheckoutEvents();
+                                        paymentForm.pay();
+                                        break;
+                                    case 400:
+                                        displayMismatchMessage(orderFragment)
+                                        checkoutFragmentCallInProgress = false;
+                                        break;
+                                    case 500:
+                                        displayPaymentMethodNotFound(orderFragment)
+                                        checkoutFragmentCallInProgress = false;
+                                        break;
+                                    default:
+                                        displayPaymentError(ajaxResponse.status);
+                                        checkoutFragmentCallInProgress = false;
                                 }
                             }
 
@@ -206,12 +210,12 @@ window.addEventListener('DOMContentLoaded',
             await toggle(t);
         }
 
-        const almaPaymentMethods = document.querySelectorAll(".alma-payment-method");
-        for (let pm of almaPaymentMethods) {
+        var almaPaymentMethods = document.querySelectorAll(".alma-payment-method");
+        almaPaymentMethods.forEach(function (pm) {
             pm.addEventListener("click", async function (e) {
                 await handlePaymentMethodClick(e);
             });
-        }
+        })
 
         function displayMismatchMessage(orderFragment) {
             var errorMessagePosition = document.querySelectorAll(context.selector.fragmentErrors)[0];
