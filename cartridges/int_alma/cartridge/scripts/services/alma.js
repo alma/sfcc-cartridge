@@ -5,10 +5,15 @@ var almaHelpers = require('*/cartridge/scripts/helpers/almaHelpers');
 
 /**
  * Builds service for payment creating
- * @returns {dw.svc.LocalServiceRegistry} service instances
+ * @returns {dw.svc.Service} service instances
  */
 function createPayment() {
     return LocalServiceRegistry.createService('alma', {
+        /**
+         * @param {dw.svc.HTTPService} service service
+         * @param {array} params parameters
+         * @returns {string} json parameters as string
+         */
         createRequest: function (service, params) {
             service.setRequestMethod('POST');
             service.URL = almaHelpers.getUrl('/v1/payments'); // eslint-disable-line no-param-reassign
@@ -24,10 +29,14 @@ function createPayment() {
 
 /**
  * Builds service for payment trigger
- * @returns {dw.svc.LocalServiceRegistry} service instances
+ * @returns {dw.svc.Service} service instances
  */
 function triggerPayment() {
     return LocalServiceRegistry.createService('alma', {
+        /**
+         * @param {dw.svc.HTTPService} service service
+         * @param {array} params parameters
+         */
         createRequest: function (service, params) {
             service.setRequestMethod('POST');
             service.URL = almaHelpers.getUrl('/v1/payments/' + params.pid + '/trigger'); // eslint-disable-line no-param-reassign
@@ -41,10 +50,14 @@ function triggerPayment() {
 
 /**
  * Builds service for getting payment details
- * @returns {dw.svc.LocalServiceRegistry} service instances
+ * @returns {dw.svc.Service} service instances
  */
 function getPaymentDetails() {
     return LocalServiceRegistry.createService('alma', {
+        /**
+         * @param {dw.svc.HTTPService} service service
+         * @param {array} params parameters
+         */
         createRequest: function (service, params) {
             service.setRequestMethod('GET');
             service.URL = almaHelpers.getUrl('/v1/payments/' + params.pid); // eslint-disable-line no-param-reassign
@@ -59,10 +72,15 @@ function getPaymentDetails() {
 
 /**
  * Builds service for getting eligibility. Min and Max values
- * @returns {dw.svc.LocalServiceRegistry} service instances
+ * @returns {dw.svc.Service} service instances
  */
 function checkEligibility() {
     return LocalServiceRegistry.createService('alma', {
+        /**
+         * @param {dw.svc.HTTPService} service service
+         * @param {array} params parameters
+         * @returns {string} json parameters as string
+         */
         createRequest: function (service, params) {
             service.setRequestMethod('POST');
             service.URL = almaHelpers.getUrl('/v2/payments/eligibility'); // eslint-disable-line no-param-reassign
@@ -78,10 +96,15 @@ function checkEligibility() {
 
 /**
  * Builds service for payment refund
- * @returns {dw.svc.LocalServiceRegistry} service instances
+ * @returns {dw.svc.Service} service instances
  */
 function refundPayment() {
     return LocalServiceRegistry.createService('alma', {
+        /**
+         * @param {dw.svc.HTTPService} service service
+         * @param {array} params parameters
+         * @returns {string} json parameters as string
+         */
         createRequest: function (service, params) {
             service.setRequestMethod('POST');
             service.URL = almaHelpers.getUrl('/v1/payments/' + params.pid + '/refunds'); // eslint-disable-line no-param-reassign
@@ -97,13 +120,42 @@ function refundPayment() {
 
 /**
  * Build service for potential fraud
- * @returns {dw.svc.LocalServiceRegistry} service instances
+ * @returns {dw.svc.Service} service instances
  */
 function flagAsPotentialFraud() {
     return LocalServiceRegistry.createService('alma', {
+        /**
+         * @param {dw.svc.HTTPService} service service
+         * @param {array} params parameters
+         * @returns {string} json parameters as string
+         */
         createRequest: function (service, params) {
             service.setRequestMethod('POST');
             service.URL = almaHelpers.getUrl('/v1/payments/' + params.pid + '/potential-fraud'); // eslint-disable-line no-param-reassign
+            almaHelpers.addHeaders(service);
+
+            return JSON.stringify(params);
+        },
+        parseResponse: function (svc, client) {
+            return client;
+        }
+    });
+}
+
+/**
+ * Add order_id in merchant_reference
+ * @returns {dw.svc.Service} service instances
+ */
+function setOrderMerchantReferenceAPI() {
+    return LocalServiceRegistry.createService('alma', {
+        /**
+         * @param {dw.svc.HTTPService} service service
+         * @param {array} params parameters
+         * @returns {string} json parameters as string
+         */
+        createRequest: function (service, params) {
+            service.setRequestMethod('POST');
+            service.URL = almaHelpers.getUrl('/v1/payments/' + params.pid + '/orders'); // eslint-disable-line no-param-reassign
             almaHelpers.addHeaders(service);
 
             return JSON.stringify(params);
@@ -120,5 +172,6 @@ module.exports = {
     triggerPayment: triggerPayment,
     refundPayment: refundPayment,
     createPayment: createPayment,
-    potentialFraud: flagAsPotentialFraud
+    potentialFraud: flagAsPotentialFraud,
+    setOrderMerchantReferenceAPI: setOrderMerchantReferenceAPI
 };

@@ -30,7 +30,7 @@ function getSitePrefNameFromPlan(plan) {
     return 'ALMA_general_'
         // number of installments (p1x, p3x, p4x, ....)
         + plan.installments_count + '_'
-        // by how many days is the payment defered
+        // by how many days is the payment deferred
         + plan.deferred_days
     ;
 }
@@ -86,7 +86,7 @@ function filterWithMerchantConfig(plan, purchaseAmount) {
 }
 
 /**
- * Get data to intialize widget in cart and product detail
+ * Get data to initialize widget in cart and product detail
  * @returns {array} widget data
  */
 function getAllowedPlans() {
@@ -102,7 +102,7 @@ function getAllowedPlans() {
 }
 
 /**
- * Get data to intialize widget in cart and product detail
+ * Get data to initialize widget in cart and product detail
  * @returns {array} eligible data
  */
 function getPlansForWidget() {
@@ -114,7 +114,7 @@ function getPlansForWidget() {
 }
 
 /**
- * Get data to intialize widget in cart and product detail
+ * Get data to initialize widget in cart and product detail
  * @param {string} locale e.g. "fr_FR"
  * @param {dw.order.Basket} currentBasket current basket
  * @returns {array} eligible data

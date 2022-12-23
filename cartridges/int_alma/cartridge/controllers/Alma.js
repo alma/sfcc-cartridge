@@ -39,7 +39,21 @@ function buildViewParams(paymentObj, order, localeId, reqProfile) {
 }
 
 /**
- * Ensure that Alma received the right amount and that SFCC order is sync'd
+ * Synchronize order and payment details
+ * @param {string} pid payment id
+ * @param {Object} order order
+ * @throw Error
+ */
+function syncOrderAndPaymentDetails(pid, order) {
+    var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
+    var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
+
+    orderHelper.addPidToOrder(order, pid);
+    almaPaymentHelper.setOrderMerchantReference(pid, order);
+}
+
+/**
+ * Ensure that Alma received the right amount and that SFCC order is synced
  * @param {Object} paymentObj the payment to describe
  * @param {dw/order/Order} order the current order
  */
@@ -69,14 +83,36 @@ function affectOrder(paymentObj, order) {
     acceptOrder(order, paymentStatus);
 }
 
-server.get('PaymentSuccess', function (req, res, next) {
-    var Transaction = require('dw/system/Transaction');
+/**
+ * Request order from OrderMgr
+ * @param {string} pid payment id
+ * @returns {Object} order
+ */
+function buildOrder(pid) {
     var OrderMgr = require('dw/order/OrderMgr');
+    return OrderMgr.queryOrder(
+        'custom.almaPaymentId={0}',
+        pid
+    );
+}
+
+/**
+ * Helper for build paymentObj
+ * @param {string} pid payment id
+ * @returns {Object} an Alma payment object
+ */
+function buildPaymentObj(pid) {
     var paymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
+    return paymentHelper.getPaymentObj(pid);
+}
+
+server.get('PaymentSuccess', function (req, res, next) {
+    var paymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
+    var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
     var paymentObj = null;
 
     try {
-        paymentObj = paymentHelper.getPaymentObj(req.querystring.pid);
+        paymentObj = buildPaymentObj(req.querystring.pid);
     } catch (e) {
         res.setStatusCode(500);
         res.render('error', {
@@ -84,12 +120,12 @@ server.get('PaymentSuccess', function (req, res, next) {
         });
         return next();
     }
-    var payDetail = paymentHelper.getPaymentDetails(paymentObj);
+    var order = buildOrder(req.querystring.pid);
 
-    var order = OrderMgr.searchOrder(
-        'orderNo={0}',
-        paymentObj.custom_data.order_id
-    );
+    if (!order) {
+        order = paymentHelper.createOrderFromBasket(req.querystring.alma_payment_method);
+        syncOrderAndPaymentDetails(req.querystring.pid, order);
+    }
 
     // we probably should throw an error if we don't have an order
     if (order) {
@@ -105,11 +141,7 @@ server.get('PaymentSuccess', function (req, res, next) {
         }
     }
     paymentHelper.emptyCurrentBasket();
-
-    Transaction.wrap(function () {
-        order.custom.almaPaymentId = req.querystring.pid;
-        order.custom.ALMA_ResponseDetails = payDetail;
-    });
+    orderHelper.addAlmaPaymentDetails(order, paymentHelper.getPaymentDetails(paymentObj));
 
     res.render('checkout/confirmation/confirmation',
         buildViewParams(paymentObj, order, req.locale.id, req.currentCustomer.profile)
@@ -144,13 +176,12 @@ server.get(
 );
 
 server.get('IPN', function (req, res, next) {
-    var OrderMgr = require('dw/order/OrderMgr');
-    var Transaction = require('dw/system/Transaction');
     var paymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
-
+    var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
     var paymentObj = null;
+
     try {
-        paymentObj = paymentHelper.getPaymentObj(req.querystring.pid);
+        paymentObj = buildPaymentObj(req.querystring.pid);
     } catch (e) {
         res.setStatusCode(500);
         res.render('error', {
@@ -158,12 +189,13 @@ server.get('IPN', function (req, res, next) {
         });
         return next();
     }
-    var payDetail = paymentHelper.getPaymentDetails(paymentObj);
+    var order = buildOrder(req.querystring.pid);
 
-    var order = OrderMgr.getOrder(
-        paymentObj.custom_data.order_id,
-        paymentObj.custom_data.order_token
-    );
+    if (!order) {
+        var basketUuid = paymentObj.custom_data.basket_id;
+        order = paymentHelper.createOrderFromBasketUUID(basketUuid);
+        orderHelper.addPidToOrder(order, req.querystring.pid);
+    }
 
     if (!order) {
         res.setStatusCode(500);
@@ -176,10 +208,8 @@ server.get('IPN', function (req, res, next) {
     try {
         affectOrder(paymentObj, order);
 
-        Transaction.wrap(function () {
-            order.custom.almaPaymentId = req.querystring.pid;
-            order.custom.ALMA_ResponseDetails = payDetail;
-        });
+        orderHelper.addPidToOrder(order, req.querystring.pid);
+        orderHelper.addAlmaPaymentDetails(order, paymentHelper.getPaymentDetails(paymentObj));
     } catch (e) {
         res.setStatusCode(500);
         res.json({
@@ -197,41 +227,24 @@ server.get('IPN', function (req, res, next) {
 });
 
 server.get('BasketData', server.middleware.https, function (req, res, next) {
+    var almaHelper = require('*/cartridge/scripts/helpers/almaHelpers');
     var BasketMgr = require('dw/order/BasketMgr');
     var formatAddress = require('*/cartridge/scripts/helpers/almaAddressHelper').formatAddress;
     var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
     var formatCustomerData = require('*/cartridge/scripts/helpers/almaHelpers').formatCustomerData;
-    var createOrderFromBasket = require('*/cartridge/scripts/helpers/almaPaymentHelper').createOrderFromBasket;
+    var pkg = require('../../package.json');
 
     var currentBasket = BasketMgr.getCurrentBasket();
     var profile = currentBasket.getCustomer().profile;
-
-    var order = null;
-    if (req.querystring.oid) {
-        var OrderMgr = require('dw/order/OrderMgr');
-        order = OrderMgr.searchOrder('orderNo={0}', req.querystring.oid);
-    }
-
-    if (!order) {
-        try {
-            order = createOrderFromBasket(req.querystring.alma_payment_method);
-        } catch (e) {
-            res.setStatusCode(400);
-            res.json({ errorMessage: e.message });
-            return next();
-        }
-    }
-
-    var orderToken = order.getOrderToken();
-    var orderId = order.orderNo;
 
     res.json({
         shipping_address: formatAddress(currentBasket.getDefaultShipment().shippingAddress),
         billing_address: formatAddress(currentBasket.getBillingAddress()),
         customer: formatCustomerData(profile, currentBasket.getCustomerEmail()),
         isEnableOnShipment: isOnShipmentPaymentEnabled(req.querystring.installment),
-        orderId: orderId,
-        orderToken: orderToken
+        cms_name: 'SFCC',
+        cms_version: almaHelper.getSfccVersion(),
+        alma_plugin_version: pkg.version
     });
 
     return next();
@@ -250,18 +263,8 @@ server.get('OrderAmount', server.middleware.https, function (req, res, next) {
 server.post('CreatePaymentUrl', server.middleware.https, function (req, res, next) {
     var getLocale = require('*/cartridge/scripts/helpers/almaHelpers').getLocale;
     var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
-    var order;
-
-    try {
-        order = almaPaymentHelper.createOrderFromBasket(req.querystring.alma_payment_method);
-    } catch (e) {
-        res.setStatusCode(400);
-        res.json({ errorMessage: e.message });
-        return next();
-    }
 
     var paymentData = almaPaymentHelper.buildPaymentData(
-        order,
         req.querystring.installments,
         req.querystring.deferred_days,
         getLocale(req)
@@ -271,7 +274,7 @@ server.post('CreatePaymentUrl', server.middleware.https, function (req, res, nex
         var result = almaPaymentHelper.createPayment(paymentData);
         res.json(result);
     } catch (e) {
-        res.setStatusCode(503);
+        res.setStatusCode(500);
         res.render('error', {
             message: 'Could not create payment on Alma side'
         });
@@ -309,5 +312,42 @@ server.post(
         return next();
     }
 );
+
+server.get(
+    'FragmentCheckout',
+    server.middleware.https,
+    function (req, res, next) {
+        var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
+        var BasketMgr = require('dw/order/BasketMgr');
+
+        try {
+            var basketAmount = Math.round(BasketMgr.getCurrentBasket().totalGrossPrice.multiply(100).value);
+            var paymentFormAmount = parseInt(req.querystring.amount, 10);
+            if (basketAmount !== paymentFormAmount) {
+                logger.warn('Mismatch error  {0}', []);
+                res.setStatusCode(400);
+                res.json({
+                    error: 'The amount of the shopping cart was changed.'
+                });
+            }
+
+            var order = buildOrder(req.querystring.pid);
+
+            if (!order) {
+                order = almaPaymentHelper.createOrderFromBasket(req.querystring.alma_payment_method);
+                syncOrderAndPaymentDetails(req.querystring.pid, order);
+            }
+
+            res.json({
+                order: JSON.stringify(order)
+            });
+        } catch (e) {
+            res.setStatusCode(500);
+            res.json({
+                error: e.message
+            });
+        }
+        return next();
+    });
 
 module.exports = server.exports();

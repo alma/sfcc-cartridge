@@ -1,10 +1,11 @@
 'use strict';
+var pkg = require('../../../package.json');
 
 /**
  * Allow to check an order status
  * @param {dw.order.Order} order the order to check
  * @param {number} status status to check
- * @returns {bool} if the order is at the requested status
+ * @returns {boolean} if the order is at the requested status
  */
 function orderStatusEquals(order, status) {
     return parseInt(order.status, 10) === parseInt(status, 10);
@@ -13,6 +14,7 @@ function orderStatusEquals(order, status) {
 /**
  * Return payment info from Alma API
  * @param {string} almaPaymentId PaymentId of an alma payment
+ * @throw Error
  * @returns {Object} info from Alma API payment
  */
 function getPaymentObj(almaPaymentId) {
@@ -34,7 +36,7 @@ function getPaymentObj(almaPaymentId) {
 /**
  * Once Alma API return a success for the Order payment, accept the Order
  * @param {dw.order.Order} order the order to accept
- * @param {bool} paymentStatus the payment status, should be PAYMENT_STATUS_NOTPAID if we use payment on shipment
+ * @param {boolean} paymentStatus the payment status, should be PAYMENT_STATUS_NOTPAID if we use payment on shipment
  */
 function acceptOrder(order, paymentStatus) {
     var Transaction = require('dw/system/Transaction');
@@ -170,6 +172,40 @@ function getUserProfile(email) {
 }
 
 /**
+ * Create an order from a Basket UUID
+ * @param {string} UUID uuid
+ * @returns {dw.order.Order} order
+ */
+function createOrderFromBasketUUID(UUID) {
+    var PaymentMgr = require('dw/order/PaymentMgr');
+    var BasketMgr = require('dw/order/BasketMgr');
+    var OrderMgr = require('dw/order/OrderMgr');
+    var Transaction = require('dw/system/Transaction');
+    var COHelpers = require('*/cartridge/scripts/checkout/checkoutHelpers');
+
+    // error here because don't have session
+    var basket = BasketMgr.getBasket(UUID);
+
+    Transaction.wrap(function () {
+        basket.removeAllPaymentInstruments();
+        var paymentProcessor = PaymentMgr.getPaymentMethod('ALMA_CREDIT').paymentProcessor;
+        var paymentInstrument = basket.createPaymentInstrument(
+            'ALMA',
+            basket.totalGrossPrice
+        );
+
+        paymentInstrument.paymentTransaction.setPaymentProcessor(
+            paymentProcessor
+        );
+    });
+    var order = COHelpers.createOrder(basket);
+    Transaction.wrap(function () {
+        OrderMgr.failOrder(order, true);
+    });
+    return order;
+}
+
+/**
  * create an order from a Basket
  * @param {string} almaPaymentMethod payment metyhod ID
  * @returns {dw.order.Order} the created order
@@ -183,6 +219,10 @@ function createOrderFromBasket(almaPaymentMethod) {
     var COHelpers = require('*/cartridge/scripts/checkout/checkoutHelpers');
 
     var currentBasket = BasketMgr.getCurrentBasket();
+
+    if (currentBasket == null) {
+        throw new Error('Current basket is null');
+    }
 
     Transaction.wrap(function () {
         currentBasket.removeAllPaymentInstruments();
@@ -205,7 +245,6 @@ function createOrderFromBasket(almaPaymentMethod) {
         );
     });
     var order = COHelpers.createOrder(currentBasket);
-
     Transaction.wrap(function () {
         OrderMgr.failOrder(order, true);
     });
@@ -229,15 +268,15 @@ function createPayment(param) {
 
 /**
  * Build the data to give to the payment endpoint
- * @param {dw.order.Order} order the order to pay
  * @param {number} installmentsCount number of installments to pay
  * @param {number} deferredDays number of days to the first payment
  * @param {string} locale the user locale
  * @returns {Object} to give to the payment endpoint
  */
-function buildPaymentData(order, installmentsCount, deferredDays, locale) {
+function buildPaymentData(installmentsCount, deferredDays, locale) {
     var BasketMgr = require('dw/order/BasketMgr');
     var URLUtils = require('dw/web/URLUtils');
+    var almaHelper = require('*/cartridge/scripts/helpers/almaHelpers');
 
     var formatAddress = require('*/cartridge/scripts/helpers/almaAddressHelper').formatAddress;
     var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
@@ -245,9 +284,6 @@ function buildPaymentData(order, installmentsCount, deferredDays, locale) {
 
     var currentBasket = BasketMgr.getCurrentBasket();
     var isEnableOnShipment = isOnShipmentPaymentEnabled(installmentsCount);
-    var orderToken = order.getOrderToken();
-    var orderId = order.orderNo;
-
     return {
         payment: {
             purchase_amount: Math.round(currentBasket.totalGrossPrice.multiply(100).value),
@@ -264,14 +300,12 @@ function buildPaymentData(order, installmentsCount, deferredDays, locale) {
             deferred: isEnableOnShipment ? 'trigger' : '',
             deferred_description: isEnableOnShipment ? require('dw/web/Resource').msg('alma.at_shipping', 'alma', null) : '',
             custom_data: {
-                order_id: orderId,
-                order_token: orderToken
+                cms_name: 'SFCC',
+                cms_version: almaHelper.getSfccVersion(),
+                alma_plugin_version: pkg.version
             }
         },
-        customer: formatCustomerData(currentBasket.getCustomer().profile, currentBasket.getCustomerEmail()),
-        order: {
-            merchant_reference: orderId
-        }
+        customer: formatCustomerData(currentBasket.getCustomer().profile, currentBasket.getCustomerEmail())
     };
 }
 
@@ -291,6 +325,25 @@ function flagAsPotentialFraud(pid, reason) {
     potentialFraudService.call(param);
 }
 
+/**
+ *  Call API to set merchant_reference in order
+ * @param {string} pid payment id
+ * @param {Order} order to give to the payment endpoint
+ */
+function setOrderMerchantReference(pid, order) {
+    var service = require('*/cartridge/scripts/services/alma');
+
+    var param = {
+        pid: pid,
+        order: {
+            merchant_reference: order.getOrderNo()
+        }
+    };
+
+    var setOrderMerchantReferenceAPI = service.setOrderMerchantReferenceAPI();
+    setOrderMerchantReferenceAPI.call(param);
+}
+
 
 module.exports = {
     orderStatusEquals: orderStatusEquals,
@@ -304,5 +357,7 @@ module.exports = {
     createOrderFromBasket: createOrderFromBasket,
     createPayment: createPayment,
     buildPaymentData: buildPaymentData,
-    flagAsPotentialFraud: flagAsPotentialFraud
+    flagAsPotentialFraud: flagAsPotentialFraud,
+    createOrderFromBasketUUID: createOrderFromBasketUUID,
+    setOrderMerchantReference: setOrderMerchantReference
 };

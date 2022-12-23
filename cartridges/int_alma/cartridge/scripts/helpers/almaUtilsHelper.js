@@ -40,7 +40,7 @@ function filter(arrayToFilter, predicate) {
 /**
  * A find function to mimic .find to pretend we have a modern dev env
  * @param {array} haystack any array
- * @param {function} predicate any predicate function that will take an array iterator and return a elem
+ * @param {function} predicate any predicate function that will take an array iterator and return an elem
  * @returns {any|null} an item from the array or null is item is not found
  */
 function find(haystack, predicate) {
@@ -74,7 +74,7 @@ function map(arrayToTransform, predicate) {
  * A some function to mimic .some to pretend we have a modern dev env
  * @param {array} haystack any array
  * @param {function} predicate any predicate function that will take an array iterator and return any
- * @returns {array} the transformed array
+ * @returns {boolean} the transformed array
  */
 function some(haystack, predicate) {
     return filter(haystack, predicate).length > 0;

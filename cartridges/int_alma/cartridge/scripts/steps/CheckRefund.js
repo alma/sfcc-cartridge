@@ -3,7 +3,7 @@
 /**
  * Check if we should refund the payment
  * @param {dw.order.Order} order to be paid
- * @returns {bool} should we refund this order payment
+ * @returns {boolean} should we refund this order payment
  */
 function isOrderToBeRefund(order) {
     return (

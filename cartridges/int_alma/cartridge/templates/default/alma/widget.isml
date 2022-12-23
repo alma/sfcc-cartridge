@@ -17,7 +17,7 @@
                             widgets.add(Alma.Widgets.PaymentPlans, {
                                 container: selector,
                                 purchaseAmount: data.amount,
-                                transitionDelay: false,
+                                transitionDelay: 5000,
                                 locale: data.locale.split("_")[0],
                                 plans: data.paymentTypes
                             });

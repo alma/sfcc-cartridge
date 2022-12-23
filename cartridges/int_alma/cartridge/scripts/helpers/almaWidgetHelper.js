@@ -6,7 +6,7 @@ var filter = utils.filter;
 
 /**
  * Returns is Alma widget Enable in cart
- * @returns {Bolean} true or false
+ * @returns {boolean} true or false
  */
 function isCartWidgetEnable() {
     return Site.getCurrent().getCustomPreferenceValue('isWidgetEnable');
@@ -14,7 +14,7 @@ function isCartWidgetEnable() {
 
 /**
  * Returns is Alma widget Enable in product detail
- * @returns {Bolean} true or false
+ * @returns {boolean} true or false
  */
 function isProductWidgetEnable() {
     return Site.getCurrent().getCustomPreferenceValue('isProductWidgetEnable');
@@ -61,7 +61,7 @@ function getSelector(pageType) {
 /**
  * Returns is Alma widget Enable
  * @param {string} pageType - 'cart'|'product'
- * @returns {Bolean} true or false
+ * @returns {boolean} true or false
  */
 function isWidgetEnabled(pageType) {
     // Only display widget on site that can use EUR

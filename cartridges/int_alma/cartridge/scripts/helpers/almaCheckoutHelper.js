@@ -113,7 +113,7 @@ function getPaymentInstallments(plan, currencyCode) {
             plan.deferred_days
         );
     }
-    // onshipment payment
+    // on shipment payment
     if (isOnShipmentPaymentEnabled(plan.installments_count)) {
         return formatCurrency(plan.payment_plan[0].purchase_amount / 100, currencyCode) + ' ' +
             Resource.msg(getPropertyCategory(plan) + '.installments.onshipment', 'alma', null) + ' ' +
@@ -157,7 +157,7 @@ function isPnx(plan) {
 
 /**
  * Returns true if the merchant want in-page payment
- * @returns {bool} if we can use fragment
+ * @returns {boolean} if we can use fragment
  */
 function isFragmentActivated() {
     var Site = require('dw/system/Site');

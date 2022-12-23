@@ -4,7 +4,7 @@
  * format address for eligibility service
  * @param  {dw.order.OrderAddress} address the customer address
  * @param  {string} email the customer email
- * @returns {Object} formated for eligibility service
+ * @returns {Object} formatted for eligibility service
  */
 function formatAddress(address, email) {
     if (address === null) {
