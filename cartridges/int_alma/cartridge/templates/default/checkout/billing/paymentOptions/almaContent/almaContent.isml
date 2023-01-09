@@ -58,7 +58,8 @@
     var almaContentContext = {
         almaUrl: {
             getPlansRefresh: "${pdict.get_plans_refresh}"
-        }
+        },
+        paymentOptionID:"${paymentOption.ID}"
     }
 </script>
 <script src="${URLUtils.staticURL('/js/almaCheckoutContent.js')}"></script>
