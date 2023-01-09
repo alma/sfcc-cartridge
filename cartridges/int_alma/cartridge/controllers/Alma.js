@@ -350,4 +350,19 @@ server.get(
         return next();
     });
 
+server.get('GetPlansRefresh',
+    server.middleware.https,
+    function (req, res, next) {
+        var getLocale = require('*/cartridge/scripts/helpers/almaHelpers').getLocale;
+        var almaPlanHelper = require('*/cartridge/scripts/helpers/almaPlanHelper');
+
+        var BasketMgr = require('dw/order/BasketMgr');
+        var currentBasket = BasketMgr.getCurrentBasket();
+
+        res.json({
+            plans: almaPlanHelper.getPlansForCheckout(getLocale(req), currentBasket)
+        });
+        return next();
+    });
+
 module.exports = server.exports();
