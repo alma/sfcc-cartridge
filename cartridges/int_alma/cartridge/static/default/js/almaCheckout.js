@@ -15,7 +15,7 @@ window.addEventListener('DOMContentLoaded',
 
         function addCheckoutEvent(event) {
             document
-                .querySelector(context.selector.submitPayment)
+                .querySelector(almaContext.selector.submitPayment)
                 .addEventListener('click', event)
         }
 
@@ -25,7 +25,7 @@ window.addEventListener('DOMContentLoaded',
             while (event) {
                 lastEvent = event;
                 document
-                    .querySelector(context.selector.submitPayment)
+                    .querySelector(almaContext.selector.submitPayment)
                     .removeEventListener('click', event)
 
                 event = checkoutEvents.shift()
@@ -36,7 +36,7 @@ window.addEventListener('DOMContentLoaded',
             }
         }
 
-        var paymentOptions = document.querySelectorAll(context.selector.paymentOptions);
+        var paymentOptions = document.querySelectorAll(almaContext.selector.paymentOptions);
 
         paymentOptions.forEach(function (paymentOption) {
             paymentOption.addEventListener('click', removeCheckoutEvents)
@@ -56,17 +56,17 @@ window.addEventListener('DOMContentLoaded',
                     installments_count: installments_count,
                     deferred_days: deferred_days,
                     deferred_months: 0,
-                    return_url: context.payment.returnUrl,
-                    ipn_callback_url: context.payment.ipnCallbackUrl,
-                    customer_cancel_url: context.payment.customerCancelUrl,
+                    return_url: almaContext.payment.returnUrl,
+                    ipn_callback_url: almaContext.payment.ipnCallbackUrl,
+                    customer_cancel_url: almaContext.payment.customerCancelUrl,
                     locale: data.locale.split("_")[0],
                     shipping_address: data.shipping_address,
                     deferred: data.isEnableOnShipment ? "trigger" : "",
-                    deferred_description: data.isEnableOnShipment ? decodeHtml(context.payment.deferredDescription) : "",
+                    deferred_description: data.isEnableOnShipment ? decodeHtml(almaContext.payment.deferredDescription) : "",
                     custom_data: {
-                        cms_name: context.payment.customData.cmsName,
-                        cms_version: context.payment.customData.cmsVersion,
-                        alma_plugin_version: context.payment.customData.almaPluginVersion
+                        cms_name: almaContext.payment.customData.cmsName,
+                        cms_version: almaContext.payment.customData.cmsVersion,
+                        alma_plugin_version: almaContext.payment.customData.almaPluginVersion
                     }
                 },
                 customer: data.customer
@@ -85,13 +85,13 @@ window.addEventListener('DOMContentLoaded',
             installments_count,
             deferred_days
         ) {
-            var response = await fetch(context.almaUrl.dataUrl + '?installment=' + installments_count);
+            var response = await fetch(almaContext.almaUrl.dataUrl + '?installment=' + installments_count);
             var data = await response.json();
 
             var paymentData = getPaymentData(data, installments_count, deferred_days)
 
-            var fragments = new Alma.Fragments(context.merchantId, {
-                mode: context.almaMode === 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST
+            var fragments = new Alma.Fragments(almaContext.merchantId, {
+                mode: almaContext.almaMode === 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST
             });
 
             var paymentForm = fragments.createPaymentForm(paymentData, {
@@ -131,7 +131,7 @@ window.addEventListener('DOMContentLoaded',
          */
         async function redirectToPaymentPage(installments_count, deferred_days) {
             var response = await fetch(
-                context.almaUrl.createPaymentUrl + '?deferred_days=' + deferred_days + '&installments=' + installments_count,
+                almaContext.almaUrl.createPaymentUrl + '?deferred_days=' + deferred_days + '&installments=' + installments_count,
                 { method: 'POST' }
             );
             var body = await response.json();
@@ -169,7 +169,7 @@ window.addEventListener('DOMContentLoaded',
                                     return;
                                 }
                                 checkoutFragmentCallInProgress = true;
-                                var ajaxResponse = await fetch(context.almaUrl.checkoutFragmentUrl + '?pid=' + paymentForm.currentPayment.id + '&amount=' + paymentForm.currentPayment.purchase_amount + '&alma_payment_method=' + alma_payment_method);
+                                var ajaxResponse = await fetch(almaContext.almaUrl.checkoutFragmentUrl + '?pid=' + paymentForm.currentPayment.id + '&amount=' + paymentForm.currentPayment.purchase_amount + '&alma_payment_method=' + alma_payment_method);
                                 var orderFragment = await ajaxResponse.json();
                                 switch (ajaxResponse.status) {
                                     case 200:
@@ -226,7 +226,7 @@ window.addEventListener('DOMContentLoaded',
         })
 
         function displayMismatchMessage(orderFragment) {
-            var errorMessagePosition = document.querySelectorAll(context.selector.fragmentErrors)[0];
+            var errorMessagePosition = document.querySelectorAll(almaContext.selector.fragmentErrors)[0];
             errorMessagePosition.after(createMismatchMessage(orderFragment));
         }
 
@@ -248,7 +248,7 @@ window.addEventListener('DOMContentLoaded',
         }
 
         function displayPaymentMethodNotFound(orderFragment) {
-            var errorMessagePosition = document.querySelectorAll(context.selector.fragmentErrors)[0];
+            var errorMessagePosition = document.querySelectorAll(almaContext.selector.fragmentErrors)[0];
             errorMessagePosition.after(createPaymentMethodNotFound(orderFragment));
         }
 
@@ -263,7 +263,7 @@ window.addEventListener('DOMContentLoaded',
         }
 
         function displayPaymentError(status) {
-            var errorMessagePosition = document.querySelectorAll(context.selector.fragmentErrors)[0];
+            var errorMessagePosition = document.querySelectorAll(almaContext.selector.fragmentErrors)[0];
             var errorMessage = document.createTextNode(status);
             var errorDiv = document.createElement('div');
             errorDiv.classList.add('col-12', 'alma-error-message');
