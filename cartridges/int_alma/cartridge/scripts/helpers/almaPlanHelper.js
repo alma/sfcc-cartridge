@@ -138,17 +138,12 @@ function getFeePlansBoFormat(feePlans) {
  * Get data to initialize widget in cart and product detail
  * @param {string} locale e.g. "fr_FR"
  * @param {dw.order.Basket} currentBasket current basket
- * @returns {string} eligible data
+ * @returns {array} eligible data
  */
 function getPlansForCheckout(locale, currentBasket) {
     var feePlans = getFeePlans();
 
     feePlans = getFeePlansBoFormat(feePlans);
-    var purchaseAmount = currentBasket.totalGrossPrice.value;
-
-    feePlans = almaUtilsHelpers.filter(feePlans, function (feePlan) {
-        return filterWithMerchantConfig(feePlan, purchaseAmount);
-    });
 
     var plans = {};
     feePlans.forEach(function (feePlan) {
@@ -157,6 +152,13 @@ function getPlansForCheckout(locale, currentBasket) {
         }
         plans[feePlan.payment_method][feePlan.key] = feePlan;
     });
+
+    var purchaseAmount = currentBasket.totalGrossPrice.value;
+
+    feePlans = almaUtilsHelpers.filter(feePlans, function (feePlan) {
+        return filterWithMerchantConfig(feePlan, purchaseAmount);
+    });
+
 
     var plansEligible = almaEligibilityHelper.getEligibility(feePlans, locale, currentBasket);
 
@@ -172,15 +174,30 @@ function getPlansForCheckout(locale, currentBasket) {
     plansEligible.forEach(function (planEligible) {
         if (typeof plans[planEligible.payment_method] === 'undefined') {
             plans[planEligible.payment_method] = {};
+            logger.error('Never arrive -> planEligible.payment_method: {0}', [planEligible.payment_method]);
         }
         if (typeof plans[planEligible.payment_method][planEligible.selector] === 'undefined') {
             plans[planEligible.payment_method][planEligible.selector] = {};
+            logger.error('Never arrive -> planEligible.selector: {0}', [planEligible.selector]);
         }
         plans[planEligible.payment_method][planEligible.selector].eligible = true;
         plans[planEligible.payment_method][planEligible.selector].payment_plans = planEligible.payment_plan;
+        plans[planEligible.payment_method][planEligible.selector].properties = planEligible.properties;
     });
 
-    return JSON.stringify(plans);
+    var formatedPlans = [];
+    Object.keys(plans).forEach(function (paymentMethod) {
+        var paymentMethodPlans = [];
+        var formatedPaymentMethod = {};
+        Object.keys(plans[paymentMethod]).forEach(function (keys) {
+            paymentMethodPlans.push(plans[paymentMethod][keys]);
+        });
+        formatedPaymentMethod.name = paymentMethod;
+        formatedPaymentMethod.plans = paymentMethodPlans;
+        formatedPlans.push(formatedPaymentMethod);
+    });
+
+    return formatedPlans;
 }
 
 module.exports = {
