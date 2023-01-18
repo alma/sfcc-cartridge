@@ -77,12 +77,8 @@ function applyMerchantConfig(currentPlan) {
  * @returns {Object} plan any alma plan
  */
 function filterWithMerchantConfig(plan, purchaseAmount) {
-    var sitePrefBase = getSitePrefNameFromPlan(plan);
-    var minSitePref = Site.getCurrent().getCustomPreferenceValue(sitePrefBase + '_min');
-    var maxSitePref = Site.getCurrent().getCustomPreferenceValue(sitePrefBase + '_max');
-
-    return (minSitePref === null || purchaseAmount > minSitePref)
-            && (maxSitePref === null || purchaseAmount < maxSitePref);
+    return (purchaseAmount > (plan.min_display_amount / 100))
+        && (purchaseAmount < (plan.max_display_amount / 100));
 }
 
 /**
@@ -114,44 +110,77 @@ function getPlansForWidget() {
 }
 
 /**
+ * Get feePlans with BO info
+ * @param {Object} feePlans feePlans
+ * @returns {Array} feePlans
+ */
+function getFeePlansBoFormat(feePlans) {
+    var plans = [];
+    feePlans.forEach(function (feePlan) {
+        var feePlanKey = getSitePrefNameFromPlan(feePlan);
+        if (Site.getCurrent()
+            .getCustomPreferenceValue(feePlanKey)) {
+            var plan = feePlan;
+            plan.key = feePlanKey;
+            plan.max_display_amount = Site.getCurrent()
+                .getCustomPreferenceValue(feePlanKey + '_max') * 100;
+            plan.min_display_amount = Site.getCurrent()
+                .getCustomPreferenceValue(feePlanKey + '_min') * 100;
+            plan.payment_method = almaCheckoutHelper.getPlanPaymentMethodID(feePlan);
+            plans.push(plan);
+        }
+    });
+
+    return plans;
+}
+
+/**
  * Get data to initialize widget in cart and product detail
  * @param {string} locale e.g. "fr_FR"
  * @param {dw.order.Basket} currentBasket current basket
- * @returns {array} eligible data
+ * @returns {string} eligible data
  */
 function getPlansForCheckout(locale, currentBasket) {
-    var plansForEligibility = getAllowedPlans();
+    var feePlans = getFeePlans();
+
+    feePlans = getFeePlansBoFormat(feePlans);
     var purchaseAmount = currentBasket.totalGrossPrice.value;
 
-    plansForEligibility = almaUtilsHelpers.filter(plansForEligibility, function (plan) {
-        return filterWithMerchantConfig(plan, purchaseAmount);
+    feePlans = almaUtilsHelpers.filter(feePlans, function (feePlan) {
+        return filterWithMerchantConfig(feePlan, purchaseAmount);
     });
 
-    var plans = almaEligibilityHelper.getEligibility(plansForEligibility, locale, currentBasket);
+    var plans = {};
+    feePlans.forEach(function (feePlan) {
+        if (typeof plans[feePlan.payment_method] === 'undefined') {
+            plans[feePlan.payment_method] = {};
+        }
+        plans[feePlan.payment_method][feePlan.key] = feePlan;
+    });
 
-    if (!Array.isArray(plans)) {
-        plans = [plans];
+    var plansEligible = almaEligibilityHelper.getEligibility(feePlans, locale, currentBasket);
+
+    if (!Array.isArray(plansEligible)) {
+        plansEligible = [plansEligible];
     }
 
-    // remove non eligible plan ?
-    plans = almaUtilsHelpers.filter(plans, function (plan) {
-        return plan.eligible === true && !(plan.deferred_days === 0 && plan.installments_count === 1);
-    });
-
-    plans = almaUtilsHelpers.map(plans, function (plan) {
+    plansEligible = almaUtilsHelpers.map(plansEligible, function (plan) {
         plan.purchaseAmount = purchaseAmount; // eslint-disable-line no-param-reassign
         return almaCheckoutHelper.formatForCheckout(plan, currentBasket.currencyCode);
     });
 
-    var orderedPlans = {};
-    for (var i = 0; i < plans.length; i++) {
-        if (!orderedPlans[plans[i].payment_method]) {
-            orderedPlans[plans[i].payment_method] = [];
+    plansEligible.forEach(function (planEligible) {
+        if (typeof plans[planEligible.payment_method] === 'undefined') {
+            plans[planEligible.payment_method] = {};
         }
-        orderedPlans[plans[i].payment_method].push(plans[i]);
-    }
+        if (typeof plans[planEligible.payment_method][planEligible.selector] === 'undefined') {
+            plans[planEligible.payment_method][planEligible.selector] = {};
+        }
+        plans[planEligible.payment_method][planEligible.selector].eligible = true;
+        plans[planEligible.payment_method][planEligible.selector].payment_plans = planEligible.payment_plan;
+    });
 
-    return orderedPlans;
+    return JSON.stringify(plans);
 }
 
 module.exports = {
