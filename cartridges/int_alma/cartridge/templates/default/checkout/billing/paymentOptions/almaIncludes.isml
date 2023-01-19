@@ -1,64 +1,64 @@
 <link rel="stylesheet" href="${URLUtils.staticURL('/css/almaContent.css')}"/>
 <script src="https://cdn.jsdelivr.net/npm/@alma/fragments@1.x/dist/alma-fragments.umd.js"></script>
- <script>
-     var almaContext = {
-         almaMode: "${pdict.mode}",
-         merchantId: "${pdict.merchantId}",
-         selector: {
-             submitPayment: ".submit-payment",
-             paymentOptions: ".payment-options",
-             fragmentErrors: ".payment-form"
-         },
-         payment: {
-             purchaseAmount: "${pdict.purchase_amount}",
-             returnUrl: "${pdict.return_url}",
-             ipnCallbackUrl: "${pdict.ipn_callback_url}",
-             customerCancelUrl: "${pdict.customer_cancel_url}",
-             deferredDescription: "${Resource.msg('alma.at_shipping', 'alma', null)}",
-             customData: {
-                 cmsName: "${pdict.cms_name}",
-                 cmsVersion: "${pdict.cms_version}",
-                 almaPluginVersion: "${pdict.alma_plugin_version}"
-             }
-         },
-         almaUrl: {
-             dataUrl: "${pdict.data_url}",
-             createPaymentUrl: "${pdict.create_payment_url}",
-             checkoutFragmentUrl: "${pdict.checkout_fragment_url}",
-             orderAmountUrl: "${pdict.order_amount_url}",
-             getPlansRefresh: "${pdict.get_plans_refresh}"
-         },
-         updateCheckoutViewEvent: 'checkout:updateCheckoutView'
-     }
+<script>
+    var almaContext = {
+        almaMode: '${pdict.mode}',
+        merchantId: '${pdict.merchantId}',
+        selector: {
+            submitPayment: '.submit-payment',
+            paymentOptions: '.payment-options',
+            fragmentErrors: '.payment-form'
+        },
+        payment: {
+            purchaseAmount: '${pdict.purchase_amount}',
+            returnUrl: '${pdict.return_url}',
+            ipnCallbackUrl: '${pdict.ipn_callback_url}',
+            customerCancelUrl: '${pdict.customer_cancel_url}',
+            deferredDescription: '${Resource.msg(\'alma.at_shipping\', \'alma\', null)}',
+            customData: {
+                cmsName: '${pdict.cms_name}',
+                cmsVersion: '${pdict.cms_version}',
+                almaPluginVersion: '${pdict.alma_plugin_version}'
+            }
+        },
+        almaUrl: {
+            dataUrl: '${pdict.data_url}',
+            createPaymentUrl: '${pdict.create_payment_url}',
+            checkoutFragmentUrl: '${pdict.checkout_fragment_url}',
+            orderAmountUrl: '${pdict.order_amount_url}',
+            getPlansRefresh: '${pdict.get_plans_refresh}'
+        },
+        updateCheckoutViewEvent: 'checkout:updateCheckoutView'
+    };
 
-     window.addEventListener('DOMContentLoaded',
-         function () {
-             /**
-              * This method remove the default submit action for SFCC StoreFront theme
-              */
-             function toggleDefaultSubmitAction() {
-                 var checkoutBtn = document.querySelector(almaContext.selector.submitPayment);
-                 var paymentMethodsTabs = document.querySelectorAll(almaContext.selector.paymentOptions);
-                 var nextStepButton = checkoutBtn.parentElement.parentElement;
-                 paymentMethodsTabs.forEach(function (pm) {
-                     pm.addEventListener('click', function (event) {
-                         var isAlmaTab = event.target.closest('li')
-                             .classList
-                             .contains('alma-tab');
-                         if (isAlmaTab) {
-                             nextStepButton.classList.remove('next-step-button');
-                             checkoutBtn.setAttribute('type', 'button');
-                             return;
-                         }
-                         nextStepButton.classList.add('next-step-button');
-                         checkoutBtn.setAttribute('type', 'submit');
-                     });
-                 });
-             }
+    window.addEventListener('DOMContentLoaded',
+        function () {
+            /**
+             * This method remove the default submit action for SFCC StoreFront theme
+             */
+            function toggleDefaultSubmitAction() {
+                var checkoutBtn = document.querySelector(almaContext.selector.submitPayment);
+                var paymentMethodsTabs = document.querySelectorAll(almaContext.selector.paymentOptions);
+                var nextStepButton = checkoutBtn.parentElement.parentElement;
+                paymentMethodsTabs.forEach(function (pm) {
+                    pm.addEventListener('click', function (event) {
+                        var isAlmaTab = event.target.closest('li')
+                            .classList
+                            .contains('alma-tab');
+                        if (isAlmaTab) {
+                            nextStepButton.classList.remove('next-step-button');
+                            checkoutBtn.setAttribute('type', 'button');
+                            return;
+                        }
+                        nextStepButton.classList.add('next-step-button');
+                        checkoutBtn.setAttribute('type', 'submit');
+                    });
+                });
+            }
 
-             toggleDefaultSubmitAction();
+            toggleDefaultSubmitAction();
 
-         });
- </script>
+        });
+</script>
 
- <script src="${URLUtils.staticURL('/js/almaCheckout.js')}"></script>
+<script src="${URLUtils.staticURL('/js/almaCheckout.js')}"></script>
