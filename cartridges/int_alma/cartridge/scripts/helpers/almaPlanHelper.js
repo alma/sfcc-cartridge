@@ -183,6 +183,7 @@ function getPlansForCheckout(locale, currentBasket) {
         plans[planEligible.payment_method][planEligible.selector].eligible = true;
         plans[planEligible.payment_method][planEligible.selector].payment_plans = planEligible.payment_plan;
         plans[planEligible.payment_method][planEligible.selector].properties = planEligible.properties;
+        plans[planEligible.payment_method][planEligible.selector].in_page = planEligible.in_page;
     });
 
     var formatedPlans = [];
