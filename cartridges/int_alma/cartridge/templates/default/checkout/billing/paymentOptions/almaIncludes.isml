@@ -27,7 +27,7 @@
              checkoutFragmentUrl: "${pdict.checkout_fragment_url}",
              orderAmountUrl: "${pdict.order_amount_url}"
          },
-         updateCheckoutEvent: 'checkout:updateCheckoutView'
+         updateCheckoutViewEvent: 'checkout:updateCheckoutView'
      }
 
      window.addEventListener('DOMContentLoaded',
