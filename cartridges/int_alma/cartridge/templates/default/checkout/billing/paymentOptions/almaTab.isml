@@ -8,34 +8,12 @@
         <span class="alma-tab-plans">
                 <span class="alma-tab-plans-span">
                     <isloop iterator="${pdict.plans}" var="paymentMethod">
-
                         <isif condition="${paymentMethod.name === paymentOption.ID}">
-
-                            <script>
-                                var needToBeHide = [];
-                            </script>
-
                             <isloop iterator="${paymentMethod.plans}" var="plan">
-
-                                <script>
-                                    needToBeHide.push('${plan.payment_plans}' === 'null');
-                                </script>
-
-                                <span id="${'alma-tab' + plan.key + '-img'}">
+                                <span id="${'alma-tab-' + plan.key + '-img'}">
                                     <isprint value="${plan.properties.img}" encoding="off"/>
                                 </span>
                             </isloop>
-
-                            <script>
-                                if (needToBeHide.includes(false)) {
-                                    document.getElementById("${'alma-tab-' + paymentOption.ID}")
-                                        .removeAttribute('hidden');
-                                } else {
-                                    document.getElementById("${'alma-tab-' + paymentOption.ID}")
-                                        .setAttribute('hidden', 'hidden');
-                                }
-                            </script>
-
                         </isif>
                     </isloop>
                 </span>
