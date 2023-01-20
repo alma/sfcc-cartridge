@@ -1,17 +1,86 @@
 window.addEventListener('DOMContentLoaded',
     function () {
 
+        /* Uses jQuery here because context.updateCheckoutViewEvent is triggered with jQuery */
+        jQuery('body').on(almaContext.updateCheckoutViewEvent, async function() {
+            var response = await fetch(almaContext.almaUrl.getPlansRefresh);
+            var data = await response.json()
+            almaPaymentMethods = data.plans;
+
+            for (const [indexPaymentMethod, almaPaymentMethod] of Object.entries(almaPaymentMethods)) {
+                var name = almaPaymentMethod.name;
+                var plans = almaPaymentMethod.plans;
+
+                for (const [indexPlan, plan] of Object.entries(plans)) {
+
+                    if (plan.payment_plans) {
+                        document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)
+                            .removeAttribute('hidden');
+                        var elementImg = document.getElementById(`${plan.key + '-img'}`);
+                        if (elementImg) {
+                            elementImg.textContent = plan.properties.img;
+                        }
+
+                        var elementTitle = document.getElementById(`${plan.key + '-title'}`);
+                        if (elementTitle) {
+                            elementTitle.textContent = plan.properties.title;
+                        }
+
+                        var elementDescription = document.getElementById(`${plan.key + '-description'}`);
+                        if (elementDescription) {
+                            elementDescription.textContent = plan.properties.description;
+                        }
+
+                        var elementFees = document.getElementById(`${plan.key + '-fees'}`);
+                        if (elementFees) {
+                            elementFees.textContent = plan.properties.fees;
+                        }
+
+                        var elementBasketCost = document.getElementById(`${plan.key + '-basket_cost'}`);
+                        if (elementBasketCost) {
+                            elementBasketCost.textContent = plan.properties.basket_cost;
+                        }
+
+                        var elementAmount = document.getElementById(`${plan.key + '-amount'}`);
+                        if (elementAmount) {
+                            elementAmount.textContent = plan.properties.amount;
+                        }
+
+                        var elementRate = document.getElementById(`${plan.key + '-rate'}`);
+                        if (elementRate) {
+                            elementRate.textContent = plan.properties.rate;
+                        }
+
+                        var elementTotalCost = document.getElementById(`${plan.key + '-total_cost'}`);
+                        if (elementTotalCost) {
+                            elementTotalCost.textContent = plan.properties.total_cost;
+                        }
+
+                        var elementPaymentInstallments = document.getElementById(`${plan.key + '-payment_installments'}`);
+                        if (elementPaymentInstallments) {
+                            elementPaymentInstallments.textContent = plan.properties.payment_installments;
+                        }
+
+                    } else {
+                        document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)
+                            .setAttribute('hidden', 'hidden');
+                    }
+                }
+
+                if (almaPaymentMethod.hasEligiblePaymentMethod) {
+                    document.getElementById(`${'alma-tab-' + name}`)
+                        .removeAttribute('hidden');
+                } else {
+                    document.getElementById(`${'alma-tab-' + name}`)
+                        .setAttribute('hidden', 'hidden');
+                }
+            }
+
+        });
+
         var checkoutFragmentCallInProgress = false;
 
         var checkoutEvents = [];
-        var purchase_amount =  Number(almaContext.payment.purchaseAmount);
-
-        /* Uses jQuery here because context.updateCheckoutEvent is triggered with jQuery */
-        jQuery('body').on(almaContext.updateCheckoutEvent, async function() {
-            var response = await fetch(almaContext.almaUrl.orderAmountUrl);
-            var data = await response.json()
-            purchase_amount = data.purchase_amount;
-        });
 
         function addCheckoutEvent(event) {
             document
