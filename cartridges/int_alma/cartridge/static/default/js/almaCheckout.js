@@ -121,7 +121,7 @@ window.addEventListener('DOMContentLoaded',
         function getPaymentData(data, installments_count, deferred_days) {
             return {
                 payment: {
-                    purchase_amount: purchase_amount,
+                    purchase_amount: Number(almaContext.payment.purchaseAmount),
                     installments_count: installments_count,
                     deferred_days: deferred_days,
                     deferred_months: 0,
