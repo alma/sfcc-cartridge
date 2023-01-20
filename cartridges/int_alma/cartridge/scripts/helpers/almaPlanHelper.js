@@ -190,9 +190,28 @@ function getPlansForCheckout(locale, currentBasket) {
     Object.keys(plans).forEach(function (paymentMethod) {
         var paymentMethodPlans = [];
         var formatedPaymentMethod = {};
+        var hasEligiblePaymentMethod = false;
         Object.keys(plans[paymentMethod]).forEach(function (keys) {
             paymentMethodPlans.push(plans[paymentMethod][keys]);
+            if (!plans[paymentMethod][keys].properties) {
+                plans[paymentMethod][keys].properties = {
+                    title: '',
+                    img: '',
+                    description: '',
+                    fees: '',
+                    credit: {
+                        basket_cost: '',
+                        amount: '',
+                        rate: '',
+                        total_cost: ''
+                    }
+                };
+            }
+            if (plans[paymentMethod][keys].payment_plans) {
+                hasEligiblePaymentMethod = true;
+            }
         });
+        formatedPaymentMethod.hasEligiblePaymentMethod = hasEligiblePaymentMethod;
         formatedPaymentMethod.name = paymentMethod;
         formatedPaymentMethod.plans = paymentMethodPlans;
         formatedPlans.push(formatedPaymentMethod);
