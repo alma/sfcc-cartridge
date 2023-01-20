@@ -94,10 +94,12 @@ window.addEventListener('DOMContentLoaded',
                 onFailure: function () {
                     addCheckoutEvent(checkoutEvents.at(-1));
                     checkoutFragmentCallInProgress = false;
+                    displayFragmentOnFailure();
                 },
                 onPopupClose: function () {
                     addCheckoutEvent(checkoutEvents.at(-1));
                     checkoutFragmentCallInProgress = false;
+                    displayFragmentOnClose();
                 }
             })
 
@@ -260,6 +262,28 @@ window.addEventListener('DOMContentLoaded',
             var errorDiv = document.createElement('div');
             errorDiv.classList.add('col-12', 'alma-error-message');
             errorDiv.id = 'payment-error';
+            errorDiv.appendChild(errorMessage);
+            errorDiv.appendChild(document.createElement('br'));
+            errorMessagePosition.after(errorDiv);
+        }
+
+        function displayFragmentOnFailure() {
+            var errorMessagePosition = document.querySelectorAll(almaContext.selector.fragmentErrors)[0];
+            var errorMessage = document.createTextNode("Alma can't create payment. Please retry or contact us.");
+            var errorDiv = document.createElement('div');
+            errorDiv.classList.add('col-12', 'alma-error-message');
+            errorDiv.id = 'fragment-on-failure';
+            errorDiv.appendChild(errorMessage);
+            errorDiv.appendChild(document.createElement('br'));
+            errorMessagePosition.after(errorDiv);
+        }
+
+        function displayFragmentOnClose() {
+            var errorMessagePosition = document.querySelectorAll(almaContext.selector.fragmentErrors)[0];
+            var errorMessage = document.createTextNode("You closed Alma popup and this action canceled payment.");
+            var errorDiv = document.createElement('div');
+            errorDiv.classList.add('col-12', 'alma-error-message');
+            errorDiv.id = 'fragment-on-close';
             errorDiv.appendChild(errorMessage);
             errorDiv.appendChild(document.createElement('br'));
             errorMessagePosition.after(errorDiv);
