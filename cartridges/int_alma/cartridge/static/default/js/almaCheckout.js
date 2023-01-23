@@ -269,7 +269,7 @@ window.addEventListener('DOMContentLoaded',
 
         function displayFragmentOnFailure() {
             var errorMessagePosition = document.querySelectorAll(almaContext.selector.fragmentErrors)[0];
-            var errorMessage = document.createTextNode("Alma can't create payment. Please retry or contact us.");
+            var errorMessage = document.createTextNode("Alma is unable to process your payment. Please try again or reach out to us for assistance.");
             var errorDiv = document.createElement('div');
             errorDiv.classList.add('col-12', 'alma-error-message');
             errorDiv.id = 'fragment-on-failure';
@@ -280,7 +280,7 @@ window.addEventListener('DOMContentLoaded',
 
         function displayFragmentOnClose() {
             var errorMessagePosition = document.querySelectorAll(almaContext.selector.fragmentErrors)[0];
-            var errorMessage = document.createTextNode("You closed Alma popup and this action canceled payment.");
+            var errorMessage = document.createTextNode("By closing the Alma popup, you have canceled the payment process.");
             var errorDiv = document.createElement('div');
             errorDiv.classList.add('col-12', 'alma-error-message');
             errorDiv.id = 'fragment-on-close';
