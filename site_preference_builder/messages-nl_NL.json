@@ -1,6 +1,6 @@
 {
   "x_times_payment": {
-    "title": "Activate or deactivate [[installments]]x installment payment",
+    "title": "[[installments]]x termijnbetaling inschakelen",
     "min": "Min orderbedrag om [[installments]]x termijnbetaling toe te staan",
     "min_disclaimer": "N.B. u kunt niet lager gaan dan [[amount]] (neem contact op met uw Alma-verkoper als u dit wilt veranderen)",
     "max": "Max orderbedrag om [[installments]]x termijnbetaling toe te staan",
@@ -8,15 +8,15 @@
     "group": "Alma [[installments]]x"
   },
   "deferred_payment": {
-    "title": "Activate or deactivate payment @ +[[deferredDays]] days",
-    "min": "Min orderbedrag om betaling toe te staan @ +[[deferredDays]] dagen",
+    "title": "Betalingswijze @ +[[deferredDays]] dagen inschakelen",
+    "min": "Min. bestelbedrag om betaling @ +[[deferredDays]] dagen toe te staan",
     "min_disclaimer": "N.B. u kunt niet lager gaan dan [[amount]] (neem contact op met uw Alma-verkoper als u dit wilt veranderen)",
     "max": "Max orderbedrag om betaling @ +[[deferredDays]] dagen toe te staan",
     "max_disclaimer": "N.B. u kunt niet hoger gaan dan [[amount]] (neem contact op met uw Alma-verkoper als u dit wilt veranderen)",
     "group": "Alma D+[[deferredDays]]"
   },
   "x_times_deferred_payment": {
-    "title": "Activate or deactivate [[installments]]x installment payment @ +[[deferredDays]] days",
+    "title": "Schakel [[installments]]x termijnbetaling @ +[[deferredDays]dagen in",
     "min": "Min. orderbedrag voor [[installments]]x betaling in termijnen @ +[[deferredDays]] dagen",
     "min_disclaimer": "N.B. u kunt niet lager gaan dan [[amount]] (neem contact op met uw Alma-verkoper als u dit wilt veranderen)",
     "max": "Max orderbedrag voor [[installments]]x betaling in termijnen @ +[[deferredDays]] dagen",
@@ -31,13 +31,13 @@
   },
   "almaRefundType": {
     "name": "Alma Restitutietype",
-    "description": "Restitueer deze bestelling met de Alma module. Dit zal automatisch worden toegepast in uw alma dashboard. Het maximumbedrag dat kan worden terugbetaald is inclusief de kosten die de klant moet betalen.",
+    "description": "Restitutie van deze order met de Alma-module. Deze wordt automatisch in uw alma dashboard toegepast. Het maximale bedrag dat kan worden terugbetaald omvat de kosten die de klant moet betalen.",
     "valueDefinitions": {
       "total": "Totaal",
       "partial": "Gedeeltelijk"
     }
   },
   "AlmaRefund": {
-    "name": "Alma Refund (Refund deze bestelling met de Alma module. Dit zal automatisch worden toegepast in uw alma dashboard. Het maximale bedrag dat kan worden terugbetaald is inclusief de kosten die de klant moet betalen)"
+    "name": "Alma terugbetaling (Restitutie van deze order met de Alma-module. Deze wordt automatisch in uw alma dashboard toegepast. Het maximale bedrag dat kan worden terugbetaald omvat de kosten die de klant moet betalen.)"
   }
 }
