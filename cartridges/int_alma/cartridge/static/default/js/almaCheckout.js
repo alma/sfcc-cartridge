@@ -62,7 +62,7 @@ window.addEventListener('DOMContentLoaded',
                         }
 
                     } else {
-                        document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)
+                        document.getElementById(plan.key)
                             .setAttribute('hidden', 'hidden');
                     }
                 }
