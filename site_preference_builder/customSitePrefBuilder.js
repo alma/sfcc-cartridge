@@ -240,6 +240,12 @@ exports.addOnShippingOption = (file, plans) => {
         externallyManaged: false
       })
     );
+    file.metadata['type-extension'][2]['group-definitions'][0]['attribute-group'][0].attribute.push(
+      {
+        $: {
+          'attribute-id': 'ALMA_On_Shipment_Payment'
+        }
+      });
   }
   return file;
 };
