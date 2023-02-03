@@ -14,8 +14,14 @@ window.addEventListener('DOMContentLoaded',
                 for (const [indexPlan, plan] of Object.entries(plans)) {
 
                     if (plan.payment_plans) {
-                        document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)
+                        document.getElementById(plan.key)
                             .removeAttribute('hidden');
+
+                        var elementTabImg = document.getElementById(`${'alma-tab-' + plan.key + '-img'}`);
+                        if (elementTabImg) {
+                            elementTabImg.textContent = plan.properties.img;
+                        }
+
                         var elementImg = document.getElementById(`${plan.key + '-img'}`);
                         if (elementImg) {
                             elementImg.textContent = plan.properties.img;
@@ -38,22 +44,22 @@ window.addEventListener('DOMContentLoaded',
 
                         var elementBasketCost = document.getElementById(`${plan.key + '-basket_cost'}`);
                         if (elementBasketCost) {
-                            elementBasketCost.textContent = plan.properties.basket_cost;
+                            elementBasketCost.textContent = plan.properties.credit.basket_cost;
                         }
 
                         var elementAmount = document.getElementById(`${plan.key + '-amount'}`);
                         if (elementAmount) {
-                            elementAmount.textContent = plan.properties.amount;
+                            elementAmount.textContent = plan.properties.credit.amount;
                         }
 
                         var elementRate = document.getElementById(`${plan.key + '-rate'}`);
                         if (elementRate) {
-                            elementRate.textContent = plan.properties.rate;
+                            elementRate.textContent = plan.properties.credit.rate;
                         }
 
                         var elementTotalCost = document.getElementById(`${plan.key + '-total_cost'}`);
                         if (elementTotalCost) {
-                            elementTotalCost.textContent = plan.properties.total_cost;
+                            elementTotalCost.textContent = plan.properties.credit.total_cost;
                         }
 
                         var elementPaymentInstallments = document.getElementById(`${plan.key + '-payment_installments'}`);
