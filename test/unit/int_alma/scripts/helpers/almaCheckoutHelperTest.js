@@ -87,14 +87,14 @@ describe('almaCheckoutHelpers', function () {
 
         it('check selector', function () {
             var checkoutData = almaCheckoutHelpers.formatForCheckout(plan, currencyCode);
-            assert.equal(checkoutData.selector, 'alma_general_3_0');
+            assert.equal(checkoutData.selector, 'ALMA_general_3_0');
 
             var planDeferred = Object.assign({}, plan, {
                 installments_count: 1,
                 deferred_days: 15
             });
             checkoutData = almaCheckoutHelpers.formatForCheckout(planDeferred, currencyCode);
-            assert.equal(checkoutData.selector, 'alma_general_1_15');
+            assert.equal(checkoutData.selector, 'ALMA_general_1_15');
         });
 
         it('check properties', function () {
