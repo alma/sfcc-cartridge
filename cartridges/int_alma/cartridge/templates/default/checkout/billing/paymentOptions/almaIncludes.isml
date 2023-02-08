@@ -26,7 +26,7 @@
             createPaymentUrl: '${pdict.create_payment_url}',
             checkoutFragmentUrl: '${pdict.checkout_fragment_url}',
             orderAmountUrl: '${pdict.order_amount_url}',
-            getPlansRefresh: '${pdict.get_plans_refresh}'
+            getPlans: '${pdict.get_plans}'
         },
         updateCheckoutViewEvent: 'checkout:updateCheckoutView'
     };

@@ -249,6 +249,6 @@ function formatPlanForCheckout(plan, currencyCode) {
 }
 
 module.exports = {
-    formatForCheckout: formatPlanForCheckout,
+    formatPlanForCheckout: formatPlanForCheckout,
     getPlanPaymentMethodID: getPlanPaymentMethodID
 };

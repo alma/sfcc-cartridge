@@ -168,7 +168,7 @@ function getPlansForCheckout(locale, currentBasket) {
 
     plansEligible = almaUtilsHelpers.map(plansEligible, function (plan) {
         plan.purchaseAmount = purchaseAmount; // eslint-disable-line no-param-reassign
-        return almaCheckoutHelper.formatForCheckout(plan, currentBasket.currencyCode);
+        return almaCheckoutHelper.formatPlanForCheckout(plan, currentBasket.currencyCode);
     });
 
     plansEligible.forEach(function (planEligible) {

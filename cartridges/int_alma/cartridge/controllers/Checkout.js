@@ -33,7 +33,7 @@ function getAlmaUrls() {
         create_payment_url: URLUtils.https('Alma-CreatePaymentUrl').toString(),
         order_amount_url: URLUtils.http('Alma-OrderAmount').toString(),
         checkout_fragment_url: URLUtils.http('Alma-FragmentCheckout').toString(),
-        get_plans_refresh: URLUtils.http('Alma-GetPlansRefresh').toString()
+        get_plans: URLUtils.http('Alma-GetPlans').toString()
     };
 }
 
