@@ -5,7 +5,18 @@ window.addEventListener('DOMContentLoaded',
 
         /* Uses jQuery here because context.updateCheckoutViewEvent is triggered with jQuery */
         jQuery('body').on(almaContext.updateCheckoutViewEvent, async function() {
-            var response = await fetch(almaContext.almaUrl.getPlansRefresh);
+            var checkoutBtn = document.querySelector(almaContext.selector.submitPayment);
+            var nextStepButton = checkoutBtn.parentElement.parentElement;
+            nextStepButton.classList.add('next-step-button');
+            checkoutBtn.setAttribute('type', 'submit');
+
+
+
+            var responseOrderAmount = await fetch(almaContext.almaUrl.orderAmountUrl);
+            var dataOrderAmount = await responseOrderAmount.json()
+            purchase_amount = dataOrderAmount.purchase_amount;
+
+            var response = await fetch(almaContext.almaUrl.getPlans);
             var data = await response.json()
             almaPaymentMethods = data.plans;
 
@@ -14,9 +25,17 @@ window.addEventListener('DOMContentLoaded',
                 var plans = almaPaymentMethod.plans;
 
                 for (const [indexPlan, plan] of Object.entries(plans)) {
+                    var icons = document.querySelectorAll(".alma-payment-method .fa");
+                    [].forEach.call(icons, function (icon) {
+                        icon.classList.remove("fa-chevron-down");
+                    });
+
+                    document.getElementById(`${plan.key + '_fragment'}`).innerHTML = "";
 
                     if (plan.payment_plans) {
                         document.getElementById(plan.key)
+                            .removeAttribute('hidden');
+                        document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)
                             .removeAttribute('hidden');
 
                         var elementTabImg = document.getElementById(`${'alma-tab-' + plan.key + '-img'}`);
@@ -71,6 +90,8 @@ window.addEventListener('DOMContentLoaded',
 
                     } else {
                         document.getElementById(plan.key)
+                            .setAttribute('hidden', 'hidden');
+                        document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)
                             .setAttribute('hidden', 'hidden');
                     }
                 }
