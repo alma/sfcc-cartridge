@@ -94,12 +94,12 @@ window.addEventListener('DOMContentLoaded',
                 onFailure: function () {
                     addCheckoutEvent(checkoutEvents.at(-1));
                     checkoutFragmentCallInProgress = false;
-                    displayFragmentOnFailure();
+                    displayAlmaErrors("Alma is unable to process your payment. Please try again or reach out to us for assistance.", 'fragment-on-failure')
                 },
                 onPopupClose: function () {
                     addCheckoutEvent(checkoutEvents.at(-1));
                     checkoutFragmentCallInProgress = false;
-                    displayFragmentOnClose();
+                    displayAlmaErrors("By closing the Alma popup, you have canceled the payment process.", 'fragment-on-close')
                 }
             })
 
@@ -175,11 +175,11 @@ window.addEventListener('DOMContentLoaded',
                                         checkoutFragmentCallInProgress = false;
                                         break;
                                     case 500:
-                                        displayPaymentMethodNotFound(orderFragment)
+                                        displayAlmaErrors(orderFragment.error, 'payment-method-not-found-message')
                                         checkoutFragmentCallInProgress = false;
                                         break;
                                     default:
-                                        displayPaymentError(ajaxResponse.status);
+                                        displayAlmaErrors(ajaxResponse.status, 'payment-error')
                                         checkoutFragmentCallInProgress = false;
                                 }
                             }
@@ -241,49 +241,12 @@ window.addEventListener('DOMContentLoaded',
             return errorDiv;
         }
 
-        function displayPaymentMethodNotFound(orderFragment) {
-            var errorMessagePosition = document.querySelectorAll(context.selector.fragmentErrors)[0];
-            errorMessagePosition.after(createPaymentMethodNotFound(orderFragment));
-        }
-
-        function createPaymentMethodNotFound(orderFragment) {
-            var errorMessage = document.createTextNode(orderFragment.error);
-            var errorDiv = document.createElement('div');
-            errorDiv.classList.add('col-12', 'alma-error-message');
-            errorDiv.id = 'payment-method-not-found-message';
-            errorDiv.appendChild(errorMessage);
-            errorDiv.appendChild(document.createElement('br'));
-            return errorDiv;
-        }
-
-        function displayPaymentError(status) {
-            var errorMessagePosition = document.querySelectorAll(context.selector.fragmentErrors)[0];
-            var errorMessage = document.createTextNode(status);
-            var errorDiv = document.createElement('div');
-            errorDiv.classList.add('col-12', 'alma-error-message');
-            errorDiv.id = 'payment-error';
-            errorDiv.appendChild(errorMessage);
-            errorDiv.appendChild(document.createElement('br'));
-            errorMessagePosition.after(errorDiv);
-        }
-
-        function displayFragmentOnFailure() {
+        function displayAlmaErrors(message, divId) {
             var errorMessagePosition = document.querySelectorAll(almaContext.selector.fragmentErrors)[0];
-            var errorMessage = document.createTextNode("Alma is unable to process your payment. Please try again or reach out to us for assistance.");
+            var errorMessage = document.createTextNode(message);
             var errorDiv = document.createElement('div');
             errorDiv.classList.add('col-12', 'alma-error-message');
-            errorDiv.id = 'fragment-on-failure';
-            errorDiv.appendChild(errorMessage);
-            errorDiv.appendChild(document.createElement('br'));
-            errorMessagePosition.after(errorDiv);
-        }
-
-        function displayFragmentOnClose() {
-            var errorMessagePosition = document.querySelectorAll(almaContext.selector.fragmentErrors)[0];
-            var errorMessage = document.createTextNode("By closing the Alma popup, you have canceled the payment process.");
-            var errorDiv = document.createElement('div');
-            errorDiv.classList.add('col-12', 'alma-error-message');
-            errorDiv.id = 'fragment-on-close';
+            errorDiv.id = divId;
             errorDiv.appendChild(errorMessage);
             errorDiv.appendChild(document.createElement('br'));
             errorMessagePosition.after(errorDiv);
