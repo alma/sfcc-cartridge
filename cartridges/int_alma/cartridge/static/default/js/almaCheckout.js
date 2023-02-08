@@ -1,6 +1,8 @@
 window.addEventListener('DOMContentLoaded',
     function () {
 
+        var purchase_amount =  Number(almaContext.payment.purchaseAmount);
+
         /* Uses jQuery here because context.updateCheckoutViewEvent is triggered with jQuery */
         jQuery('body').on(almaContext.updateCheckoutViewEvent, async function() {
             var response = await fetch(almaContext.almaUrl.getPlansRefresh);
@@ -127,7 +129,7 @@ window.addEventListener('DOMContentLoaded',
         function getPaymentData(data, installments_count, deferred_days) {
             return {
                 payment: {
-                    purchase_amount: Number(almaContext.payment.purchaseAmount),
+                    purchase_amount: purchase_amount,
                     installments_count: installments_count,
                     deferred_days: deferred_days,
                     deferred_months: 0,
