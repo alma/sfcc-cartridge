@@ -162,9 +162,9 @@ window.addEventListener('DOMContentLoaded',
                     deferred: data.isEnableOnShipment ? "trigger" : "",
                     deferred_description: data.isEnableOnShipment ? decodeHtml(almaContext.payment.deferredDescription) : "",
                     custom_data: {
-                        cms_name: almaContext.payment.customData.cmsName,
-                        cms_version: almaContext.payment.customData.cmsVersion,
-                        alma_plugin_version: almaContext.payment.customData.almaPluginVersion
+                        cms_name: data.cms_name,
+                        cms_version: data.cms_version,
+                        alma_plugin_version: data.alma_plugin_version
                     }
                 },
                 customer: data.customer
