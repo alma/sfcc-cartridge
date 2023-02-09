@@ -135,6 +135,86 @@ function getFeePlansBoFormat(feePlans) {
 }
 
 /**
+ * Build eligible plans
+ * @param {number} purchaseAmount purchaseAmount
+ * @param {Array} feePlans feePlans
+ * @param {string} locale locale
+ * @param {Object} currentBasket currentBasket
+ * @param {array} plans plans
+ * @returns {array} eligible plans
+ */
+function buildEligiblePlans(purchaseAmount, feePlans, locale, currentBasket, plans) {
+    var plansEligible = almaEligibilityHelper.getEligibility(feePlans, locale, currentBasket);
+    if (!Array.isArray(plansEligible)) {
+        plansEligible = [plansEligible];
+    }
+
+    plansEligible = almaUtilsHelpers.map(plansEligible, function (planForReassignment) {
+        planForReassignment.purchaseAmount = purchaseAmount;
+        return almaCheckoutHelper.formatPlanForCheckout(planForReassignment, currentBasket.currencyCode);
+    });
+
+    plansEligible.forEach(function (planEligible) {
+        if (typeof plans[planEligible.payment_method] === 'undefined') {
+            plans[planEligible.payment_method] = {};
+            logger.error('Never arrive -> planEligible.payment_method: {0}', [planEligible.payment_method]);
+        }
+        if (typeof plans[planEligible.payment_method][planEligible.selector] === 'undefined') {
+            plans[planEligible.payment_method][planEligible.selector] = {};
+            logger.error('Never arrive -> planEligible.selector: {0}', [planEligible.selector]);
+        }
+        plans[planEligible.payment_method][planEligible.selector].eligible = true;
+        plans[planEligible.payment_method][planEligible.selector].payment_plans = planEligible.payment_plan;
+        plans[planEligible.payment_method][planEligible.selector].properties = planEligible.properties;
+        plans[planEligible.payment_method][planEligible.selector].in_page = planEligible.in_page;
+    });
+
+    return plans;
+}
+
+/**
+ * Get plans formatted for front integration
+ * @param {array} plans plans before format
+ * @returns {array} formatted plans
+ */
+function getFormattedPlans(plans) {
+    var formattedPlans = [];
+    Object.keys(plans).forEach(function (paymentMethod) {
+        var paymentMethodPlans = [];
+        var formattedPaymentMethod = {};
+        var hasEligiblePaymentMethod = false;
+
+        Object.keys(plans[paymentMethod]).forEach(function (keys) {
+            paymentMethodPlans.push(plans[paymentMethod][keys]);
+            if (!plans[paymentMethod][keys].properties) {
+                plans[paymentMethod][keys].properties = {
+                    title: '',
+                    img: '',
+                    description: '',
+                    fees: '',
+                    credit: {
+                        basket_cost: '',
+                        amount: '',
+                        rate: '',
+                        total_cost: ''
+                    }
+                };
+            }
+            if (plans[paymentMethod][keys].payment_plans) {
+                hasEligiblePaymentMethod = true;
+            }
+        });
+
+        formattedPaymentMethod.hasEligiblePaymentMethod = hasEligiblePaymentMethod;
+        formattedPaymentMethod.name = paymentMethod;
+        formattedPaymentMethod.plans = paymentMethodPlans;
+        formattedPlans.push(formattedPaymentMethod);
+    });
+
+    return formattedPlans;
+}
+
+/**
  * Get data to initialize widget in cart and product detail
  * @param {string} locale e.g. "fr_FR"
  * @param {dw.order.Basket} currentBasket current basket
@@ -159,65 +239,9 @@ function getPlansForCheckout(locale, currentBasket) {
         return filterWithMerchantConfig(feePlan, purchaseAmount);
     });
 
+    plans = buildEligiblePlans(purchaseAmount, feePlans, locale, currentBasket, plans);
 
-    var plansEligible = almaEligibilityHelper.getEligibility(feePlans, locale, currentBasket);
-
-    if (!Array.isArray(plansEligible)) {
-        plansEligible = [plansEligible];
-    }
-
-    plansEligible = almaUtilsHelpers.map(plansEligible, function (plan) {
-        plan.purchaseAmount = purchaseAmount; // eslint-disable-line no-param-reassign
-        return almaCheckoutHelper.formatPlanForCheckout(plan, currentBasket.currencyCode);
-    });
-
-    plansEligible.forEach(function (planEligible) {
-        if (typeof plans[planEligible.payment_method] === 'undefined') {
-            plans[planEligible.payment_method] = {};
-            logger.error('Never arrive -> planEligible.payment_method: {0}', [planEligible.payment_method]);
-        }
-        if (typeof plans[planEligible.payment_method][planEligible.selector] === 'undefined') {
-            plans[planEligible.payment_method][planEligible.selector] = {};
-            logger.error('Never arrive -> planEligible.selector: {0}', [planEligible.selector]);
-        }
-        plans[planEligible.payment_method][planEligible.selector].eligible = true;
-        plans[planEligible.payment_method][planEligible.selector].payment_plans = planEligible.payment_plan;
-        plans[planEligible.payment_method][planEligible.selector].properties = planEligible.properties;
-        plans[planEligible.payment_method][planEligible.selector].in_page = planEligible.in_page;
-    });
-
-    var formatedPlans = [];
-    Object.keys(plans).forEach(function (paymentMethod) {
-        var paymentMethodPlans = [];
-        var formatedPaymentMethod = {};
-        var hasEligiblePaymentMethod = false;
-        Object.keys(plans[paymentMethod]).forEach(function (keys) {
-            paymentMethodPlans.push(plans[paymentMethod][keys]);
-            if (!plans[paymentMethod][keys].properties) {
-                plans[paymentMethod][keys].properties = {
-                    title: '',
-                    img: '',
-                    description: '',
-                    fees: '',
-                    credit: {
-                        basket_cost: '',
-                        amount: '',
-                        rate: '',
-                        total_cost: ''
-                    }
-                };
-            }
-            if (plans[paymentMethod][keys].payment_plans) {
-                hasEligiblePaymentMethod = true;
-            }
-        });
-        formatedPaymentMethod.hasEligiblePaymentMethod = hasEligiblePaymentMethod;
-        formatedPaymentMethod.name = paymentMethod;
-        formatedPaymentMethod.plans = paymentMethodPlans;
-        formatedPlans.push(formatedPaymentMethod);
-    });
-
-    return formatedPlans;
+    return getFormattedPlans(plans);
 }
 
 module.exports = {
