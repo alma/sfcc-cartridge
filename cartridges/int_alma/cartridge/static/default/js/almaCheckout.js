@@ -3,6 +3,31 @@ window.addEventListener('DOMContentLoaded',
 
         var purchase_amount =  Number(almaContext.payment.purchaseAmount);
 
+        function assignAlmaElementsValues(plan) {
+            for (const [id, property] of Object.entries(plan.properties)) {
+                if (id === 'img') {
+                    var elementTabImg = document.getElementById(`${'alma-tab-' + plan.key + '-' + id}`);
+                    if (elementTabImg) {
+                        elementTabImg.textContent = property;
+                    }
+                }
+
+                if (id === 'credit') {
+                    for (const [creditId, creditProperties] of Object.entries(property)) {
+                        var elementCredit = document.getElementById(`${plan.key + '-' + creditId}`);
+                        if (elementCredit) {
+                            elementCredit.textContent = creditProperties;
+                        }
+                    }
+                } else {
+                    var element = document.getElementById(`${plan.key + '-' + id}`);
+                    if (element) {
+                        element.textContent = property;
+                    }
+                }
+            }
+        }
+
         /* Uses jQuery here because context.updateCheckoutViewEvent is triggered with jQuery */
         jQuery('body').on(almaContext.updateCheckoutViewEvent, async function() {
             var checkoutBtn = document.querySelector(almaContext.selector.submitPayment);
@@ -38,55 +63,7 @@ window.addEventListener('DOMContentLoaded',
                         document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)
                             .removeAttribute('hidden');
 
-                        var elementTabImg = document.getElementById(`${'alma-tab-' + plan.key + '-img'}`);
-                        if (elementTabImg) {
-                            elementTabImg.textContent = plan.properties.img;
-                        }
-
-                        var elementImg = document.getElementById(`${plan.key + '-img'}`);
-                        if (elementImg) {
-                            elementImg.textContent = plan.properties.img;
-                        }
-
-                        var elementTitle = document.getElementById(`${plan.key + '-title'}`);
-                        if (elementTitle) {
-                            elementTitle.textContent = plan.properties.title;
-                        }
-
-                        var elementDescription = document.getElementById(`${plan.key + '-description'}`);
-                        if (elementDescription) {
-                            elementDescription.textContent = plan.properties.description;
-                        }
-
-                        var elementFees = document.getElementById(`${plan.key + '-fees'}`);
-                        if (elementFees) {
-                            elementFees.textContent = plan.properties.fees;
-                        }
-
-                        var elementBasketCost = document.getElementById(`${plan.key + '-basket_cost'}`);
-                        if (elementBasketCost) {
-                            elementBasketCost.textContent = plan.properties.credit.basket_cost;
-                        }
-
-                        var elementAmount = document.getElementById(`${plan.key + '-amount'}`);
-                        if (elementAmount) {
-                            elementAmount.textContent = plan.properties.credit.amount;
-                        }
-
-                        var elementRate = document.getElementById(`${plan.key + '-rate'}`);
-                        if (elementRate) {
-                            elementRate.textContent = plan.properties.credit.rate;
-                        }
-
-                        var elementTotalCost = document.getElementById(`${plan.key + '-total_cost'}`);
-                        if (elementTotalCost) {
-                            elementTotalCost.textContent = plan.properties.credit.total_cost;
-                        }
-
-                        var elementPaymentInstallments = document.getElementById(`${plan.key + '-payment_installments'}`);
-                        if (elementPaymentInstallments) {
-                            elementPaymentInstallments.textContent = plan.properties.payment_installments;
-                        }
+                        assignAlmaElementsValues(plan);
 
                     } else {
                         document.getElementById(plan.key)
