@@ -25,7 +25,9 @@
             dataUrl: "${pdict.data_url}",
             createPaymentUrl: "${pdict.create_payment_url}",
             checkoutFragmentUrl: "${pdict.checkout_fragment_url}"
-        }
+        },
+        fragmentOnCloseMessage: "${pdict.fragment_on_close_message}",
+        fragmentOnFailureMessage: "${pdict.fragment_on_failure_message}",
     }
 
     window.addEventListener('DOMContentLoaded',

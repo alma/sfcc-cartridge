@@ -94,12 +94,12 @@ window.addEventListener('DOMContentLoaded',
                 onFailure: function () {
                     addCheckoutEvent(checkoutEvents.at(-1));
                     checkoutFragmentCallInProgress = false;
-                    displayAlmaErrors("Alma is unable to process your payment. Please try again or reach out to us for assistance.", 'fragment-on-failure')
+                    displayAlmaErrors(almaContext.fragmentOnFailureMessage, 'fragment-on-failure')
                 },
                 onPopupClose: function () {
                     addCheckoutEvent(checkoutEvents.at(-1));
                     checkoutFragmentCallInProgress = false;
-                    displayAlmaErrors("By closing the Alma popup, you have canceled the payment process.", 'fragment-on-close')
+                    displayAlmaErrors(almaContext.fragmentOnCloseMessage, 'fragment-on-close')
                 }
             })
 
