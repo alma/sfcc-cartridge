@@ -8,7 +8,7 @@ window.addEventListener('DOMContentLoaded',
                 if (id === 'img') {
                     var elementTabImg = document.getElementById(`${'alma-tab-' + plan.key + '-' + id}`);
                     if (elementTabImg) {
-                        elementTabImg.textContent = property;
+                        elementTabImg.textContent = property.toString();
                     }
                 }
 
@@ -16,13 +16,13 @@ window.addEventListener('DOMContentLoaded',
                     for (const [creditId, creditProperties] of Object.entries(property)) {
                         var elementCredit = document.getElementById(`${plan.key + '-' + creditId}`);
                         if (elementCredit) {
-                            elementCredit.textContent = creditProperties;
+                            elementCredit.textContent = creditProperties.toString();
                         }
                     }
                 } else {
                     var element = document.getElementById(`${plan.key + '-' + id}`);
                     if (element) {
-                        element.textContent = property;
+                        element.textContent = property.toString();
                     }
                 }
             }
