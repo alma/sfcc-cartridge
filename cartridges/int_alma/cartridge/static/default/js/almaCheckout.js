@@ -19,11 +19,11 @@ window.addEventListener('DOMContentLoaded',
                             elementCredit.textContent = creditProperties.toString();
                         }
                     }
-                } else {
-                    var element = document.getElementById(`${plan.key + '-' + id}`);
-                    if (element) {
-                        element.textContent = property.toString();
-                    }
+                    continue;
+                }
+                var element = document.getElementById(`${plan.key + '-' + id}`);
+                if (element) {
+                    element.textContent = property.toString();
                 }
             }
         }
@@ -64,22 +64,23 @@ window.addEventListener('DOMContentLoaded',
                             .removeAttribute('hidden');
 
                         assignAlmaElementsValues(plan);
-
-                    } else {
-                        document.getElementById(plan.key)
-                            .setAttribute('hidden', 'hidden');
-                        document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)
-                            .setAttribute('hidden', 'hidden');
+                        continue;
                     }
+                    document.getElementById(plan.key)
+                        .setAttribute('hidden', 'hidden');
+                    document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)
+                        .setAttribute('hidden', 'hidden');
+
                 }
 
                 if (almaPaymentMethod.hasEligiblePaymentMethod) {
                     document.getElementById(`${'alma-tab-' + name}`)
                         .removeAttribute('hidden');
-                } else {
-                    document.getElementById(`${'alma-tab-' + name}`)
-                        .setAttribute('hidden', 'hidden');
+                    continue;
                 }
+                document.getElementById(`${'alma-tab-' + name}`)
+                    .setAttribute('hidden', 'hidden');
+
             }
 
         });
