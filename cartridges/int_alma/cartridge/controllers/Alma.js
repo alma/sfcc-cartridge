@@ -350,7 +350,7 @@ server.get(
         return next();
     });
 
-server.get('GetPlans',
+server.get('Plans',
     server.middleware.https,
     function (req, res, next) {
         var getLocale = require('*/cartridge/scripts/helpers/almaHelpers').getLocale;

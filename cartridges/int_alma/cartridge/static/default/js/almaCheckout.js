@@ -41,7 +41,7 @@ window.addEventListener('DOMContentLoaded',
             var dataOrderAmount = await responseOrderAmount.json()
             purchase_amount = dataOrderAmount.purchase_amount;
 
-            var response = await fetch(almaContext.almaUrl.getPlans);
+            var response = await fetch(almaContext.almaUrl.plans_url);
             var data = await response.json()
             almaPaymentMethods = data.plans;
 
