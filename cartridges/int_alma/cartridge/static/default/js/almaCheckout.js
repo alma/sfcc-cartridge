@@ -1,13 +1,97 @@
 window.addEventListener('DOMContentLoaded',
     function () {
 
+        var purchase_amount =  Number(almaContext.payment.purchaseAmount);
+
+        function assignAlmaElementsValues(plan) {
+            for (const [id, property] of Object.entries(plan.properties)) {
+                if (id === 'img') {
+                    var elementTabImg = document.getElementById(`${'alma-tab-' + plan.key + '-' + id}`);
+                    if (elementTabImg) {
+                        elementTabImg.textContent = property.toString();
+                    }
+                }
+
+                if (id === 'credit') {
+                    for (const [creditId, creditProperties] of Object.entries(property)) {
+                        var elementCredit = document.getElementById(`${plan.key + '-' + creditId}`);
+                        if (elementCredit) {
+                            elementCredit.textContent = creditProperties.toString();
+                        }
+                    }
+                    continue;
+                }
+                var element = document.getElementById(`${plan.key + '-' + id}`);
+                if (element) {
+                    element.textContent = property.toString();
+                }
+            }
+        }
+
+        /* Uses jQuery here because context.updateCheckoutViewEvent is triggered with jQuery */
+        jQuery('body').on(almaContext.updateCheckoutViewEvent, async function() {
+            var checkoutBtn = document.querySelector(almaContext.selector.submitPayment);
+            var nextStepButton = checkoutBtn.parentElement.parentElement;
+            nextStepButton.classList.add('next-step-button');
+            checkoutBtn.setAttribute('type', 'submit');
+
+
+
+            var responseOrderAmount = await fetch(almaContext.almaUrl.orderAmountUrl);
+            var dataOrderAmount = await responseOrderAmount.json()
+            purchase_amount = dataOrderAmount.purchase_amount;
+
+            var response = await fetch(almaContext.almaUrl.plans_url);
+            var data = await response.json()
+            almaPaymentMethods = data.plans;
+
+            for (const [indexPaymentMethod, almaPaymentMethod] of Object.entries(almaPaymentMethods)) {
+                var name = almaPaymentMethod.name;
+                var plans = almaPaymentMethod.plans;
+
+                for (const [indexPlan, plan] of Object.entries(plans)) {
+                    var icons = document.querySelectorAll(".alma-payment-method .fa");
+                    [].forEach.call(icons, function (icon) {
+                        icon.classList.remove("fa-chevron-down");
+                    });
+
+                    document.getElementById(`${plan.key + '_fragment'}`).innerHTML = "";
+
+                    if (plan.payment_plans) {
+                        document.getElementById(plan.key)
+                            .removeAttribute('hidden');
+                        document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)
+                            .removeAttribute('hidden');
+
+                        assignAlmaElementsValues(plan);
+                        continue;
+                    }
+                    document.getElementById(plan.key)
+                        .setAttribute('hidden', 'hidden');
+                    document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)
+                        .setAttribute('hidden', 'hidden');
+
+                }
+
+                if (almaPaymentMethod.hasEligiblePaymentMethod) {
+                    document.getElementById(`${'alma-tab-' + name}`)
+                        .removeAttribute('hidden');
+                    continue;
+                }
+                document.getElementById(`${'alma-tab-' + name}`)
+                    .setAttribute('hidden', 'hidden');
+
+            }
+
+        });
+
         var checkoutFragmentCallInProgress = false;
 
         var checkoutEvents = [];
 
         function addCheckoutEvent(event) {
             document
-                .querySelector(context.selector.submitPayment)
+                .querySelector(almaContext.selector.submitPayment)
                 .addEventListener('click', event)
         }
 
@@ -17,7 +101,7 @@ window.addEventListener('DOMContentLoaded',
             while (event) {
                 lastEvent = event;
                 document
-                    .querySelector(context.selector.submitPayment)
+                    .querySelector(almaContext.selector.submitPayment)
                     .removeEventListener('click', event)
 
                 event = checkoutEvents.shift()
@@ -28,7 +112,7 @@ window.addEventListener('DOMContentLoaded',
             }
         }
 
-        var paymentOptions = document.querySelectorAll(context.selector.paymentOptions);
+        var paymentOptions = document.querySelectorAll(almaContext.selector.paymentOptions);
 
         paymentOptions.forEach(function (paymentOption) {
             paymentOption.addEventListener('click', removeCheckoutEvents)
@@ -44,21 +128,21 @@ window.addEventListener('DOMContentLoaded',
         function getPaymentData(data, installments_count, deferred_days) {
             return {
                 payment: {
-                    purchase_amount: Number(context.payment.purchaseAmount),
+                    purchase_amount: purchase_amount,
                     installments_count: installments_count,
                     deferred_days: deferred_days,
                     deferred_months: 0,
-                    return_url: context.payment.returnUrl,
-                    ipn_callback_url: context.payment.ipnCallbackUrl,
-                    customer_cancel_url: context.payment.customerCancelUrl,
+                    return_url: almaContext.payment.returnUrl,
+                    ipn_callback_url: almaContext.payment.ipnCallbackUrl,
+                    customer_cancel_url: almaContext.payment.customerCancelUrl,
                     locale: data.locale.split("_")[0],
                     shipping_address: data.shipping_address,
                     deferred: data.isEnableOnShipment ? "trigger" : "",
-                    deferred_description: data.isEnableOnShipment ? decodeHtml(context.payment.deferredDescription) : "",
+                    deferred_description: data.isEnableOnShipment ? decodeHtml(almaContext.payment.deferredDescription) : "",
                     custom_data: {
-                        cms_name: context.payment.customData.cmsName,
-                        cms_version: context.payment.customData.cmsVersion,
-                        alma_plugin_version: context.payment.customData.almaPluginVersion
+                        cms_name: data.cms_name,
+                        cms_version: data.cms_version,
+                        alma_plugin_version: data.alma_plugin_version
                     }
                 },
                 customer: data.customer
@@ -77,13 +161,13 @@ window.addEventListener('DOMContentLoaded',
             installments_count,
             deferred_days
         ) {
-            var response = await fetch(context.almaUrl.dataUrl + '?installment=' + installments_count);
+            var response = await fetch(almaContext.almaUrl.dataUrl + '?installment=' + installments_count);
             var data = await response.json();
 
             var paymentData = getPaymentData(data, installments_count, deferred_days)
 
-            var fragments = new Alma.Fragments(context.merchantId, {
-                mode: context.almaMode === 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST
+            var fragments = new Alma.Fragments(almaContext.merchantId, {
+                mode: almaContext.almaMode === 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST
             });
 
             var paymentForm = fragments.createPaymentForm(paymentData, {
@@ -125,7 +209,7 @@ window.addEventListener('DOMContentLoaded',
          */
         async function redirectToPaymentPage(installments_count, deferred_days) {
             var response = await fetch(
-                context.almaUrl.createPaymentUrl + '?deferred_days=' + deferred_days + '&installments=' + installments_count,
+                almaContext.almaUrl.createPaymentUrl + '?deferred_days=' + deferred_days + '&installments=' + installments_count,
                 { method: 'POST' }
             );
             var body = await response.json();
@@ -163,7 +247,7 @@ window.addEventListener('DOMContentLoaded',
                                     return;
                                 }
                                 checkoutFragmentCallInProgress = true;
-                                var ajaxResponse = await fetch(context.almaUrl.checkoutFragmentUrl + '?pid=' + paymentForm.currentPayment.id + '&amount=' + paymentForm.currentPayment.purchase_amount + '&alma_payment_method=' + alma_payment_method);
+                                var ajaxResponse = await fetch(almaContext.almaUrl.checkoutFragmentUrl + '?pid=' + paymentForm.currentPayment.id + '&amount=' + paymentForm.currentPayment.purchase_amount + '&alma_payment_method=' + alma_payment_method);
                                 var orderFragment = await ajaxResponse.json();
                                 switch (ajaxResponse.status) {
                                     case 200:
@@ -220,7 +304,7 @@ window.addEventListener('DOMContentLoaded',
         })
 
         function displayMismatchMessage(orderFragment) {
-            var errorMessagePosition = document.querySelectorAll(context.selector.fragmentErrors)[0];
+            var errorMessagePosition = document.querySelectorAll(almaContext.selector.fragmentErrors)[0];
             errorMessagePosition.after(createMismatchMessage(orderFragment));
         }
 

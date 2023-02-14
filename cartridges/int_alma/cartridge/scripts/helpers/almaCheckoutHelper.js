@@ -16,7 +16,7 @@ var paymentMethodId = '';
  * @returns {string} the custom site preference name
  */
 function getSelectorNameFromPlan(plan) {
-    return 'alma_general_'
+    return 'ALMA_general_'
         // number of installments (p1x, p3x, p4x, ....)
         + plan.installments_count + '_'
         // by how many days is the payment defered
@@ -249,5 +249,6 @@ function formatPlanForCheckout(plan, currencyCode) {
 }
 
 module.exports = {
-    formatForCheckout: formatPlanForCheckout
+    formatPlanForCheckout: formatPlanForCheckout,
+    getPlanPaymentMethodID: getPlanPaymentMethodID
 };
