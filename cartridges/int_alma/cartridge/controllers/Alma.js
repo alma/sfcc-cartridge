@@ -239,8 +239,8 @@ server.get('BasketData', server.middleware.https, function (req, res, next) {
 
     res.json({
         shipping_address: formatAddress(currentBasket.getDefaultShipment().shippingAddress),
-        billing_address: formatAddress(currentBasket.getBillingAddress(), currentBasket.getDefaultShipment().shippingAddress.phone),
-        customer: formatCustomerData(profile, currentBasket.getCustomerEmail()),
+        billing_address: formatAddress(currentBasket.getBillingAddress()),
+        customer: formatCustomerData(profile, currentBasket.getCustomerEmail(), formatAddress(currentBasket.getDefaultShipment().shippingAddress)),
         isEnableOnShipment: isOnShipmentPaymentEnabled(req.querystring.installment),
         cms_name: 'SFCC',
         cms_version: almaHelper.getSfccVersion(),
