@@ -3,10 +3,11 @@ CHANGELOG
 
 v4.1.0
 ------
-* Fix: update price and informations on Alma payment method when shipping price change
+* Fix: update price and information on Alma payment method when shipping price change
 * Fix: display right Alma payment method for the current basket price
 * Fix: manage events on next step button in checkout
 * Fix: update custom data in Alma payload
+* Fix: pass to fragment customer guest information
 
 v4.0.0
 ------

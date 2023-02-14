@@ -91,20 +91,24 @@ function getMode() {
  * Get customer data for init payment
  * @param {Object} profile customer profile
  * @param {string} customerEmail customer email
+ * @param {Object} shippingAddress shipping address
  * @returns {Object} customer data
  */
-function formatCustomerData(profile, customerEmail) {
+function formatCustomerData(profile, customerEmail, shippingAddress) {
     if (profile) {
+        var phone = profile.phoneMobile ? profile.phoneMobile : profile.phoneHome;
         return {
             first_name: profile.firstName,
             last_name: profile.lastName,
-            phone: profile.phoneHome,
+            phone: phone,
             email: profile.email
         };
     }
     return {
+        first_name: shippingAddress.first_name,
+        last_name: shippingAddress.last_name,
         email: customerEmail,
-        phone: ''
+        phone: shippingAddress.phone
     };
 }
 
