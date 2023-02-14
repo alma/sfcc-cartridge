@@ -96,10 +96,11 @@ function getMode() {
  */
 function formatCustomerData(profile, customerEmail, shippingAddress) {
     if (profile) {
+        var phone = profile.phoneMobile ? profile.phoneMobile : profile.phoneHome;
         return {
             first_name: profile.firstName,
             last_name: profile.lastName,
-            phone: profile.phoneHome,
+            phone: phone,
             email: profile.email
         };
     }
