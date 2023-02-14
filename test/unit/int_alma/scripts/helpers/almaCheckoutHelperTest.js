@@ -75,30 +75,30 @@ var currencyCode = 'EUR';
 describe('almaCheckoutHelpers', function () {
     describe('formatPlanForCheckout', function () {
         it('check in page', function () {
-            var checkoutData = almaCheckoutHelpers.formatForCheckout(plan, currencyCode);
+            var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(plan, currencyCode);
             assert.equal(checkoutData.in_page, true);
 
             var planP10x = Object.assign({}, plan, {
                 installments_count: 10
             });
-            checkoutData = almaCheckoutHelpers.formatForCheckout(planP10x, currencyCode);
+            checkoutData = almaCheckoutHelpers.formatPlanForCheckout(planP10x, currencyCode);
             assert.equal(checkoutData.in_page, false);
         });
 
         it('check selector', function () {
-            var checkoutData = almaCheckoutHelpers.formatForCheckout(plan, currencyCode);
-            assert.equal(checkoutData.selector, 'alma_general_3_0');
+            var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(plan, currencyCode);
+            assert.equal(checkoutData.selector, 'ALMA_general_3_0');
 
             var planDeferred = Object.assign({}, plan, {
                 installments_count: 1,
                 deferred_days: 15
             });
-            checkoutData = almaCheckoutHelpers.formatForCheckout(planDeferred, currencyCode);
-            assert.equal(checkoutData.selector, 'alma_general_1_15');
+            checkoutData = almaCheckoutHelpers.formatPlanForCheckout(planDeferred, currencyCode);
+            assert.equal(checkoutData.selector, 'ALMA_general_1_15');
         });
 
         it('check properties', function () {
-            var checkoutData = almaCheckoutHelpers.formatForCheckout(plan, currencyCode);
+            var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(plan, currencyCode);
             assert.deepEqual(checkoutData.properties, {
                 title: 'alma.pay.in_x_installment',
                 img: 'alma.pay.in_x_installment.img',
@@ -115,18 +115,18 @@ describe('almaCheckoutHelpers', function () {
         });
 
         it('check payment method PNX', function () {
-            var checkoutData = almaCheckoutHelpers.formatForCheckout(plan, currencyCode);
+            var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(plan, currencyCode);
             assert.equal(checkoutData.payment_method, 'ALMA_PNX'
             );
         });
 
         it('check payment method CREDIT', function () {
-            var checkoutData = almaCheckoutHelpers.formatForCheckout(planCredit, currencyCode);
+            var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(planCredit, currencyCode);
             assert.equal(checkoutData.payment_method, 'ALMA_CREDIT');
         });
 
         it('check payment method DEFERRED', function () {
-            var checkoutData = almaCheckoutHelpers.formatForCheckout(plansDeferred, currencyCode);
+            var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(plansDeferred, currencyCode);
             assert.equal(checkoutData.payment_method, 'ALMA_DEFERRED');
         });
     });
