@@ -305,7 +305,7 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
                 alma_plugin_version: pkg.version
             }
         },
-        customer: formatCustomerData(currentBasket.getCustomer().profile, currentBasket.getCustomerEmail())
+        customer: formatCustomerData(currentBasket.getCustomer().profile, currentBasket.getCustomerEmail(), currentBasket.getDefaultShipment().shippingAddress.phone)
     };
 }
 
