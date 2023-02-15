@@ -40,6 +40,7 @@ function getAlmaUrls() {
 server.extend(module.superModule);
 
 server.append('Begin', function (req, res, next) {
+    var Resource = require('dw/web/Resource');
     var getLocale = require('*/cartridge/scripts/helpers/almaHelpers').getLocale;
     var almaPlanHelper = require('*/cartridge/scripts/helpers/almaPlanHelper');
     var almaConfigInfo = getAlmaInfo();
@@ -60,7 +61,9 @@ server.append('Begin', function (req, res, next) {
         {
             currencyCode: currentBasket.currencyCode,
             purchase_amount: Math.round(currentBasket.totalGrossPrice.multiply(100).value),
-            plans: almaPlanHelper.getPlansForCheckout(getLocale(req), currentBasket)
+            plans: almaPlanHelper.getPlansForCheckout(getLocale(req), currentBasket),
+            fragment_on_close_message: Resource.msg('alma.fragment_on_close_message', 'alma', null),
+            fragment_on_failure_message: Resource.msg('alma.fragment_on_failure_message', 'alma', null)
         }
     );
 

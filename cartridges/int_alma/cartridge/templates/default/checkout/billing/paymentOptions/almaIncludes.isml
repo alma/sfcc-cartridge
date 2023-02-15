@@ -22,13 +22,16 @@
             }
         },
         almaUrl: {
+
             dataUrl: '${pdict.data_url}',
             createPaymentUrl: '${pdict.create_payment_url}',
             checkoutFragmentUrl: '${pdict.checkout_fragment_url}',
             orderAmountUrl: '${pdict.order_amount_url}',
             plans_url: '${pdict.plans_url}'
         },
-        updateCheckoutViewEvent: 'checkout:updateCheckoutView'
+        updateCheckoutViewEvent: 'checkout:updateCheckoutView',
+        fragmentOnCloseMessage: "${pdict.fragment_on_close_message}",
+        fragmentOnFailureMessage: "${pdict.fragment_on_failure_message}",
     };
 
     window.addEventListener('DOMContentLoaded',

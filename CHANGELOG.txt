@@ -3,11 +3,12 @@ CHANGELOG
 
 v4.1.0
 ------
-* Fix: update price and information on Alma payment method when shipping price change
-* Fix: display right Alma payment method for the current basket price
+* Feat: manage errors when fragment's popup close
+* Fix: update price and payment information on Alma payment method when shipping price changes
+* Fix: display right Alma payment method for the current cart price
 * Fix: manage events on next step button in checkout
 * Fix: update custom data in Alma payload
-* Fix: pass to fragment customer guest information
+* Fix: place customer guest information on shipping address onto fragment
 
 v4.0.0
 ------
