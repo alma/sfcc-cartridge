@@ -62,8 +62,8 @@ server.append('Begin', function (req, res, next) {
             currencyCode: currentBasket.currencyCode,
             purchase_amount: Math.round(currentBasket.totalGrossPrice.multiply(100).value),
             plans: almaPlanHelper.getPlansForCheckout(getLocale(req), currentBasket),
-            fragment_on_close_message: Resource.msg('alma.fragment_on_close', 'alma', null),
-            fragment_on_failure_message: Resource.msg('alma.fragment_on_failure', 'alma', null)
+            fragment_on_close_message: Resource.msg('alma.fragment_on_close_message', 'alma', null),
+            fragment_on_failure_message: Resource.msg('alma.fragment_on_failure_message', 'alma', null)
         }
     );
 
