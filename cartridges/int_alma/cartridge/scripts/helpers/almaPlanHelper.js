@@ -16,7 +16,7 @@ function getFeePlans() {
     try {
         return JSON.parse(plansString);
     } catch (e) {
-        logger.error('Configuration Error, please run \'npm run build:sitepref\' and import site_template.zip again.');
+        logger.error('[ERROR][ALMA]Configuration Error, please run \'npm run build:sitepref\' and import site_template.zip again.');
     }
     return [];
 }
@@ -157,11 +157,11 @@ function buildEligiblePlans(purchaseAmount, feePlans, locale, currentBasket, pla
     plansEligible.forEach(function (planEligible) {
         if (typeof plans[planEligible.payment_method] === 'undefined') {
             plans[planEligible.payment_method] = {};
-            logger.error('Never arrive -> planEligible.payment_method: {0}', [planEligible.payment_method]);
+            logger.error('[ERROR][ALMA]Never arrive -> planEligible.payment_method: {0}', [planEligible.payment_method]);
         }
         if (typeof plans[planEligible.payment_method][planEligible.selector] === 'undefined') {
             plans[planEligible.payment_method][planEligible.selector] = {};
-            logger.error('Never arrive -> planEligible.selector: {0}', [planEligible.selector]);
+            logger.error('[ERROR][ALMA]Never arrive -> planEligible.selector: {0}', [planEligible.selector]);
         }
         plans[planEligible.payment_method][planEligible.selector].eligible = true;
         plans[planEligible.payment_method][planEligible.selector].payment_plans = planEligible.payment_plan;

@@ -19,7 +19,7 @@ function callEligibility(param) {
         return JSON.parse(rawResponse);
     }
     // Call to API failed, then we cant provide any alma payment method
-    logger.error('Could not reach API. There is an issue with Alma, please contact Alma to fix this.');
+    logger.error('[ERROR][ALMA]Could not reach API. There is an issue with Alma, please contact Alma to fix this.');
     return [];
 }
 

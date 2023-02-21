@@ -23,7 +23,7 @@ function getSfccVersion() {
 function addHeaders(service) {
     var apiKey = Site.getCurrent().getCustomPreferenceValue('ALMA_APIKey');
     if (!apiKey) {
-        logger.error('Alma api key is not configured');
+        logger.error('[ERROR][ALMA]Alma api key is not configured');
         return service;
     }
 
@@ -47,7 +47,7 @@ function getUrl(path) {
     var url = Site.getCurrent().getCustomPreferenceValue('ALMA_APIUrl') + path;
 
     if (!url) {
-        logger.error('Alma URL is not configured');
+        logger.error('[ERROR][ALMA]Alma URL is not configured');
         return '';
     }
 
