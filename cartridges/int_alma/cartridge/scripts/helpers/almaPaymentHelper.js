@@ -229,8 +229,11 @@ function createOrderFromBasket(almaPaymentMethod) {
         var paymentMethod = PaymentMgr.getPaymentMethod(almaPaymentMethod);
 
         if (!paymentMethod) {
+            var paymentMethodErrorContext = {
+                Alma_Payment_Method: almaPaymentMethod
+            };
             var Logger = require('dw/system/Logger').getLogger('alma');
-            Logger.error('[ERROR][ALMA]Unable to process payment: payment method not found {0}', [almaPaymentMethod]);
+            Logger.error('Unable to process payment: payment method not found. | {0}', [JSON.stringify(paymentMethodErrorContext)]);
             throw new Error('Unable to process payment: payment method not found');
         }
 

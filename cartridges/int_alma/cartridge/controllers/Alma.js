@@ -74,7 +74,13 @@ function affectOrder(paymentObj, order) {
 
         var reason = paymentObj.purchase_amount !== orderTotal ? 'amount_mismatch' : 'state_error';
         almaPaymentHelper.flagAsPotentialFraud(paymentObj.id, reason);
-        logger.warn('[WARN][ALMA]Flag potential fraud id:{0} | reason:{1}', [paymentObj.id, reason]);
+
+        var potentialFraudErrorContext = {
+            Payment_ID: paymentObj.id,
+            Reason: reason,
+            Order_ID: order.getOrderNo()
+        };
+        logger.warn('Flag potential fraud | {0}', [potentialFraudErrorContext]);
         throw new Error(reason);
     }
 
@@ -324,7 +330,12 @@ server.get(
             var basketAmount = Math.round(BasketMgr.getCurrentBasket().totalGrossPrice.multiply(100).value);
             var paymentFormAmount = parseInt(req.querystring.amount, 10);
             if (basketAmount !== paymentFormAmount) {
-                logger.warn('[WARN][ALMA]Mismatch error  {0}', []);
+                var mismatchErrorContext = {
+                    basketAmount: (basketAmount / 100).toString() + ' ' + BasketMgr.getCurrentBasket().currencyCode,
+                    paymentFormAmount: (paymentFormAmount / 100).toString() + ' ' + BasketMgr.getCurrentBasket().currencyCode
+                };
+
+                logger.warn('Mismatch error | {0}', [JSON.stringify(mismatchErrorContext)]);
                 res.setStatusCode(400);
                 res.json({
                     error: 'The amount of the shopping cart was changed.'
