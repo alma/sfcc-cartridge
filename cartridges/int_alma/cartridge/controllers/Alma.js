@@ -331,8 +331,8 @@ server.get(
             var paymentFormAmount = parseInt(req.querystring.amount, 10);
             if (basketAmount !== paymentFormAmount) {
                 var mismatchErrorContext = {
-                    basketAmount: (basketAmount / 100).toString() + ' ' + BasketMgr.getCurrentBasket().currencyCode,
-                    paymentFormAmount: (paymentFormAmount / 100).toString() + ' ' + BasketMgr.getCurrentBasket().currencyCode
+                    basketAmount: basketAmount,
+                    paymentFormAmount: paymentFormAmount
                 };
 
                 logger.warn('Mismatch error | {0}', [JSON.stringify(mismatchErrorContext)]);
