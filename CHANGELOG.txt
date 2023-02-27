@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+v4.2.0
+------
+* Feat: Add contexte informations for Alma logs
+
 v4.1.0
 ------
 * Feat: manage errors when fragment's popup close
