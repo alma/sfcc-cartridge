@@ -18,8 +18,12 @@ function callEligibility(param) {
         var rawResponse = httpResult.getObject().text;
         return JSON.parse(rawResponse);
     }
+
+    var apiErrorContext = {
+        HTTP_Result_Message: httpResult.msg
+    };
     // Call to API failed, then we cant provide any alma payment method
-    logger.error('Could not reach API. There is an issue with Alma, please contact Alma to fix this.');
+    logger.error('Could not reach API. There is an issue with Alma, please contact Alma to fix this. | {0}', [JSON.stringify(apiErrorContext)]);
     return [];
 }
 
