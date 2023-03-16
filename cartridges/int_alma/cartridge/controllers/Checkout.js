@@ -43,13 +43,19 @@ server.append('Begin', function (req, res, next) {
     var Resource = require('dw/web/Resource');
     var getLocale = require('*/cartridge/scripts/helpers/almaHelpers').getLocale;
     var almaPlanHelper = require('*/cartridge/scripts/helpers/almaPlanHelper');
+    var almaHelpers = require('*/cartridge/scripts/helpers/almaHelpers');
     var almaConfigInfo = getAlmaInfo();
 
     var BasketMgr = require('dw/order/BasketMgr');
     var currentBasket = BasketMgr.getCurrentBasket();
 
-    // if alma isn't activated don't even bother to call any API
-    if (!almaConfigInfo.isAlmaEnable) {
+    var productIds = [];
+    currentBasket.getAllProductLineItems().toArray().forEach(function (productLineItem) {
+        productIds.push(productLineItem.getProductID());
+    });
+
+    // if alma isn't activated don't even bother to call any API or if we have a category excluded
+    if (!almaConfigInfo.isAlmaEnable || almaHelpers.haveExcludedCategory(productIds)) {
         next();
         return;
     }
