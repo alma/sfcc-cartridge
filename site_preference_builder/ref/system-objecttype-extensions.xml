@@ -86,6 +86,12 @@
                 <externally-managed-flag>false</externally-managed-flag>
                 <default-value>#alma-badge</default-value>
             </attribute-definition>
+            <attribute-definition attribute-id="categoryExclusion">
+                <display-name xml:lang="x-default">Add ids of excluded categories separated by " | "</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
 
         </custom-attribute-definitions>
         <group-definitions>
@@ -102,6 +108,7 @@
                 <attribute attribute-id="isProductWidgetEnable"/>
                 <attribute attribute-id="productSelector"/>
                 <attribute attribute-id="ALMA_FEE_PLANS"/>
+                <attribute attribute-id="categoryExclusion"/>
             </attribute-group>
         </group-definitions>
     </type-extension>
