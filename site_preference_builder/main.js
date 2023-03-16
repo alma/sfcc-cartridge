@@ -69,7 +69,7 @@ async function main() {
   let updatedSitePref = addCustomAttrFromPlan(sitePref, plans);
   updatedSitePref = addCustomGroupFromPlan(updatedSitePref, plans);
   updatedSitePref = addFeePlans(updatedSitePref, plans);
-  updatedSitePref = addAPIInfo(updatedSitePref, url, apiKey, merchantId);
+  updatedSitePref = addAPIInfo(updatedSitePref, url, merchantId);
   updatedSitePref = addOnShippingOption(updatedSitePref, plans);
 
   if (process.env.TOGGLE_REFUND !== REFUND_IS_DISABLED) {

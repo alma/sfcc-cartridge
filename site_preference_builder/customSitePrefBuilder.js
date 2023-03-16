@@ -189,16 +189,15 @@ exports.addFeePlans = (file, plans) => {
   return file;
 };
 
-exports.addAPIInfo = (file, url, key, merchantId) => {
+exports.addAPIInfo = (file, url, merchantId) => {
   // add ALMA_APIKey as a custom site pref
   file.metadata['type-extension'][2]['custom-attribute-definitions'][0]['attribute-definition'].push(
     buildCustomSitePrefObject({
       id: 'ALMA_APIKey',
       name: 'Your Alma API key',
-      type: 'string',
+      type: 'password',
       mandatory: false,
-      externallyManaged: false,
-      defaultValue: key
+      externallyManaged: false
     })
   );
 
