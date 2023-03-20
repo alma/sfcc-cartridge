@@ -29,7 +29,7 @@ server.get('BasketWidgetData', server.middleware.https, function (req, res, next
     currentBasket.getAllProductLineItems().toArray().forEach(function (productLineItem) {
         productIds.push(productLineItem.getProductID());
     });
-    var isWidgetEnabled = almaHelpers.haveExcludedCategory(productIds) ? false : almaWidgetHelper.isWidgetEnabled('product');
+    var isWidgetEnabled = almaWidgetHelper.isWidgetEnabled('product') && !almaHelpers.haveExcludedCategory(productIds);
 
     res.json({
         isWidgetEnabled: isWidgetEnabled,

@@ -29,7 +29,7 @@ server.get('ProductWidgetData', server.middleware.https, function (req, res, nex
     };
     var product = ProductFactory.get(params);
 
-    var isWidgetEnabled = almaHelpers.haveExcludedCategory([productId]) ? false : almaWidgetHelper.isWidgetEnabled('product');
+    var isWidgetEnabled = almaWidgetHelper.isWidgetEnabled('product') && !almaHelpers.haveExcludedCategory([productId]);
 
     var productQte = req.querystring.qte;
     var amount = Math.round(product.price.sales.value * productQte * 100);
