@@ -123,6 +123,43 @@ function getLocale(req) {
     return Locale.getLocale(req.locale.id).toString();
 }
 
+/**
+ * Check if the product’s category is excluded
+ * @param {array} productIds product id
+ * @return {boolean} return a boolean
+ */
+function haveExcludedCategory(productIds) {
+    var ProductMgr = require('dw/catalog/ProductMgr');
+    var categoriesID = [];
+
+    productIds.forEach(function (productId) {
+        var product = ProductMgr.getProduct(productId);
+
+        if (product.isMaster()) {
+            product.getAllCategories().toArray().forEach(function (category) {
+                categoriesID.push(category.getID());
+            });
+        } else {
+            product.getMasterProduct().getAllCategories().toArray().forEach(function (category) {
+                categoriesID.push(category.getID());
+            });
+        }
+    });
+    logger.warn('categoriesID {0}', [JSON.stringify(categoriesID)]);
+
+    var categoriesExcluded = Site.getCurrent().getCustomPreferenceValue('categoryExclusion').trim().split(' | ');
+
+    var haveExcludedCategoryReturn = false;
+
+    categoriesExcluded.forEach(function (categoryExcluded) {
+        if (categoriesID.includes(categoryExcluded)) {
+            haveExcludedCategoryReturn = true;
+        }
+    });
+
+    return haveExcludedCategoryReturn;
+}
+
 module.exports = {
     addHeaders: addHeaders,
     formatCustomerData: formatCustomerData,
@@ -132,5 +169,6 @@ module.exports = {
     getUrl: getUrl,
     isAlmaEnable: isAlmaEnable,
     isAlmaOnShipment: isAlmaOnShipment,
-    getSfccVersion: getSfccVersion
+    getSfccVersion: getSfccVersion,
+    haveExcludedCategory: haveExcludedCategory
 };
