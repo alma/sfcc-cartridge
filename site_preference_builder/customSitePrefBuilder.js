@@ -20,8 +20,6 @@ if (locale !== 'en_GB' && fs.existsSync(path.join(__dirname, `messages-${locale}
 
 const messages = require(localisationFile);
 
-const { merchantHasOnShipment } = require('./jobs');
-
 // we also remove 1x that isn't deferred, as the api will provide it, but we don't want to display it
 const filterAllowedPlan = (plan) => {
   return plan.allowed && !(plan.installments_count === 1 && plan.deferred_days === 0);
@@ -225,21 +223,6 @@ exports.addAPIInfo = (file, url, merchantId) => {
     })
   );
 
-  return file;
-};
-
-exports.addOnShippingOption = (file, plans) => {
-  if (merchantHasOnShipment(plans)) {
-    file.metadata['type-extension'][2]['custom-attribute-definitions'][0]['attribute-definition'].push(
-      buildCustomSitePrefObject({
-        id: 'ALMA_On_Shipment_Payment',
-        name: 'Pay on shipping',
-        type: 'boolean',
-        mandatory: false,
-        externallyManaged: false
-      })
-    );
-  }
   return file;
 };
 
