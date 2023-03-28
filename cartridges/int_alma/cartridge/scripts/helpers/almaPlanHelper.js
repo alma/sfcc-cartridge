@@ -94,6 +94,11 @@ function getAllowedPlans() {
     // only keep what's the merchant allow
     plans = almaUtilsHelpers.filter(plans, checkMerchantConfig);
 
+    // don’t keep p1x plan
+    plans = almaUtilsHelpers.filter(plans, function (plan) {
+        return !(plan.installments_count === 1 && plan.deferred_days === 0);
+    });
+
     return almaUtilsHelpers.map(plans, applyMerchantConfig);
 }
 
