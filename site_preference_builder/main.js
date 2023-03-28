@@ -19,6 +19,8 @@ const {
 
 const path = require('path');
 const { writeJobsFile } = require('./jobs');
+// eslint-disable-next-line max-len
+const almaUtilsHelpers = require('../cartridges/int_alma/cartridge/scripts/helpers/almaUtilsHelper');
 
 require('dotenv').config({
   path: path.resolve(__dirname, '../.env')
@@ -62,7 +64,11 @@ async function main() {
     url,
     apiKey
   } = process.env.ALMA_API_MODE === 'live' ? LIVE_MODE : TEST_MODE;
-  const plans = await getFeePlansFromAPI(url, apiKey);
+  let plans = await getFeePlansFromAPI(url, apiKey);
+  plans = almaUtilsHelpers.filter(plans, function (plan) {
+    return !(plan.installments_count === 1 && plan.deferred_days === 0);
+  });
+
   const merchantId = getMerchantIdFromFeePlans(plans);
 
   let updatedSitePref = addCustomAttrFromPlan(sitePref, plans);
