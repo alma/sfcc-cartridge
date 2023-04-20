@@ -1,6 +1,8 @@
 CHANGELOG
 =========
 
+* Feat: Pay Now
+
 v4.2.0
 ------
 * Feat: Add contexte informations for Alma logs
