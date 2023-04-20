@@ -249,6 +249,19 @@ function formatPlanForCheckout(plan, currencyCode) {
             payment_method: getPlanPaymentMethodID(plan)
         };
     }
+    if (plan.installments_count === 1 && plan.deferred_days === 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PAY_NOW_ID), plan)) {
+        formatPlan = {
+            in_page: false,
+            selector: getSelectorNameFromPlan(plan),
+            installments_count: plan.installments_count,
+            deferred_days: plan.deferred_days,
+            purchase_amount: plan.purchase_amount,
+            customer_fee: plan.customer_fee,
+            payment_plan: plan.payment_plan,
+            properties: getPropertiesForPlan(plan, currencyCode),
+            payment_method: getPlanPaymentMethodID(plan)
+        };
+    }
     return formatPlan;
 }
 
