@@ -204,7 +204,9 @@ function getPlanPaymentMethodID(plan) {
     if (plan.deferred_days > 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_DEFERRED_ID), plan)) {
         paymentMethodId = ALMA_DEFERRED_ID;
     }
-    if (plan.installments_count === 1 && plan.deferred_days === 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PAY_NOW_ID), plan)) {
+    if (plan.installments_count === 1
+        && plan.deferred_days === 0
+        && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PAY_NOW_ID), plan)) {
         paymentMethodId = ALMA_PAY_NOW_ID;
     }
 
