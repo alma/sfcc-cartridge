@@ -34,6 +34,9 @@ function getPropertyCategory(plan) {
     if (plan.installments_count > 1 && plan.deferred_days > 0) {
         return 'alma.pay.in_x_installment_after_x_days';
     }
+    if (plan.installments_count === 1 && plan.deferred_days === 0) {
+        return 'alma.pay.now';
+    }
     if (plan.deferred_days > 0) {
         return 'alma.pay.after_x_days';
     }
@@ -113,6 +116,12 @@ function getPaymentInstallments(plan, currencyCode) {
             formatCurrency(plan.payment_plan[0].purchase_amount / 100, currencyCode),
             plan.deferred_days
         );
+    }
+
+    // pay now
+    if (plan.installments_count === 1 && plan.deferred_days === 0) {
+        return formatCurrency(plan.payment_plan[0].purchase_amount / 100, currencyCode) + ' ' +
+            Resource.msgf(getPropertyCategory(plan) + '.installments', 'alma', null);
     }
     // on shipment payment
     if (isOnShipmentPaymentEnabled(plan.installments_count)) {
