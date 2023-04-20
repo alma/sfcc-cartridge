@@ -8,6 +8,7 @@ var PaymentMgr = require('dw/order/PaymentMgr');
 var ALMA_PNX_ID = 'ALMA_PNX';
 var ALMA_CREDIT_ID = 'ALMA_CREDIT';
 var ALMA_DEFERRED_ID = 'ALMA_DEFERRED';
+var ALMA_PAY_NOW_ID = 'ALMA_PAY_NOW';
 var paymentMethodId = '';
 
 /**
@@ -193,6 +194,9 @@ function getPlanPaymentMethodID(plan) {
     }
     if (plan.deferred_days > 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_DEFERRED_ID), plan)) {
         paymentMethodId = ALMA_DEFERRED_ID;
+    }
+    if (plan.installments_count === 1 && plan.deferred_days === 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PAY_NOW_ID), plan)) {
+        paymentMethodId = ALMA_PAY_NOW_ID;
     }
 
     return paymentMethodId;
