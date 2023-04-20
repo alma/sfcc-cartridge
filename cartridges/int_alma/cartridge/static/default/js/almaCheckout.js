@@ -60,8 +60,10 @@ window.addEventListener('DOMContentLoaded',
                     if (plan.payment_plans) {
                         document.getElementById(plan.key)
                             .removeAttribute('hidden');
-                        document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)
-                            .removeAttribute('hidden');
+                        if (document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)) {
+                            document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)
+                                .removeAttribute('hidden');
+                        }
 
                         assignAlmaElementsValues(plan);
                         continue;

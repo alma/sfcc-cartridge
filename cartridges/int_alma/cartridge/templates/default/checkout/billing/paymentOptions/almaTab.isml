@@ -1,11 +1,18 @@
 <li class="nav-item alma-tab" data-method-id="${paymentOption.ID}" id="${'alma-tab-' + paymentOption.ID}">
     <a class="nav-link credit-card-tab" data-toggle="tab" href="${'#alma-content-' + paymentOption.ID}" role="tab">
-        <img class="credit-card-option-alma"
-             src="${URLUtils.staticURL('/images/alma_min.png')}"
-             alt="${paymentOption.name}"
-             title="${paymentOption.name}"
-        >
-        <span class="alma-tab-plans">
+        <isif condition="${paymentOption.ID === 'ALMA_PAY_NOW'}">
+            <img class="credit-card-option-alma"
+                 src="${URLUtils.staticURL('/images/alma.png')}"
+                 alt="${paymentOption.name}"
+                 title="${paymentOption.name}"
+            >
+            <iselse>
+                <img class="credit-card-option-alma"
+                     src="${URLUtils.staticURL('/images/alma_min.png')}"
+                     alt="${paymentOption.name}"
+                     title="${paymentOption.name}"
+                >
+                <span class="alma-tab-plans">
                 <span class="alma-tab-plans-span">
                     <isloop iterator="${pdict.plans}" var="paymentMethod">
                         <isif condition="${paymentMethod.name === paymentOption.ID}">
@@ -18,6 +25,8 @@
                     </isloop>
                 </span>
             </span>
+            </iselse>
+        </isif>
     </a>
 </li>
 <style>
