@@ -226,6 +226,9 @@ function createOrderFromBasket(almaPaymentMethod) {
 
     Transaction.wrap(function () {
         currentBasket.removeAllPaymentInstruments();
+        if (!almaPaymentMethod) {
+            almaPaymentMethod = 'ALMA_PNX';
+        }
         var paymentMethod = PaymentMgr.getPaymentMethod(almaPaymentMethod);
 
         if (!paymentMethod) {
