@@ -5,6 +5,7 @@
                  src="${URLUtils.staticURL('/images/alma.png')}"
                  alt="${paymentOption.name}"
                  title="${paymentOption.name}"
+                 style="height: 1.2em"
             >
             <iselse>
                 <img class="credit-card-option-alma"
