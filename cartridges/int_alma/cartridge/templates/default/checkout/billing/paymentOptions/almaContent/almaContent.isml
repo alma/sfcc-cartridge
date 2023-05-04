@@ -49,7 +49,8 @@
                     <span class="fa fa-chevron-right"></span>
                 </div>
             </div>
-            <div id="${plan.key}_fragment"></div>
+            <div id="${plan.key}_fragment_hide" hidden></div>
+            <div id="${plan.key}-inpage"></div>
         </isloop>
     </isif>
 </isloop>

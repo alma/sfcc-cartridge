@@ -216,6 +216,33 @@ window.addEventListener('DOMContentLoaded',
             window.location = body.url;
         }
 
+        async function inPageInitialize(paymentForm, inPageContainer) {
+            // console.log(paymentForm);
+            const inPage = Alma.InPage.initialize(
+                paymentForm.currentPayment.id,
+                {
+                    environment: almaContext.almaMode,
+                    showPayButton: false,
+                    onPaymentSucceeded: function (returnedData) {
+                        window.location = returnedData.return_url;
+                    },
+                    onPaymentRejected: function () {
+                        addCheckoutEvent(checkoutEvents.at(-1));
+                        checkoutFragmentCallInProgress = false;
+                        displayAlmaErrors(almaContext.fragmentOnFailureMessage, 'fragment-on-failure');
+                    },
+                    onUserCloseModal: function () {
+                        addCheckoutEvent(checkoutEvents.at(-1));
+                        checkoutFragmentCallInProgress = false;
+                        displayAlmaErrors(almaContext.fragmentOnCloseMessage, 'fragment-on-close');
+                    }
+                });
+
+            // console.log(document.getElementById(container));
+            await inPage.mount("#" + inPageContainer);
+            return inPage;
+        }
+
         /**
          * Open a payment option and hide the others
          * @param  {Object} t a JS selector
@@ -240,37 +267,41 @@ window.addEventListener('DOMContentLoaded',
 
                 document.body.style.cursor = 'wait';
                 if (in_page) {
-                    await renderInPage(t.id + "_fragment", installments_count, deferred_days)
-                        .then(function (paymentForm) {
-                            var checkoutFragmentCall = async function () {
-                                if (checkoutFragmentCallInProgress) {
-                                    return;
-                                }
-                                checkoutFragmentCallInProgress = true;
-                                var ajaxResponse = await fetch(almaContext.almaUrl.checkoutFragmentUrl + '?pid=' + paymentForm.currentPayment.id + '&amount=' + paymentForm.currentPayment.purchase_amount + '&alma_payment_method=' + alma_payment_method);
-                                var orderFragment = await ajaxResponse.json();
-                                switch (ajaxResponse.status) {
-                                    case 200:
-                                        removeCheckoutEvents();
-                                        paymentForm.pay();
-                                        break;
-                                    case 400:
-                                        displayMismatchMessage(orderFragment)
-                                        checkoutFragmentCallInProgress = false;
-                                        break;
-                                    case 500:
-                                        displayAlmaErrors(orderFragment.error, 'payment-method-not-found-message')
-                                        checkoutFragmentCallInProgress = false;
-                                        break;
-                                    default:
-                                        displayAlmaErrors(ajaxResponse.status, 'payment-error')
-                                        checkoutFragmentCallInProgress = false;
-                                }
-                            }
+                    await renderInPage(t.id + "_fragment_hide", installments_count, deferred_days)
+                        .then(async function (paymentForm) {
+                            await inPageInitialize(paymentForm, t.id + "-inpage")
+                                .then(function (inPage) {
+                                    console.log(inPage);
+                                    var checkoutFragmentCall = async function () {
+                                        if (checkoutFragmentCallInProgress) {
+                                            return;
+                                        }
+                                        checkoutFragmentCallInProgress = true;
+                                        var ajaxResponse = await fetch(almaContext.almaUrl.checkoutFragmentUrl + '?pid=' + paymentForm.currentPayment.id + '&amount=' + paymentForm.currentPayment.purchase_amount + '&alma_payment_method=' + alma_payment_method);
+                                        var orderFragment = await ajaxResponse.json();
+                                        switch (ajaxResponse.status) {
+                                            case 200:
+                                                removeCheckoutEvents();
+                                                inPage.startPayment();
+                                                break;
+                                            case 400:
+                                                displayMismatchMessage(orderFragment);
+                                                checkoutFragmentCallInProgress = false;
+                                                break;
+                                            case 500:
+                                                displayAlmaErrors(orderFragment.error, 'payment-method-not-found-message');
+                                                checkoutFragmentCallInProgress = false;
+                                                break;
+                                            default:
+                                                displayAlmaErrors(ajaxResponse.status, 'payment-error');
+                                                checkoutFragmentCallInProgress = false;
+                                        }
+                                    };
 
-                            checkoutEvents.push(checkoutFragmentCall);
+                                    checkoutEvents.push(checkoutFragmentCall);
 
-                            addCheckoutEvent(checkoutFragmentCall);
+                                    addCheckoutEvent(checkoutFragmentCall);
+                                });
                         });
                 } else {
                     activeElt.parentNode.innerHTML = '<div class="alma-lds-ring"><div></div><div></div><div></div><div></div></div>';

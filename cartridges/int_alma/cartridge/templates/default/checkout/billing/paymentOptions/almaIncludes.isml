@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="${URLUtils.staticURL('/css/almaContent.css')}"/>
 <script src="https://cdn.jsdelivr.net/npm/@alma/fragments@1.x/dist/alma-fragments.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@alma/in-page@1.x/dist/index.umd.js"></script>
 <script>
     var almaContext = {
         almaMode: '${pdict.mode}',
