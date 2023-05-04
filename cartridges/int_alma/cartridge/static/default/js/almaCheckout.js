@@ -1,7 +1,7 @@
 window.addEventListener('DOMContentLoaded',
     function () {
 
-        var purchase_amount =  Number(almaContext.payment.purchaseAmount);
+        var purchase_amount = Number(almaContext.payment.purchaseAmount);
 
         function assignAlmaElementsValues(plan) {
             for (const [id, property] of Object.entries(plan.properties)) {
@@ -29,61 +29,61 @@ window.addEventListener('DOMContentLoaded',
         }
 
         /* Uses jQuery here because context.updateCheckoutViewEvent is triggered with jQuery */
-        jQuery('body').on(almaContext.updateCheckoutViewEvent, async function() {
-            var checkoutBtn = document.querySelector(almaContext.selector.submitPayment);
-            var nextStepButton = checkoutBtn.parentElement.parentElement;
-            nextStepButton.classList.add('next-step-button');
-            checkoutBtn.setAttribute('type', 'submit');
+        jQuery('body')
+            .on(almaContext.updateCheckoutViewEvent, async function () {
+                var checkoutBtn = document.querySelector(almaContext.selector.submitPayment);
+                var nextStepButton = checkoutBtn.parentElement.parentElement;
+                nextStepButton.classList.add('next-step-button');
+                checkoutBtn.setAttribute('type', 'submit');
 
 
+                var responseOrderAmount = await fetch(almaContext.almaUrl.orderAmountUrl);
+                var dataOrderAmount = await responseOrderAmount.json();
+                purchase_amount = dataOrderAmount.purchase_amount;
 
-            var responseOrderAmount = await fetch(almaContext.almaUrl.orderAmountUrl);
-            var dataOrderAmount = await responseOrderAmount.json()
-            purchase_amount = dataOrderAmount.purchase_amount;
+                var response = await fetch(almaContext.almaUrl.plans_url);
+                var data = await response.json();
+                almaPaymentMethods = data.plans;
 
-            var response = await fetch(almaContext.almaUrl.plans_url);
-            var data = await response.json()
-            almaPaymentMethods = data.plans;
+                for (const [indexPaymentMethod, almaPaymentMethod] of Object.entries(almaPaymentMethods)) {
+                    var name = almaPaymentMethod.name;
+                    var plans = almaPaymentMethod.plans;
 
-            for (const [indexPaymentMethod, almaPaymentMethod] of Object.entries(almaPaymentMethods)) {
-                var name = almaPaymentMethod.name;
-                var plans = almaPaymentMethod.plans;
+                    for (const [indexPlan, plan] of Object.entries(plans)) {
+                        var icons = document.querySelectorAll(".alma-payment-method .fa");
+                        [].forEach.call(icons, function (icon) {
+                            icon.classList.remove("fa-chevron-down");
+                        });
 
-                for (const [indexPlan, plan] of Object.entries(plans)) {
-                    var icons = document.querySelectorAll(".alma-payment-method .fa");
-                    [].forEach.call(icons, function (icon) {
-                        icon.classList.remove("fa-chevron-down");
-                    });
+                        document.getElementById(`${plan.key + '_fragment'}`).innerHTML = "";
 
-                    document.getElementById(`${plan.key + '_fragment'}`).innerHTML = "";
+                        if (plan.payment_plans) {
+                            document.getElementById(plan.key)
+                                .removeAttribute('hidden');
+                            document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)
+                                .removeAttribute('hidden');
 
-                    if (plan.payment_plans) {
+                            assignAlmaElementsValues(plan);
+                            continue;
+                        }
                         document.getElementById(plan.key)
-                            .removeAttribute('hidden');
+                            .setAttribute('hidden', 'hidden');
                         document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)
-                            .removeAttribute('hidden');
+                            .setAttribute('hidden', 'hidden');
 
-                        assignAlmaElementsValues(plan);
+                    }
+
+                    if (almaPaymentMethod.hasEligiblePaymentMethod) {
+                        document.getElementById(`${'alma-tab-' + name}`)
+                            .removeAttribute('hidden');
                         continue;
                     }
-                    document.getElementById(plan.key)
-                        .setAttribute('hidden', 'hidden');
-                    document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)
-                        .setAttribute('hidden', 'hidden');
-
-                }
-
-                if (almaPaymentMethod.hasEligiblePaymentMethod) {
                     document.getElementById(`${'alma-tab-' + name}`)
-                        .removeAttribute('hidden');
-                    continue;
+                        .setAttribute('hidden', 'hidden');
+
                 }
-                document.getElementById(`${'alma-tab-' + name}`)
-                    .setAttribute('hidden', 'hidden');
 
-            }
-
-        });
+            });
 
         var checkoutFragmentCallInProgress = false;
 
@@ -92,19 +92,19 @@ window.addEventListener('DOMContentLoaded',
         function addCheckoutEvent(event) {
             document
                 .querySelector(almaContext.selector.submitPayment)
-                .addEventListener('click', event)
+                .addEventListener('click', event);
         }
 
         function removeCheckoutEvents() {
             var lastEvent;
-            var event = checkoutEvents.shift()
+            var event = checkoutEvents.shift();
             while (event) {
                 lastEvent = event;
                 document
                     .querySelector(almaContext.selector.submitPayment)
-                    .removeEventListener('click', event)
+                    .removeEventListener('click', event);
 
-                event = checkoutEvents.shift()
+                event = checkoutEvents.shift();
             }
 
             if (lastEvent) {
@@ -115,7 +115,7 @@ window.addEventListener('DOMContentLoaded',
         var paymentOptions = document.querySelectorAll(almaContext.selector.paymentOptions);
 
         paymentOptions.forEach(function (paymentOption) {
-            paymentOption.addEventListener('click', removeCheckoutEvents)
+            paymentOption.addEventListener('click', removeCheckoutEvents);
         });
 
         /**
@@ -164,7 +164,7 @@ window.addEventListener('DOMContentLoaded',
             var response = await fetch(almaContext.almaUrl.dataUrl + '?installment=' + installments_count);
             var data = await response.json();
 
-            var paymentData = getPaymentData(data, installments_count, deferred_days)
+            var paymentData = getPaymentData(data, installments_count, deferred_days);
 
             var fragments = new Alma.Fragments(almaContext.merchantId, {
                 mode: almaContext.almaMode === 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST
@@ -178,14 +178,14 @@ window.addEventListener('DOMContentLoaded',
                 onFailure: function () {
                     addCheckoutEvent(checkoutEvents.at(-1));
                     checkoutFragmentCallInProgress = false;
-                    displayAlmaErrors(almaContext.fragmentOnFailureMessage, 'fragment-on-failure')
+                    displayAlmaErrors(almaContext.fragmentOnFailureMessage, 'fragment-on-failure');
                 },
                 onPopupClose: function () {
                     addCheckoutEvent(checkoutEvents.at(-1));
                     checkoutFragmentCallInProgress = false;
-                    displayAlmaErrors(almaContext.fragmentOnCloseMessage, 'fragment-on-close')
+                    displayAlmaErrors(almaContext.fragmentOnCloseMessage, 'fragment-on-close');
                 }
-            })
+            });
 
             await paymentForm.mount(document.getElementById(container));
             return paymentForm;
@@ -310,7 +310,9 @@ window.addEventListener('DOMContentLoaded',
                 document.body.style.cursor = 'default';
 
             } else {
-                await document.getElementById(t.id + "_fragment").firstChild.remove();
+                await document.getElementById(t.id + "_fragment")
+                    .firstChild
+                    .remove();
             }
         }
 
@@ -332,7 +334,7 @@ window.addEventListener('DOMContentLoaded',
             pm.addEventListener("click", async function (e) {
                 await handlePaymentMethodClick(e);
             });
-        })
+        });
 
         function displayMismatchMessage(orderFragment) {
             var errorMessagePosition = document.querySelectorAll(almaContext.selector.fragmentErrors)[0];
