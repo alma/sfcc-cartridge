@@ -100,7 +100,7 @@ function getInstallmentCountAfterFirst(plan) {
 }
 
 /**
- * Returns the property displaying installments before calling fragment
+ * Returns the property displaying installments before calling inpage
  * @param  {Object} plan any alma plan
  * @param  {string} currencyCode e.g. 'EUR'
  * @returns {string} the message to display for a payment option
@@ -149,20 +149,20 @@ function getPropertiesForPlan(plan, currencyCode) {
 /**
  * Returns if the current payment option is pnx 2,3 or 4
  * @param  {Object} plan any alma plan
- * @returns {boolean} true means we can use fragment
+ * @returns {boolean} true means we can use inpage
  */
 function isPnx(plan) {
-    return plan.installments_count <= 4;
+    return plan.installments_count <= 4 && plan.deferred_days <= 0;
 }
 
 /**
  * Returns true if the merchant want in-page payment
- * @returns {boolean} if we can use fragment
+ * @returns {boolean} if we can use inpage
  */
-function isFragmentActivated() {
+function isInpageActivated() {
     var Site = require('dw/system/Site');
 
-    return Site.getCurrent().getCustomPreferenceValue('ALMA_Fragment_Payment');
+    return Site.getCurrent().getCustomPreferenceValue('ALMA_Inpage_Payment');
 }
 
 /**
@@ -208,7 +208,7 @@ function formatPlanForCheckout(plan, currencyCode) {
     var formatPlan = {};
     if (plan.installments_count < 5 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PNX_ID), plan)) {
         formatPlan = {
-            in_page: isPnx(plan) && isFragmentActivated(),
+            in_page: isPnx(plan) && isInpageActivated(),
             selector: getSelectorNameFromPlan(plan),
             installments_count: plan.installments_count,
             deferred_days: plan.deferred_days,
@@ -221,7 +221,7 @@ function formatPlanForCheckout(plan, currencyCode) {
     }
     if (plan.installments_count >= 5 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_CREDIT_ID), plan)) {
         formatPlan = {
-            in_page: isPnx(plan) && isFragmentActivated(),
+            in_page: isPnx(plan) && isInpageActivated(),
             selector: getSelectorNameFromPlan(plan),
             installments_count: plan.installments_count,
             deferred_days: plan.deferred_days,
@@ -234,7 +234,7 @@ function formatPlanForCheckout(plan, currencyCode) {
     }
     if (plan.deferred_days > 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_DEFERRED_ID), plan)) {
         formatPlan = {
-            in_page: isPnx(plan) && isFragmentActivated(),
+            in_page: isPnx(plan) && isInpageActivated(),
             selector: getSelectorNameFromPlan(plan),
             installments_count: plan.installments_count,
             deferred_days: plan.deferred_days,

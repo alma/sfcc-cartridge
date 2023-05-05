@@ -7,7 +7,7 @@
         selector: {
             submitPayment: '.submit-payment',
             paymentOptions: '.payment-options',
-            fragmentErrors: '.payment-form'
+            inpageErrors: '.payment-form'
         },
         payment: {
             purchaseAmount: '${pdict.purchase_amount}',
@@ -25,13 +25,13 @@
 
             dataUrl: '${pdict.data_url}',
             createPaymentUrl: '${pdict.create_payment_url}',
-            checkoutFragmentUrl: '${pdict.checkout_fragment_url}',
+            checkoutInpageUrl: '${pdict.checkout_inpage_url}',
             orderAmountUrl: '${pdict.order_amount_url}',
             plans_url: '${pdict.plans_url}'
         },
         updateCheckoutViewEvent: 'checkout:updateCheckoutView',
-        fragmentOnCloseMessage: "${pdict.fragment_on_close_message}",
-        fragmentOnFailureMessage: "${pdict.fragment_on_failure_message}",
+        inpageOnCloseMessage: "${pdict.inpage_on_close_message}",
+        inpageOnFailureMessage: "${pdict.inpage_on_failure_message}",
     };
 
     window.addEventListener('DOMContentLoaded',

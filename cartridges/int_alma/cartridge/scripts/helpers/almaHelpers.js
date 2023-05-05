@@ -145,7 +145,6 @@ function haveExcludedCategory(productIds) {
             });
         }
     });
-    logger.warn('categoriesID {0}', [JSON.stringify(categoriesID)]);
 
     var categoriesExcluded = Site.getCurrent().getCustomPreferenceValue('categoryExclusion').trim().split(' | ');
 

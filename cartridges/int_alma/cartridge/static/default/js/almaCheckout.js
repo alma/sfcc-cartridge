@@ -85,7 +85,7 @@ window.addEventListener('DOMContentLoaded',
 
             });
 
-        var checkoutFragmentCallInProgress = false;
+        var checkoutInpageCallInProgress = false;
 
         var checkoutEvents = [];
 
@@ -248,19 +248,19 @@ window.addEventListener('DOMContentLoaded',
             });
         });
 
-        function displayMismatchMessage(orderFragment) {
-            var errorMessagePosition = document.querySelectorAll(almaContext.selector.fragmentErrors)[0];
-            errorMessagePosition.after(createMismatchMessage(orderFragment));
+        function displayMismatchMessage(orderInpage) {
+            var errorMessagePosition = document.querySelectorAll(almaContext.selector.inpageErrors)[0];
+            errorMessagePosition.after(createMismatchMessage(orderInpage));
         }
 
-        function createMismatchMessage(orderFragment) {
+        function createMismatchMessage(orderInpage) {
             var errorLink = document.createElement('a');
             var errorLinkText = document.createTextNode("Please refresh the page to try to pay again.");
             errorLink.href = '';
             errorLink.appendChild(errorLinkText);
 
 
-            var errorMismatchMessage = document.createTextNode(orderFragment.error);
+            var errorMismatchMessage = document.createTextNode(orderInpage.error);
             var errorDiv = document.createElement('div');
             errorDiv.classList.add('col-12', 'alma-error-message');
             errorDiv.id = 'mismatch-message';
@@ -271,7 +271,7 @@ window.addEventListener('DOMContentLoaded',
         }
 
         function displayAlmaErrors(message, divId) {
-            var errorMessagePosition = document.querySelectorAll(almaContext.selector.fragmentErrors)[0];
+            var errorMessagePosition = document.querySelectorAll(almaContext.selector.inpageErrors)[0];
             var errorMessage = document.createTextNode(message);
             var errorDiv = document.createElement('div');
             errorDiv.classList.add('col-12', 'alma-error-message');

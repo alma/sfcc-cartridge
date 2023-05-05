@@ -320,7 +320,7 @@ server.post(
 );
 
 server.get(
-    'FragmentCheckout',
+    'InpageCheckout',
     server.middleware.https,
     function (req, res, next) {
         var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');

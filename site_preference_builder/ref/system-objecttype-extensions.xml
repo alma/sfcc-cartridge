@@ -43,7 +43,7 @@
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
-            <attribute-definition attribute-id="ALMA_Fragment_Payment">
+            <attribute-definition attribute-id="ALMA_Inpage_Payment">
                 <display-name xml:lang="x-default">Activate in-page payment when possible</display-name>
                 <type>boolean</type>
                 <mandatory-flag>false</mandatory-flag>
@@ -95,7 +95,7 @@
                 <attribute attribute-id="ALMA_APIUrl"/>
                 <attribute attribute-id="ALMA_APIKey"/>
                 <attribute attribute-id="ALMA_Merchant_Id"/>
-                <attribute attribute-id="ALMA_Fragment_Payment"/>
+                <attribute attribute-id="ALMA_Inpage_Payment"/>
                 <attribute attribute-id="isWidgetEnable"/>
                 <attribute attribute-id="cartSelector"/>
                 <attribute attribute-id="isProductWidgetEnable"/>
