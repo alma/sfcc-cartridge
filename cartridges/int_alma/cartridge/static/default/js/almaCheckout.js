@@ -55,7 +55,7 @@ window.addEventListener('DOMContentLoaded',
                             icon.classList.remove("fa-chevron-down");
                         });
 
-                        document.getElementById(`${plan.key + '_fragment'}`).innerHTML = "";
+                        document.getElementById(`${plan.key + '-inpage'}`).innerHTML = "";
 
                         if (plan.payment_plans) {
                             document.getElementById(plan.key)
@@ -118,90 +118,6 @@ window.addEventListener('DOMContentLoaded',
             paymentOption.addEventListener('click', removeCheckoutEvents);
         });
 
-        /**
-         * Returns the data formatted for in-page payment
-         * @param  {Object} data an alma plan
-         * @param  {number} installments_count number of installments
-         * @param  {number} deferred_days number of days before the 1st payment
-         * @returns {Object}
-         */
-        function getPaymentData(data, installments_count, deferred_days) {
-            return {
-                payment: {
-                    purchase_amount: purchase_amount,
-                    installments_count: installments_count,
-                    deferred_days: deferred_days,
-                    deferred_months: 0,
-                    return_url: almaContext.payment.returnUrl,
-                    ipn_callback_url: almaContext.payment.ipnCallbackUrl,
-                    customer_cancel_url: almaContext.payment.customerCancelUrl,
-                    locale: data.locale.split("_")[0],
-                    shipping_address: data.shipping_address,
-                    deferred: data.isEnableOnShipment ? "trigger" : "",
-                    deferred_description: data.isEnableOnShipment ? decodeHtml(almaContext.payment.deferredDescription) : "",
-                    custom_data: {
-                        cms_name: data.cms_name,
-                        cms_version: data.cms_version,
-                        alma_plugin_version: data.alma_plugin_version
-                    }
-                },
-                customer: data.customer
-            };
-        }
-
-        /**
-         * Build an in-page payment form to allow the customer to pay
-         * This option is only available when installments_count is 2 or 3
-         * @param  {string} container the div elem where the form will be built
-         * @param  {number} installments_count number of installments
-         * @param  {number} deferred_days number of days before the 1st payment
-         */
-        async function renderInPage(
-            container,
-            installments_count,
-            deferred_days
-        ) {
-            var response = await fetch(almaContext.almaUrl.dataUrl + '?installment=' + installments_count);
-            var data = await response.json();
-
-            var paymentData = getPaymentData(data, installments_count, deferred_days);
-
-            var fragments = new Alma.Fragments(almaContext.merchantId, {
-                mode: almaContext.almaMode === 'LIVE' ? Alma.ApiMode.LIVE : Alma.ApiMode.TEST
-            });
-
-            var paymentForm = fragments.createPaymentForm(paymentData, {
-                showPayButton: false,
-                onSuccess: function (returnedData) {
-                    window.location = returnedData.return_url;
-                },
-                onFailure: function () {
-                    addCheckoutEvent(checkoutEvents.at(-1));
-                    checkoutFragmentCallInProgress = false;
-                    displayAlmaErrors(almaContext.fragmentOnFailureMessage, 'fragment-on-failure');
-                },
-                onPopupClose: function () {
-                    addCheckoutEvent(checkoutEvents.at(-1));
-                    checkoutFragmentCallInProgress = false;
-                    displayAlmaErrors(almaContext.fragmentOnCloseMessage, 'fragment-on-close');
-                }
-            });
-
-            await paymentForm.mount(document.getElementById(container));
-            return paymentForm;
-        }
-
-        /**
-         * SFCC resource needs to be decoded to be given to Alma Fragment
-         * @param {string} ressource the message to decode
-         * @returns {string} the decoded string
-         */
-        function decodeHtml(ressource) {
-            var txt = document.createElement("textarea");
-            txt.innerHTML = ressource;
-            return txt.value;
-        }
-
         /*
          * Redirect to Alma website to allow the customer to pay
          * @param  {number} installments_count number of installments
@@ -216,29 +132,18 @@ window.addEventListener('DOMContentLoaded',
             window.location = body.url;
         }
 
-        async function inPageInitialize(paymentForm, inPageContainer) {
-            // console.log(paymentForm);
+        async function inPageInitialize(inPageContainer, payment) {
             const inPage = Alma.InPage.initialize(
-                paymentForm.currentPayment.id,
+                payment.id,
                 {
                     environment: almaContext.almaMode,
                     showPayButton: false,
-                    onPaymentSucceeded: function (returnedData) {
-                        window.location = returnedData.return_url;
-                    },
-                    onPaymentRejected: function () {
-                        addCheckoutEvent(checkoutEvents.at(-1));
-                        checkoutFragmentCallInProgress = false;
-                        displayAlmaErrors(almaContext.fragmentOnFailureMessage, 'fragment-on-failure');
-                    },
                     onUserCloseModal: function () {
                         addCheckoutEvent(checkoutEvents.at(-1));
-                        checkoutFragmentCallInProgress = false;
-                        displayAlmaErrors(almaContext.fragmentOnCloseMessage, 'fragment-on-close');
+                        checkoutInpageCallInProgress = false;
                     }
                 });
 
-            // console.log(document.getElementById(container));
             await inPage.mount("#" + inPageContainer);
             return inPage;
         }
@@ -248,6 +153,16 @@ window.addEventListener('DOMContentLoaded',
          * @param  {Object} t a JS selector
          */
         async function toggle(t) {
+            var inPages = document.querySelectorAll('[id$="-inpage"]');
+            inPages.forEach(function (inPage) {
+                if (inPage.firstChild) {
+                    inPage
+                        .firstChild
+                        .remove();
+                }
+            });
+
+
             removeCheckoutEvents();
             var activeElt = document.querySelector("#" + t.id + " .fa");
             var isAlreadyOpen = activeElt.classList.contains("fa-chevron-down");
@@ -267,41 +182,42 @@ window.addEventListener('DOMContentLoaded',
 
                 document.body.style.cursor = 'wait';
                 if (in_page) {
-                    await renderInPage(t.id + "_fragment_hide", installments_count, deferred_days)
-                        .then(async function (paymentForm) {
-                            await inPageInitialize(paymentForm, t.id + "-inpage")
-                                .then(function (inPage) {
-                                    console.log(inPage);
-                                    var checkoutFragmentCall = async function () {
-                                        if (checkoutFragmentCallInProgress) {
-                                            return;
-                                        }
-                                        checkoutFragmentCallInProgress = true;
-                                        var ajaxResponse = await fetch(almaContext.almaUrl.checkoutFragmentUrl + '?pid=' + paymentForm.currentPayment.id + '&amount=' + paymentForm.currentPayment.purchase_amount + '&alma_payment_method=' + alma_payment_method);
-                                        var orderFragment = await ajaxResponse.json();
-                                        switch (ajaxResponse.status) {
-                                            case 200:
-                                                removeCheckoutEvents();
-                                                inPage.startPayment();
-                                                break;
-                                            case 400:
-                                                displayMismatchMessage(orderFragment);
-                                                checkoutFragmentCallInProgress = false;
-                                                break;
-                                            case 500:
-                                                displayAlmaErrors(orderFragment.error, 'payment-method-not-found-message');
-                                                checkoutFragmentCallInProgress = false;
-                                                break;
-                                            default:
-                                                displayAlmaErrors(ajaxResponse.status, 'payment-error');
-                                                checkoutFragmentCallInProgress = false;
-                                        }
-                                    };
+                    var response = await fetch(
+                        almaContext.almaUrl.createPaymentUrl + '?deferred_days=' + deferred_days + '&installments=' + installments_count,
+                        { method: 'POST' }
+                    );
+                    var payment = await response.json();
+                    await inPageInitialize(t.id + "-inpage", payment)
+                        .then(function (inPage) {
+                            var checkoutInpageCall = async function () {
+                                if (checkoutInpageCallInProgress) {
+                                    return;
+                                }
+                                checkoutInpageCallInProgress = true;
+                                var ajaxResponse = await fetch(almaContext.almaUrl.checkoutInpageUrl + '?pid=' + payment.id + '&amount=' + payment.purchase_amount + '&alma_payment_method=' + alma_payment_method);
+                                var orderInpage = await ajaxResponse.json();
+                                switch (ajaxResponse.status) {
+                                    case 200:
+                                        removeCheckoutEvents();
+                                        inPage.startPayment();
+                                        break;
+                                    case 400:
+                                        displayMismatchMessage(orderInpage);
+                                        checkoutInpageCallInProgress = false;
+                                        break;
+                                    case 500:
+                                        displayAlmaErrors(orderInpage.error, 'payment-method-not-found-message');
+                                        checkoutInpageCallInProgress = false;
+                                        break;
+                                    default:
+                                        displayAlmaErrors(ajaxResponse.status, 'payment-error');
+                                        checkoutInpageCallInProgress = false;
+                                }
+                            };
 
-                                    checkoutEvents.push(checkoutFragmentCall);
+                            checkoutEvents.push(checkoutInpageCall);
 
-                                    addCheckoutEvent(checkoutFragmentCall);
-                                });
+                            addCheckoutEvent(checkoutInpageCall);
                         });
                 } else {
                     activeElt.parentNode.innerHTML = '<div class="alma-lds-ring"><div></div><div></div><div></div><div></div></div>';
@@ -309,10 +225,6 @@ window.addEventListener('DOMContentLoaded',
                 }
                 document.body.style.cursor = 'default';
 
-            } else {
-                await document.getElementById(t.id + "_fragment")
-                    .firstChild
-                    .remove();
             }
         }
 

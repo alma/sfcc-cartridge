@@ -297,7 +297,7 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
             ipn_callback_url: URLUtils.http('Alma-IPN').toString(),
             customer_cancel_url: URLUtils.https('Alma-CustomerCancel').toString(),
             locale: locale,
-            origin: 'online',
+            origin: 'online_in_page',
             shipping_address: formatAddress(currentBasket.getDefaultShipment().shippingAddress),
             billing_address: formatAddress(currentBasket.getBillingAddress()),
             deferred: isEnableOnShipment ? 'trigger' : '',
