@@ -280,10 +280,16 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
     var BasketMgr = require('dw/order/BasketMgr');
     var URLUtils = require('dw/web/URLUtils');
     var almaHelper = require('*/cartridge/scripts/helpers/almaHelpers');
+    var almaCheckoutHelper = require('*/cartridge/scripts/helpers/almaCheckoutHelper');
 
     var formatAddress = require('*/cartridge/scripts/helpers/almaAddressHelper').formatAddress;
     var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
     var formatCustomerData = require('*/cartridge/scripts/helpers/almaHelpers').formatCustomerData;
+
+    var online = 'online';
+    if (almaCheckoutHelper.isPnx(installmentsCount, deferredDays) && almaCheckoutHelper.isInpageActivated()) {
+        online = 'online_in_page';
+    }
 
     var currentBasket = BasketMgr.getCurrentBasket();
     var isEnableOnShipment = isOnShipmentPaymentEnabled(installmentsCount);
@@ -297,7 +303,7 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
             ipn_callback_url: URLUtils.http('Alma-IPN').toString(),
             customer_cancel_url: URLUtils.https('Alma-CustomerCancel').toString(),
             locale: locale,
-            origin: 'online_in_page',
+            origin: online,
             shipping_address: formatAddress(currentBasket.getDefaultShipment().shippingAddress),
             billing_address: formatAddress(currentBasket.getBillingAddress()),
             deferred: isEnableOnShipment ? 'trigger' : '',
