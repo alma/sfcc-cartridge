@@ -160,6 +160,22 @@ function haveExcludedCategory(productIds) {
     return haveExcludedCategoryReturn;
 }
 
+/**
+ * Get the full url for a page
+ * @param {string} pageName name of page for url
+ * @param {string} pageTemplate template of page for url
+ * @param {string} locale locale
+ * @returns {string} url
+ */
+function getFullPageUrl(pageName, pageTemplate, locale) {
+    var hostname = Site.getCurrent().getHttpsHostName();
+    var siteName = Site.getCurrent().getName();
+
+    var url = 'https://' + hostname + '/s/' + siteName + '/' + pageName + '/' + pageTemplate + '.html?lang=' + locale;
+
+    return url;
+}
+
 module.exports = {
     addHeaders: addHeaders,
     formatCustomerData: formatCustomerData,
@@ -170,5 +186,6 @@ module.exports = {
     isAlmaEnable: isAlmaEnable,
     isAlmaOnShipment: isAlmaOnShipment,
     getSfccVersion: getSfccVersion,
-    haveExcludedCategory: haveExcludedCategory
+    haveExcludedCategory: haveExcludedCategory,
+    getFullPageUrl: getFullPageUrl
 };

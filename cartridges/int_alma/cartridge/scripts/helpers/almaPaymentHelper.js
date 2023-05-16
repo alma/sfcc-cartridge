@@ -318,14 +318,17 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
             .forEach(function (productLineItem) {
                 var product = productLineItem.getProduct();
                 var categories = [];
+                var fullPageUrl = '';
 
                 if (product.isMaster()) {
+                    fullPageUrl = almaHelper.getFullPageUrl(product.getPageURL(), product.getID(), locale);
                     product.getAllCategories().toArray().forEach(function (category) {
                         if (!categories.includes(category.getID())) {
                             categories.push(category.getID());
                         }
                     });
                 } else {
+                    fullPageUrl = almaHelper.getFullPageUrl(product.getPageURL(), product.getMasterProduct().getID(), locale);
                     product.getMasterProduct().getAllCategories().toArray().forEach(function (category) {
                         if (!categories.includes(category.getID())) {
                             categories.push(category.getID());
@@ -341,7 +344,7 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
                     unit_price: parseInt(product.getPriceModel().getPrice() * 100, 10),
                     line_price: parseInt(productLineItem.getProratedPrice() * 100, 10),
                     categories: categories,
-                    url: product.getPageURL(),
+                    url: fullPageUrl,
                     picture_url: product.getImage('large').getHttpsURL().toString(),
                     requires_shipping: !!productLineItem.getShipment()
 
