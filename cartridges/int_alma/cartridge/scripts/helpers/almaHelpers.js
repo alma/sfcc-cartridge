@@ -171,9 +171,7 @@ function getFullPageUrl(pageName, pageTemplate, locale) {
     var hostname = Site.getCurrent().getHttpsHostName();
     var siteName = Site.getCurrent().getName();
 
-    var url = 'https://' + hostname + '/s/' + siteName + '/' + pageName + '/' + pageTemplate + '.html?lang=' + locale;
-
-    return url;
+    return 'https://' + hostname + '/s/' + siteName + '/' + pageName + '/' + pageTemplate + '.html?lang=' + locale;
 }
 
 module.exports = {

@@ -319,26 +319,24 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
                 var product = productLineItem.getProduct();
                 var categories = [];
                 var fullPageUrl = '';
+                var productsCategories = '';
 
                 if (product.isMaster()) {
                     fullPageUrl = almaHelper.getFullPageUrl(product.getPageURL(), product.getID(), locale);
-                    product.getAllCategories().toArray().forEach(function (category) {
-                        if (!categories.includes(category.getID())) {
-                            categories.push(category.getID());
-                        }
-                    });
+                    productsCategories = product.getAllCategories().toArray();
                 } else {
                     fullPageUrl = almaHelper.getFullPageUrl(product.getPageURL(), product.getMasterProduct().getID(), locale);
-                    product.getMasterProduct().getAllCategories().toArray().forEach(function (category) {
-                        if (!categories.includes(category.getID())) {
-                            categories.push(category.getID());
-                        }
-                    });
+                    productsCategories = product.getMasterProduct().getAllCategories().toArray();
                 }
+
+                productsCategories.forEach(function (category) {
+                    if (!categories.includes(category.getID())) {
+                        categories.push(category.getID());
+                    }
+                });
 
                 var item = {
                     sku: product.getID(),
-                    // vendor: '',
                     title: product.getName(),
                     quantity: productLineItem.getQuantityValue(),
                     unit_price: parseInt(product.getPriceModel().getPrice() * 100, 10),
