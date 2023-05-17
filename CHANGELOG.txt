@@ -3,7 +3,7 @@ CHANGELOG
 
 v4.2.0
 ------
-* Feat: Add contexte informations for Alma logs
+* Feat: Add contextual information for Alma logs
 * Feat: Encrypt Alma API key in back-office
 * Feat: Add possibility to exclude a product category for Alma payment
 
