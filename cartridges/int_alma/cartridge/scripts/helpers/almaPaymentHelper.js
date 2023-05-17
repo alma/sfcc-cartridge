@@ -224,6 +224,11 @@ function createOrderFromBasket(almaPaymentMethod) {
         throw new Error('Current basket is null');
     }
 
+    // If almaPaymentMethod doesn't exist force to 'ALMA_PNX' to get paymentMethod
+    if (!almaPaymentMethod) {
+        almaPaymentMethod = 'ALMA_PNX';
+    }
+
     Transaction.wrap(function () {
         currentBasket.removeAllPaymentInstruments();
         var paymentMethod = PaymentMgr.getPaymentMethod(almaPaymentMethod);
