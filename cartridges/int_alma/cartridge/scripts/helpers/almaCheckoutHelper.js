@@ -152,7 +152,7 @@ function getPropertiesForPlan(plan, currencyCode) {
  * @param  {int} deferredDays deferred days
  * @returns {boolean} true means we can use inpage
  */
-function isPnx(installmentsCount, deferredDays) {
+function isAvailableForInpage(installmentsCount, deferredDays) {
     return installmentsCount <= 4 && deferredDays <= 0;
 }
 
@@ -209,7 +209,7 @@ function formatPlanForCheckout(plan, currencyCode) {
     var formatPlan = {};
     if (plan.installments_count < 5 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PNX_ID), plan)) {
         formatPlan = {
-            in_page: isPnx(plan.installments_count, plan.deferred_days) && isInpageActivated(),
+            in_page: isAvailableForInpage(plan.installments_count, plan.deferred_days) && isInpageActivated(),
             selector: getSelectorNameFromPlan(plan),
             installments_count: plan.installments_count,
             deferred_days: plan.deferred_days,
@@ -222,7 +222,7 @@ function formatPlanForCheckout(plan, currencyCode) {
     }
     if (plan.installments_count >= 5 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_CREDIT_ID), plan)) {
         formatPlan = {
-            in_page: isPnx(plan.installments_count, plan.deferred_days) && isInpageActivated(),
+            in_page: isAvailableForInpage(plan.installments_count, plan.deferred_days) && isInpageActivated(),
             selector: getSelectorNameFromPlan(plan),
             installments_count: plan.installments_count,
             deferred_days: plan.deferred_days,
@@ -235,7 +235,7 @@ function formatPlanForCheckout(plan, currencyCode) {
     }
     if (plan.deferred_days > 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_DEFERRED_ID), plan)) {
         formatPlan = {
-            in_page: isPnx(plan.installments_count, plan.deferred_days) && isInpageActivated(),
+            in_page: isAvailableForInpage(plan.installments_count, plan.deferred_days) && isInpageActivated(),
             selector: getSelectorNameFromPlan(plan),
             installments_count: plan.installments_count,
             deferred_days: plan.deferred_days,
@@ -252,6 +252,6 @@ function formatPlanForCheckout(plan, currencyCode) {
 module.exports = {
     formatPlanForCheckout: formatPlanForCheckout,
     getPlanPaymentMethodID: getPlanPaymentMethodID,
-    isPnx: isPnx,
+    isAvailableForInpage: isAvailableForInpage,
     isInpageActivated: isInpageActivated
 };

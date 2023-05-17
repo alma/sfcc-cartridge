@@ -287,7 +287,7 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
     var formatCustomerData = require('*/cartridge/scripts/helpers/almaHelpers').formatCustomerData;
 
     var origin = 'online';
-    if (almaCheckoutHelper.isPnx(installmentsCount, deferredDays) && almaCheckoutHelper.isInpageActivated()) {
+    if (almaCheckoutHelper.isAvailableForInpage(installmentsCount, deferredDays) && almaCheckoutHelper.isInpageActivated()) {
         origin = 'online_in_page';
     }
 
