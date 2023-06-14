@@ -159,6 +159,95 @@ function haveExcludedCategory(productIds) {
 
     return haveExcludedCategoryReturn;
 }
+/**
+ * Get the full url for a page
+ * @param {string} pageName name of page for url
+ * @param {string} pageTemplate template of page for url
+ * @param {string} locale locale
+ * @returns {string} url
+ */
+function getFullPageUrl(pageName, pageTemplate, locale) {
+    var hostname = Site.getCurrent().getHttpsHostName();
+    var siteName = Site.getCurrent().getName();
+
+    return 'https://' + hostname + '/s/' + siteName + '/' + pageName + '/' + pageTemplate + '.html?lang=' + locale;
+}
+
+/**
+ * get orders items for website customer details
+ * @param {Object} order order
+ * @param {string} locale locale
+ * @returns {Object} items
+ */
+function getOrdersItemsForWebsiteCustomerDetails(order, locale) {
+    var forOf = require('*/cartridge/scripts/helpers/almaUtilsHelper').forOf;
+    var items = [];
+    forOf(order.getAllProductLineItems(), function (productLine) {
+        var product = productLine.getProduct();
+        var categories = [];
+        var fullPageUrl = '';
+        var productsCategories = '';
+
+        if (product.isMaster()) {
+            fullPageUrl = getFullPageUrl(product.getPageURL(), product.getID(), locale);
+            productsCategories = product.getAllCategories().toArray();
+        } else {
+            fullPageUrl = getFullPageUrl(product.getPageURL(), product.getMasterProduct().getID(), locale);
+            productsCategories = product.getMasterProduct().getAllCategories().toArray();
+        }
+
+        productsCategories.forEach(function (category) {
+            if (!categories.includes(category.getID())) {
+                categories.push(category.getID());
+            }
+        });
+        var item = {
+            sku: product.getID(),
+            title: product.getName(),
+            quantity: productLine.getQuantityValue(),
+            unit_price: parseInt(product.getPriceModel().getPrice() * 100, 10),
+            line_price: parseInt(productLine.getProratedPrice() * 100, 10),
+            categories: categories,
+            url: fullPageUrl,
+            picture_url: product.getImage('large').getHttpsURL().toString(),
+            requires_shipping: !!productLine.getShipment()
+        };
+        items.push(item);
+    });
+    return items;
+}
+
+/**
+ * Get website customer details data
+ * @param {Object} customer customer
+ * @param {string} locale locale
+ * @returns {Object} data
+ */
+function getWebsiteCustomerDetails(customer, locale) {
+    var forOf = require('*/cartridge/scripts/helpers/almaUtilsHelper').forOf;
+    var isGuest = customer.isAnonymous();
+
+    var previousOrders = [];
+
+    if (!isGuest) {
+        var orders = customer.getOrderHistory().getOrders().asList(0, 10);
+        forOf(orders, function (order) {
+            var previourOrder = {
+                purchase_amount: Math.round(order.totalGrossPrice.multiply(100).value),
+                payment_method: order.getPaymentInstruments()[0].getPaymentTransaction().getPaymentProcessor().getID(),
+                shipping_method: order.getShipments()[0].getShippingMethod().getDisplayName(),
+                created: order.getCreationDate().getTime(),
+                items: getOrdersItemsForWebsiteCustomerDetails(order, locale)
+            };
+            previousOrders.push(previourOrder);
+        });
+    }
+
+    return {
+        is_guest: isGuest,
+        previous_orders: previousOrders
+    };
+}
 
 module.exports = {
     addHeaders: addHeaders,
@@ -170,5 +259,6 @@ module.exports = {
     isAlmaEnable: isAlmaEnable,
     isAlmaOnShipment: isAlmaOnShipment,
     getSfccVersion: getSfccVersion,
-    haveExcludedCategory: haveExcludedCategory
+    haveExcludedCategory: haveExcludedCategory,
+    getWebsiteCustomerDetails: getWebsiteCustomerDetails
 };
