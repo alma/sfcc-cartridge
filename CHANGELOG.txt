@@ -1,7 +1,9 @@
 CHANGELOG
 =========
 
-* Feat: Pay Now
+v4.3.0
+------
+* Feat: add Pay Now with credit card with Alma
 
 v4.2.0
 ------
