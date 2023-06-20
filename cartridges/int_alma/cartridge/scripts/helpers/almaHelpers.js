@@ -161,16 +161,63 @@ function haveExcludedCategory(productIds) {
 }
 /**
  * Get the full url for a page
- * @param {string} pageName name of page for url
- * @param {string} pageTemplate template of page for url
+ * @param {Object} product product
  * @param {string} locale locale
  * @returns {string} url
  */
-function getFullPageUrl(pageName, pageTemplate, locale) {
-    var hostname = Site.getCurrent().getHttpsHostName();
-    var siteName = Site.getCurrent().getName();
+function getFullPageUrl(product, locale) {
+    var productId = '';
+    if (product.isMaster()) {
+        productId = product.getID();
+    } else {
+        productId = product.getMasterProduct().getID();
+    }
+    return 'https://' + Site.getCurrent().getHttpsHostName() + '/s/' + Site.getCurrent().getName() + '/' + product.getPageURL() + '/' + productId + '.html?lang=' + locale;
+}
 
-    return 'https://' + hostname + '/s/' + siteName + '/' + pageName + '/' + pageTemplate + '.html?lang=' + locale;
+/**
+ * Get catégories for a product
+ * @param {Object} product product
+ * @returns {array} categories
+ */
+function getProductCategories(product) {
+    var categories = [];
+    var productsCategories = '';
+
+    if (product.isMaster()) {
+        productsCategories = product.getAllCategories().toArray();
+    } else {
+        productsCategories = product.getMasterProduct().getAllCategories().toArray();
+    }
+
+    productsCategories.forEach(function (category) {
+        if (!categories.includes(category.getID())) {
+            categories.push(category.getID());
+        }
+    });
+
+    return categories;
+}
+
+/**
+ * Get fomated item for a product line
+ * @param {Object} product product
+ * @param {Object} productLine product line
+ * @param {string} locale locale
+ * @returns {Object} item
+ */
+function formatItem(product, productLine, locale) {
+    return {
+        sku: product.getID(),
+        title: product.getName(),
+        quantity: productLine.getQuantityValue(),
+        unit_price: parseInt(product.getPriceModel().getPrice() * 100, 10),
+        line_price: parseInt(productLine.getProratedPrice() * 100, 10),
+        categories: getProductCategories(product),
+        url: getFullPageUrl(product, locale),
+        picture_url: product.getImage('large').getHttpsURL().toString(),
+        requires_shipping: !!productLine.getShipment()
+    };
 }
 
 /**
@@ -184,37 +231,25 @@ function getOrdersItemsForWebsiteCustomerDetails(order, locale) {
     var items = [];
     forOf(order.getAllProductLineItems(), function (productLine) {
         var product = productLine.getProduct();
-        var categories = [];
-        var fullPageUrl = '';
-        var productsCategories = '';
-
-        if (product.isMaster()) {
-            fullPageUrl = getFullPageUrl(product.getPageURL(), product.getID(), locale);
-            productsCategories = product.getAllCategories().toArray();
-        } else {
-            fullPageUrl = getFullPageUrl(product.getPageURL(), product.getMasterProduct().getID(), locale);
-            productsCategories = product.getMasterProduct().getAllCategories().toArray();
-        }
-
-        productsCategories.forEach(function (category) {
-            if (!categories.includes(category.getID())) {
-                categories.push(category.getID());
-            }
-        });
-        var item = {
-            sku: product.getID(),
-            title: product.getName(),
-            quantity: productLine.getQuantityValue(),
-            unit_price: parseInt(product.getPriceModel().getPrice() * 100, 10),
-            line_price: parseInt(productLine.getProratedPrice() * 100, 10),
-            categories: categories,
-            url: fullPageUrl,
-            picture_url: product.getImage('large').getHttpsURL().toString(),
-            requires_shipping: !!productLine.getShipment()
-        };
-        items.push(item);
+        items.push(formatItem(product, productLine, locale));
     });
     return items;
+}
+
+/**
+ * Get previous order
+ * @param {Object} order order
+ * @param {string} locale locale
+ * @returns {Object} previous order
+ */
+function getPreviousOrder(order, locale) {
+    return {
+        purchase_amount: Math.round(order.totalGrossPrice.multiply(100).value),
+        payment_method: order.getPaymentInstruments()[0].getPaymentTransaction().getPaymentProcessor().getID(),
+        shipping_method: order.getShipments()[0].getShippingMethod().getDisplayName(),
+        created: order.getCreationDate().getTime(),
+        items: getOrdersItemsForWebsiteCustomerDetails(order, locale)
+    };
 }
 
 /**
@@ -232,14 +267,7 @@ function getWebsiteCustomerDetails(customer, locale) {
     if (!isGuest) {
         var orders = customer.getOrderHistory().getOrders().asList(0, 10);
         forOf(orders, function (order) {
-            var previourOrder = {
-                purchase_amount: Math.round(order.totalGrossPrice.multiply(100).value),
-                payment_method: order.getPaymentInstruments()[0].getPaymentTransaction().getPaymentProcessor().getID(),
-                shipping_method: order.getShipments()[0].getShippingMethod().getDisplayName(),
-                created: order.getCreationDate().getTime(),
-                items: getOrdersItemsForWebsiteCustomerDetails(order, locale)
-            };
-            previousOrders.push(previourOrder);
+            previousOrders.push(getPreviousOrder(order, locale));
         });
     }
 
