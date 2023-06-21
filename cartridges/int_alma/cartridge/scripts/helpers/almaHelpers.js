@@ -176,7 +176,7 @@ function getFullPageUrl(product, locale) {
 }
 
 /**
- * Get catégories for a product
+ * Get categories for a product
  * @param {Object} product product
  * @returns {array} categories
  */
@@ -237,12 +237,12 @@ function getOrdersItemsForWebsiteCustomerDetails(order, locale) {
 }
 
 /**
- * Get previous order
+ * Format previous order
  * @param {Object} order order
  * @param {string} locale locale
  * @returns {Object} previous order
  */
-function getPreviousOrder(order, locale) {
+function formatPreviousOrder(order, locale) {
     return {
         purchase_amount: Math.round(order.totalGrossPrice.multiply(100).value),
         payment_method: order.getPaymentInstruments()[0].getPaymentTransaction().getPaymentProcessor().getID(),
@@ -267,7 +267,7 @@ function getWebsiteCustomerDetails(customer, locale) {
     if (!isGuest) {
         var orders = customer.getOrderHistory().getOrders().asList(0, 10);
         forOf(orders, function (order) {
-            previousOrders.push(getPreviousOrder(order, locale));
+            previousOrders.push(formatPreviousOrder(order, locale));
         });
     }
 
