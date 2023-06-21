@@ -4,6 +4,7 @@ var Site = require('dw/system/Site');
 var System = require('dw/system/System');
 var logger = require('dw/system/Logger').getLogger('alma');
 var pkg = require('../../../package.json');
+var almaProductHelper = require('*/cartridge/scripts/helpers/almaProductHelper');
 
 /**
  * Builds SFCC current version.
@@ -166,13 +167,7 @@ function haveExcludedCategory(productIds) {
  * @returns {string} url
  */
 function getFullPageUrl(product, locale) {
-    var productId = '';
-    if (product.isMaster()) {
-        productId = product.getID();
-    } else {
-        productId = product.getMasterProduct().getID();
-    }
-    return 'https://' + Site.getCurrent().getHttpsHostName() + '/s/' + Site.getCurrent().getName() + '/' + product.getPageURL() + '/' + productId + '.html?lang=' + locale;
+    return 'https://' + Site.getCurrent().getHttpsHostName() + '/s/' + Site.getCurrent().getName() + '/' + product.getPageURL() + '/' + almaProductHelper.getProductId(product) + '.html?lang=' + locale;
 }
 
 /**
@@ -182,15 +177,8 @@ function getFullPageUrl(product, locale) {
  */
 function getProductCategories(product) {
     var categories = [];
-    var productsCategories = '';
 
-    if (product.isMaster()) {
-        productsCategories = product.getAllCategories().toArray();
-    } else {
-        productsCategories = product.getMasterProduct().getAllCategories().toArray();
-    }
-
-    productsCategories.forEach(function (category) {
+    almaProductHelper.getProductCategories(product).forEach(function (category) {
         if (!categories.includes(category.getID())) {
             categories.push(category.getID());
         }
