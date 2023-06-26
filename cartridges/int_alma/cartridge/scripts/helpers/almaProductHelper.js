@@ -6,15 +6,10 @@
  * @returns {string} id
  */
 function getProductId(product) {
-    var productId = '';
-
     if (product.isMaster()) {
-        productId = product.getID();
-    } else {
-        productId = product.getMasterProduct().getID();
+        return product.getID();
     }
-
-    return productId;
+    return product.getMasterProduct().getID();
 }
 
 /**
@@ -23,15 +18,10 @@ function getProductId(product) {
  * @returns {array} categories
  */
 function getProductCategories(product) {
-    var productsCategories = [];
-
     if (product.isMaster()) {
-        productsCategories = product.getAllCategories().toArray();
-    } else {
-        productsCategories = product.getMasterProduct().getAllCategories().toArray();
+        return product.getAllCategories().toArray();
     }
-
-    return productsCategories;
+    return product.getMasterProduct().getAllCategories().toArray();
 }
 
 module.exports = {
