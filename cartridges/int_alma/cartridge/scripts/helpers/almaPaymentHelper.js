@@ -331,37 +331,7 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
         products.toArray()
             .forEach(function (productLineItem) {
                 var product = productLineItem.getProduct();
-                var categories = [];
-                var fullPageUrl = '';
-                var productsCategories = '';
-
-                if (product.isMaster()) {
-                    fullPageUrl = almaHelper.getFullPageUrl(product.getPageURL(), product.getID(), locale);
-                    productsCategories = product.getAllCategories().toArray();
-                } else {
-                    fullPageUrl = almaHelper.getFullPageUrl(product.getPageURL(), product.getMasterProduct().getID(), locale);
-                    productsCategories = product.getMasterProduct().getAllCategories().toArray();
-                }
-
-                productsCategories.forEach(function (category) {
-                    if (!categories.includes(category.getID())) {
-                        categories.push(category.getID());
-                    }
-                });
-
-                var item = {
-                    sku: product.getID(),
-                    title: product.getName(),
-                    quantity: productLineItem.getQuantityValue(),
-                    unit_price: parseInt(product.getPriceModel().getPrice() * 100, 10),
-                    line_price: parseInt(productLineItem.getProratedPrice() * 100, 10),
-                    categories: categories,
-                    url: fullPageUrl,
-                    picture_url: product.getImage('large').getHttpsURL().toString(),
-                    requires_shipping: !!productLineItem.getShipment()
-
-                };
-                items.push(item);
+                items.push(almaHelper.formatItem(product, productLineItem, locale));
             });
 
         paymentData.payment.cart = {
