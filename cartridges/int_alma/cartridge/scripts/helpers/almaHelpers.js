@@ -266,6 +266,20 @@ function getWebsiteCustomerDetails(customer, locale) {
     };
 }
 
+/**
+ * Get the full url for a page
+ * @param {string} pageName name of page for url
+ * @param {string} pageTemplate template of page for url
+ * @param {string} locale locale
+ * @returns {string} url
+ */
+function getFullPageUrl(pageName, pageTemplate, locale) {
+    var hostname = Site.getCurrent().getHttpsHostName();
+    var siteName = Site.getCurrent().getName();
+
+    return 'https://' + hostname + '/s/' + siteName + '/' + pageName + '/' + pageTemplate + '.html?lang=' + locale;
+}
+
 module.exports = {
     addHeaders: addHeaders,
     formatCustomerData: formatCustomerData,
@@ -278,4 +292,5 @@ module.exports = {
     getSfccVersion: getSfccVersion,
     haveExcludedCategory: haveExcludedCategory,
     getWebsiteCustomerDetails: getWebsiteCustomerDetails
+    getFullPageUrl: getFullPageUrl
 };
