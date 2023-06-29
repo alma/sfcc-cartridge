@@ -1,6 +1,12 @@
 CHANGELOG
 =========
 
+v4.3.0
+------
+* Feat: add Pay Now with credit card with Alma.
+* Feat: add data for Alma Risk - 10 past purchases.
+* Feat: add cart items in Alma payment payload for credit.
+
 v4.2.0
 ------
 * Feat: Add contextual information for Alma logs

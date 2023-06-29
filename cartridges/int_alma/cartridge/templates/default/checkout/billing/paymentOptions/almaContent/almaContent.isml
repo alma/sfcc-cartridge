@@ -9,9 +9,11 @@
             >
                 <div class="col-2 img-content">
                     <div class="img">
-                        <div class="img-text" id="${plan.key + '-img'}">
-                            <isprint value="${plan.properties.img}" encoding="off"/>
-                        </div>
+                        <isif condition="${paymentOption.ID !== 'ALMA_PAY_NOW'}">
+                            <div class="img-text" id="${plan.key + '-img'}">
+                                <isprint value="${plan.properties.img}" encoding="off"/>
+                            </div>
+                        </isif>
                         <img alt="" src="${URLUtils.staticURL('/images/alma.png')}" title="ALMA"
                              style="height: 20px;"/>
                     </div>

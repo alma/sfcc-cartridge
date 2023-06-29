@@ -11,4 +11,7 @@
     <isif condition="${pdict.isAlmaEnable && paymentOption && paymentOption.ID === 'ALMA_CREDIT'}">
         <isinclude template="checkout/billing/paymentOptions/almaTab" />
     </isif>
+    <isif condition="${pdict.isAlmaEnable && paymentOption && paymentOption.ID === 'ALMA_PAY_NOW'}">
+        <isinclude template="checkout/billing/paymentOptions/almaTab" />
+    </isif>
 </isloop>
