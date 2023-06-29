@@ -247,13 +247,14 @@ function formatPreviousOrder(order, locale) {
  * @returns {Object} data
  */
 function getWebsiteCustomerDetails(customer, locale) {
+    var Order = require('dw/order/Order');
     var forOf = require('*/cartridge/scripts/helpers/almaUtilsHelper').forOf;
     var isGuest = customer.isAnonymous();
 
     var previousOrders = [];
 
     if (!isGuest) {
-        var orders = customer.getOrderHistory().getOrders().asList(0, 10);
+        var orders = customer.getOrderHistory().getOrders('status = {0} OR status = {1}', 'creationDate DESC', [Order.ORDER_STATUS_NEW, Order.ORDER_STATUS_OPEN]).asList(0, 10);
         forOf(orders, function (order) {
             previousOrders.push(formatPreviousOrder(order, locale));
         });
