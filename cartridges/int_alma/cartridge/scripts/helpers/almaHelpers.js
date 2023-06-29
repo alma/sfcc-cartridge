@@ -279,5 +279,6 @@ module.exports = {
     getSfccVersion: getSfccVersion,
     haveExcludedCategory: haveExcludedCategory,
     getWebsiteCustomerDetails: getWebsiteCustomerDetails,
-    getFullPageUrl: getFullPageUrl
+    getFullPageUrl: getFullPageUrl,
+    formatItem: formatItem
 };
