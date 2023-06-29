@@ -4,6 +4,7 @@ var Site = require('dw/system/Site');
 var System = require('dw/system/System');
 var logger = require('dw/system/Logger').getLogger('alma');
 var pkg = require('../../../package.json');
+var almaProductHelper = require('*/cartridge/scripts/helpers/almaProductHelper');
 
 /**
  * Builds SFCC current version.
@@ -159,20 +160,112 @@ function haveExcludedCategory(productIds) {
 
     return haveExcludedCategoryReturn;
 }
-
 /**
  * Get the full url for a page
- * @param {string} pageName name of page for url
- * @param {string} pageTemplate template of page for url
+ * @param {Object} product product
  * @param {string} locale locale
  * @returns {string} url
  */
-function getFullPageUrl(pageName, pageTemplate, locale) {
-    var hostname = Site.getCurrent().getHttpsHostName();
-    var siteName = Site.getCurrent().getName();
-
-    return 'https://' + hostname + '/s/' + siteName + '/' + pageName + '/' + pageTemplate + '.html?lang=' + locale;
+function getFullPageUrl(product, locale) {
+    return 'https://' + Site.getCurrent().getHttpsHostName() + '/s/' + Site.getCurrent().getName() + '/' + product.getPageURL() + '/' + almaProductHelper.getProductId(product) + '.html?lang=' + locale;
 }
+
+/**
+ * Get categories for a product
+ * @param {Object} product product
+ * @returns {array} categories
+ */
+function getProductCategories(product) {
+    var categories = [];
+
+    almaProductHelper.getProductCategories(product).forEach(function (category) {
+        if (!categories.includes(category.getID())) {
+            categories.push(category.getID());
+        }
+    });
+
+    return categories;
+}
+
+/**
+ * Get fomated item for a product line
+ * @param {Object} product product
+ * @param {Object} productLine product line
+ * @param {string} locale locale
+ * @returns {Object} item
+ */
+function formatItem(product, productLine, locale) {
+    return {
+        sku: product.getID(),
+        title: product.getName(),
+        quantity: productLine.getQuantityValue(),
+        unit_price: parseInt(product.getPriceModel().getPrice() * 100, 10),
+        line_price: parseInt(productLine.getProratedPrice() * 100, 10),
+        categories: getProductCategories(product),
+        url: getFullPageUrl(product, locale),
+        picture_url: product.getImage('large').getHttpsURL().toString(),
+        requires_shipping: !!productLine.getShipment()
+    };
+}
+
+/**
+ * get orders items for website customer details
+ * @param {Object} order order
+ * @param {string} locale locale
+ * @returns {Object} items
+ */
+function getOrdersItemsForWebsiteCustomerDetails(order, locale) {
+    var forOf = require('*/cartridge/scripts/helpers/almaUtilsHelper').forOf;
+    var items = [];
+    forOf(order.getAllProductLineItems(), function (productLine) {
+        var product = productLine.getProduct();
+        items.push(formatItem(product, productLine, locale));
+    });
+    return items;
+}
+
+/**
+ * Format previous order
+ * @param {Object} order order
+ * @param {string} locale locale
+ * @returns {Object} previous order
+ */
+function formatPreviousOrder(order, locale) {
+    return {
+        purchase_amount: Math.round(order.totalGrossPrice.multiply(100).value),
+        payment_method: order.getPaymentInstruments()[0].getPaymentTransaction().getPaymentProcessor().getID(),
+        shipping_method: order.getShipments()[0].getShippingMethod().getDisplayName(),
+        created: order.getCreationDate().getTime(),
+        items: getOrdersItemsForWebsiteCustomerDetails(order, locale)
+    };
+}
+
+/**
+ * Get website customer details data
+ * @param {Object} customer customer
+ * @param {string} locale locale
+ * @returns {Object} data
+ */
+function getWebsiteCustomerDetails(customer, locale) {
+    var Order = require('dw/order/Order');
+    var forOf = require('*/cartridge/scripts/helpers/almaUtilsHelper').forOf;
+    var isGuest = customer.isAnonymous();
+
+    var previousOrders = [];
+
+    if (!isGuest) {
+        var orders = customer.getOrderHistory().getOrders('status = {0} OR status = {1}', 'creationDate DESC', [Order.ORDER_STATUS_NEW, Order.ORDER_STATUS_OPEN]).asList(0, 10);
+        forOf(orders, function (order) {
+            previousOrders.push(formatPreviousOrder(order, locale));
+        });
+    }
+
+    return {
+        is_guest: isGuest,
+        previous_orders: previousOrders
+    };
+}
+
 
 module.exports = {
     addHeaders: addHeaders,
@@ -185,5 +278,6 @@ module.exports = {
     isAlmaOnShipment: isAlmaOnShipment,
     getSfccVersion: getSfccVersion,
     haveExcludedCategory: haveExcludedCategory,
+    getWebsiteCustomerDetails: getWebsiteCustomerDetails,
     getFullPageUrl: getFullPageUrl
 };
