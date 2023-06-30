@@ -208,64 +208,6 @@ function formatItem(product, productLine, locale) {
     };
 }
 
-/**
- * get orders items for website customer details
- * @param {Object} order order
- * @param {string} locale locale
- * @returns {Object} items
- */
-function getOrdersItemsForWebsiteCustomerDetails(order, locale) {
-    var forOf = require('*/cartridge/scripts/helpers/almaUtilsHelper').forOf;
-    var items = [];
-    forOf(order.getAllProductLineItems(), function (productLine) {
-        var product = productLine.getProduct();
-        items.push(formatItem(product, productLine, locale));
-    });
-    return items;
-}
-
-/**
- * Format previous order
- * @param {Object} order order
- * @param {string} locale locale
- * @returns {Object} previous order
- */
-function formatPreviousOrder(order, locale) {
-    return {
-        purchase_amount: Math.round(order.totalGrossPrice.multiply(100).value),
-        payment_method: order.getPaymentInstruments()[0].getPaymentTransaction().getPaymentProcessor().getID(),
-        shipping_method: order.getShipments()[0].getShippingMethod().getDisplayName(),
-        created: order.getCreationDate().getTime(),
-        items: getOrdersItemsForWebsiteCustomerDetails(order, locale)
-    };
-}
-
-/**
- * Get website customer details data
- * @param {Object} customer customer
- * @param {string} locale locale
- * @returns {Object} data
- */
-function getWebsiteCustomerDetails(customer, locale) {
-    var Order = require('dw/order/Order');
-    var forOf = require('*/cartridge/scripts/helpers/almaUtilsHelper').forOf;
-    var isGuest = customer.isAnonymous();
-
-    var previousOrders = [];
-
-    if (!isGuest) {
-        var orders = customer.getOrderHistory().getOrders('status = {0} OR status = {1}', 'creationDate DESC', [Order.ORDER_STATUS_NEW, Order.ORDER_STATUS_OPEN]).asList(0, 10);
-        forOf(orders, function (order) {
-            previousOrders.push(formatPreviousOrder(order, locale));
-        });
-    }
-
-    return {
-        is_guest: isGuest,
-        previous_orders: previousOrders
-    };
-}
-
 
 module.exports = {
     addHeaders: addHeaders,
@@ -278,7 +220,5 @@ module.exports = {
     isAlmaOnShipment: isAlmaOnShipment,
     getSfccVersion: getSfccVersion,
     haveExcludedCategory: haveExcludedCategory,
-    getWebsiteCustomerDetails: getWebsiteCustomerDetails,
-    getFullPageUrl: getFullPageUrl,
     formatItem: formatItem
 };

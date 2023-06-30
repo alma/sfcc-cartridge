@@ -294,7 +294,6 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
     var formatAddress = require('*/cartridge/scripts/helpers/almaAddressHelper').formatAddress;
     var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
     var formatCustomerData = require('*/cartridge/scripts/helpers/almaHelpers').formatCustomerData;
-    var getWebsiteCustomerDetails = require('*/cartridge/scripts/helpers/almaHelpers').getWebsiteCustomerDetails;
 
     var currentBasket = BasketMgr.getCurrentBasket();
     var isEnableOnShipment = isOnShipmentPaymentEnabled(installmentsCount);
@@ -320,7 +319,6 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
                 alma_plugin_version: pkg.version
             }
         },
-        website_customer_details: getWebsiteCustomerDetails(currentBasket.getCustomer(), locale),
         customer: formatCustomerData(currentBasket.getCustomer().profile, currentBasket.getCustomerEmail(), formatAddress(currentBasket.getDefaultShipment().shippingAddress))
     };
 
