@@ -139,7 +139,7 @@ window.addEventListener('DOMContentLoaded',
                     amountInCents :almaContext.payment.purchaseAmount,
                     installmentsCount :installments_count,
                     selector :"#" + inPageContainer,
-                    locale : almaContext.locale
+                    locale : almaContext.locale.slice(0,2)
                 }
             );
         }
