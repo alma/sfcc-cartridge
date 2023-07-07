@@ -261,10 +261,12 @@ function createOrderFromBasket(almaPaymentMethod) {
  */
 function createPayment(param) {
     var service = require('*/cartridge/scripts/services/alma');
-
     var httpResult = service.createPayment().call(param);
+
     if (httpResult.msg !== 'OK') {
-        throw new Error('API error : ' + httpResult.status);
+        var e = new Error('API error : ' + httpResult.status);
+        e.name = 'create_payment_error';
+        throw e;
     }
     return JSON.parse(httpResult.getObject().text);
 }

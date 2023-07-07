@@ -32,7 +32,7 @@ function getAlmaUrls() {
         data_url: URLUtils.http('Alma-BasketData').toString(),
         create_payment_url: URLUtils.https('Alma-CreatePaymentUrl').toString(),
         order_amount_url: URLUtils.http('Alma-OrderAmount').toString(),
-        checkout_inpage_url: URLUtils.http('Alma-InpageCheckout').toString(),
+        inpage_checkout_url: URLUtils.http('Alma-InpageCheckout').toString(),
         plans_url: URLUtils.http('Alma-Plans').toString()
     };
 }
@@ -69,7 +69,8 @@ server.append('Begin', function (req, res, next) {
             purchase_amount: Math.round(currentBasket.totalGrossPrice.multiply(100).value),
             plans: almaPlanHelper.getPlansForCheckout(getLocale(req), currentBasket),
             inpage_on_close_message: Resource.msg('alma.inpage_on_close_message', 'alma', null),
-            inpage_on_failure_message: Resource.msg('alma.inpage_on_failure_message', 'alma', null)
+            inpage_on_failure_message: Resource.msg('alma.inpage_on_failure_message', 'alma', null),
+            locale: getLocale(req)
         }
     );
 

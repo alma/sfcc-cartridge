@@ -90,11 +90,11 @@ function affectOrder(paymentObj, order) {
 }
 
 /**
- * Request order from OrderMgr
+ * Request order from OrderMgr by Alma payment ID
  * @param {string} pid payment id
  * @returns {Object} order
  */
-function buildOrder(pid) {
+function getOrderByAlmaPaymentId(pid) {
     var OrderMgr = require('dw/order/OrderMgr');
     return OrderMgr.queryOrder(
         'custom.almaPaymentId={0}',
@@ -126,7 +126,7 @@ server.get('PaymentSuccess', function (req, res, next) {
         });
         return next();
     }
-    var order = buildOrder(req.querystring.pid);
+    var order = getOrderByAlmaPaymentId(req.querystring.pid);
 
     if (!order) {
         order = paymentHelper.createOrderFromBasket(req.querystring.alma_payment_method);
@@ -195,7 +195,7 @@ server.get('IPN', function (req, res, next) {
         });
         return next();
     }
-    var order = buildOrder(req.querystring.pid);
+    var order = getOrderByAlmaPaymentId(req.querystring.pid);
 
     if (!order) {
         var basketUuid = paymentObj.custom_data.basket_id;
@@ -324,40 +324,40 @@ server.get(
     server.middleware.https,
     function (req, res, next) {
         var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
-        var BasketMgr = require('dw/order/BasketMgr');
+        var getLocale = require('*/cartridge/scripts/helpers/almaHelpers').getLocale;
+        var paymentData = almaPaymentHelper.buildPaymentData(
+            req.querystring.installments,
+            req.querystring.deferred_days,
+            getLocale(req)
+        );
 
         try {
-            var basketAmount = Math.round(BasketMgr.getCurrentBasket().totalGrossPrice.multiply(100).value);
-            var paymentFormAmount = parseInt(req.querystring.amount, 10);
-            if (basketAmount !== paymentFormAmount) {
-                var mismatchErrorContext = {
-                    basketAmount: basketAmount,
-                    paymentFormAmount: paymentFormAmount
-                };
-
-                logger.warn('Mismatch error | {0}', [JSON.stringify(mismatchErrorContext)]);
-                res.setStatusCode(400);
-                res.json({
-                    error: 'The amount of the shopping cart was changed.'
-                });
-            }
-
-            var order = buildOrder(req.querystring.pid);
+            var almaPayment = almaPaymentHelper.createPayment(paymentData);
+            var order = getOrderByAlmaPaymentId(almaPayment.id);
 
             if (!order) {
                 order = almaPaymentHelper.createOrderFromBasket(req.querystring.alma_payment_method);
-                syncOrderAndPaymentDetails(req.querystring.pid, order);
+                syncOrderAndPaymentDetails(almaPayment.id, order);
             }
-
+            res.setStatusCode(200);
             res.json({
-                order: JSON.stringify(order)
+                order: order,
+                payment_id: almaPayment.id
             });
         } catch (e) {
             res.setStatusCode(500);
-            res.json({
-                error: e.message
-            });
+
+            if (e.name === 'create_payment_error') {
+                res.json({
+                    error: 'Could not create payment on Alma side'
+                });
+            } else {
+                res.json({
+                    error: e.message
+                });
+            }
         }
+
         return next();
     });
 

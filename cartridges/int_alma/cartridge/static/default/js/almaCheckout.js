@@ -132,20 +132,16 @@ window.addEventListener('DOMContentLoaded',
             window.location = body.url;
         }
 
-        async function inPageInitialize(inPageContainer, payment) {
-            const inPage = Alma.InPage.initialize(
-                payment.id,
+        async function inPageInitialize(inPageContainer, installments_count) {
+            return Alma.InPage.initialize(
                 {
-                    environment: almaContext.almaMode,
-                    showPayButton: false,
-                    onUserCloseModal: function () {
-                        addCheckoutEvent(checkoutEvents.at(-1));
-                        checkoutInpageCallInProgress = false;
-                    }
-                });
-
-            await inPage.mount("#" + inPageContainer);
-            return inPage;
+                    merchantId: almaContext.merchantId,
+                    amountInCents :almaContext.payment.purchaseAmount,
+                    installmentsCount :installments_count,
+                    selector :"#" + inPageContainer,
+                    locale : almaContext.locale
+                }
+            );
         }
 
         /**
@@ -182,41 +178,35 @@ window.addEventListener('DOMContentLoaded',
 
                 document.body.style.cursor = 'wait';
                 if (in_page) {
-                    var response = await fetch(
-                        almaContext.almaUrl.createPaymentUrl + '?deferred_days=' + deferred_days + '&installments=' + installments_count,
-                        { method: 'POST' }
-                    );
-                    var payment = await response.json();
-                    await inPageInitialize(t.id + "-inpage", payment)
+                    await inPageInitialize(t.id + "-inpage", installments_count)
                         .then(function (inPage) {
                             var checkoutInpageCall = async function () {
                                 if (checkoutInpageCallInProgress) {
                                     return;
                                 }
                                 checkoutInpageCallInProgress = true;
-                                var ajaxResponse = await fetch(almaContext.almaUrl.checkoutInpageUrl + '?pid=' + payment.id + '&amount=' + payment.purchase_amount + '&alma_payment_method=' + alma_payment_method);
-                                var orderInpage = await ajaxResponse.json();
-                                switch (ajaxResponse.status) {
+                                var ajaxInPageResponse = await fetch(almaContext.almaUrl.inPageCheckoutUrl + '?alma_payment_method=' + alma_payment_method + '&deferred_days=' + deferred_days + '&installments=' + installments_count);
+                                var inPagePaymentResponse = await ajaxInPageResponse.json();
+                                switch (ajaxInPageResponse.status) {
                                     case 200:
                                         removeCheckoutEvents();
-                                        inPage.startPayment();
+                                        inPage.startPayment(inPagePaymentResponse.payment_id);
                                         break;
                                     case 400:
-                                        displayMismatchMessage(orderInpage);
+                                        displayMismatchMessage(inPagePaymentResponse);
                                         checkoutInpageCallInProgress = false;
                                         break;
                                     case 500:
-                                        displayAlmaErrors(orderInpage.error, 'payment-method-not-found-message');
+                                        displayAlmaErrors(inPagePaymentResponse.error, 'payment-method-not-found-message');
                                         checkoutInpageCallInProgress = false;
                                         break;
                                     default:
-                                        displayAlmaErrors(ajaxResponse.status, 'payment-error');
+                                        displayAlmaErrors(ajaxInPageResponse.status, 'payment-error');
                                         checkoutInpageCallInProgress = false;
                                 }
                             };
 
                             checkoutEvents.push(checkoutInpageCall);
-
                             addCheckoutEvent(checkoutInpageCall);
                         });
                 } else {
