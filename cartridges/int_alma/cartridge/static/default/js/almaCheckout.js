@@ -139,7 +139,8 @@ window.addEventListener('DOMContentLoaded',
                     amountInCents :almaContext.payment.purchaseAmount,
                     installmentsCount :installments_count,
                     selector :"#" + inPageContainer,
-                    locale : almaContext.locale.slice(0,2)
+                    locale : almaContext.locale.slice(0,2),
+                    environment : almaContext.almaMode
                 }
             );
         }
@@ -174,11 +175,12 @@ window.addEventListener('DOMContentLoaded',
                 var installments_count = parseInt(t.getAttribute('data-installments'));
                 var deferred_days = parseInt(t.getAttribute('data-deferred-days'));
                 var alma_payment_method = t.getAttribute('data-alma-payment-method');
-                var in_page = t.getAttribute('data-in-page') === 'true';
-
-                document.body.style.cursor = 'wait';
+                var in_page = t.getAttribute('data-in-page');
                 if (in_page) {
-                    await inPageInitialize(t.id + "-inpage", installments_count)
+                    await inPageInitialize(
+                        t.id + "-inpage",
+                        installments_count
+                    )
                         .then(function (inPage) {
                             var checkoutInpageCall = async function () {
                                 if (checkoutInpageCallInProgress) {
@@ -189,8 +191,14 @@ window.addEventListener('DOMContentLoaded',
                                 var inPagePaymentResponse = await ajaxInPageResponse.json();
                                 switch (ajaxInPageResponse.status) {
                                     case 200:
-                                        removeCheckoutEvents();
-                                        inPage.startPayment(inPagePaymentResponse.payment_id);
+                                        $.spinner().start();
+                                        inPage.startPayment({
+                                            paymentId :inPagePaymentResponse.payment_id,
+                                            onUserCloseModal: () => {
+                                                $.spinner().stop();
+                                            }
+                                        });
+                                        checkoutInpageCallInProgress = false;
                                         break;
                                     case 400:
                                         displayMismatchMessage(inPagePaymentResponse);
