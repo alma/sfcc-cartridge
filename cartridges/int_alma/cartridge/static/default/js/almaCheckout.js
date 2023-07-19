@@ -175,7 +175,8 @@ window.addEventListener('DOMContentLoaded',
                 var installments_count = parseInt(t.getAttribute('data-installments'));
                 var deferred_days = parseInt(t.getAttribute('data-deferred-days'));
                 var alma_payment_method = t.getAttribute('data-alma-payment-method');
-                var in_page = t.getAttribute('data-in-page');
+                var in_page = t.getAttribute('data-in-page') === 'true';
+
                 if (in_page) {
                     await inPageInitialize(
                         t.id + "-inpage",
