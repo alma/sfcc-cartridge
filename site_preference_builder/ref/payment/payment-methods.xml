@@ -46,4 +46,19 @@
         </custom-attributes>
     </payment-method>
 
+    <payment-method method-id="ALMA_PAY_NOW">
+        <name xml:lang="x-default">Alma Pay Now</name>
+        <enabled-flag>true</enabled-flag>
+        <processor-id>ALMA</processor-id>
+        <countries>
+            <country country-code="FR"/>
+        </countries>
+        <currencies>
+            <currency>EUR</currency>
+        </currencies>
+        <custom-attributes>
+            <custom-attribute attribute-id="almaActivated">p1x</custom-attribute>
+        </custom-attributes>
+    </payment-method>
+
 </payment-settings>

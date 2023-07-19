@@ -224,8 +224,18 @@ function createOrderFromBasket(almaPaymentMethod) {
         throw new Error('Current basket is null');
     }
 
+    // If almaPaymentMethod doesn't exist force to 'ALMA_PNX' to get paymentMethod
+    if (!almaPaymentMethod) {
+        almaPaymentMethod = 'ALMA_PNX';
+    }
+
     Transaction.wrap(function () {
         currentBasket.removeAllPaymentInstruments();
+
+        // If almaPaymentMethod doesn't exist force to 'ALMA_PNX' to get paymentMethod
+        if (!almaPaymentMethod) {
+            almaPaymentMethod = 'ALMA_PNX';
+        }
         var paymentMethod = PaymentMgr.getPaymentMethod(almaPaymentMethod);
 
         if (!paymentMethod) {
@@ -295,7 +305,8 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
 
     var currentBasket = BasketMgr.getCurrentBasket();
     var isEnableOnShipment = isOnShipmentPaymentEnabled(installmentsCount);
-    return {
+
+    var paymentData = {
         payment: {
             purchase_amount: Math.round(currentBasket.totalGrossPrice.multiply(100).value),
             installments_count: parseInt(installmentsCount, 10),
@@ -318,6 +329,23 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
         },
         customer: formatCustomerData(currentBasket.getCustomer().profile, currentBasket.getCustomerEmail(), formatAddress(currentBasket.getDefaultShipment().shippingAddress))
     };
+
+    if (installmentsCount >= 5) {
+        var products = currentBasket.getAllProductLineItems();
+        var items = [];
+
+        products.toArray()
+            .forEach(function (productLineItem) {
+                var product = productLineItem.getProduct();
+                items.push(almaHelper.formatItem(product, productLineItem, locale));
+            });
+
+        paymentData.payment.cart = {
+            items: items
+        };
+    }
+
+    return paymentData;
 }
 
 /**

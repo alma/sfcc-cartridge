@@ -22,7 +22,7 @@ const messages = require(localisationFile);
 
 // we also remove 1x that isn't deferred, as the api will provide it, but we don't want to display it
 const filterAllowedPlan = (plan) => {
-  return plan.allowed && !(plan.installments_count === 1 && plan.deferred_days === 0);
+  return plan.allowed;
 };
 
 const getMessageKey = (installments, deferredDays) => {
@@ -32,7 +32,7 @@ const getMessageKey = (installments, deferredDays) => {
   if (deferredDays > 0) {
     return 'deferred_payment';
   }
-  if (installments > 1) {
+  if (installments >= 1) {
     return 'x_times_payment';
   }
   throw new ConfigException('could not find this type of payment');

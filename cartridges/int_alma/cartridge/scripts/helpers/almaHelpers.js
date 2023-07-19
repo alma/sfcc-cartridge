@@ -4,6 +4,7 @@ var Site = require('dw/system/Site');
 var System = require('dw/system/System');
 var logger = require('dw/system/Logger').getLogger('alma');
 var pkg = require('../../../package.json');
+var almaProductHelper = require('*/cartridge/scripts/helpers/almaProductHelper');
 
 /**
  * Builds SFCC current version.
@@ -158,6 +159,54 @@ function haveExcludedCategory(productIds) {
 
     return haveExcludedCategoryReturn;
 }
+/**
+ * Get the full url for a page
+ * @param {Object} product product
+ * @param {string} locale locale
+ * @returns {string} url
+ */
+function getFullPageUrl(product, locale) {
+    return 'https://' + Site.getCurrent().getHttpsHostName() + '/s/' + Site.getCurrent().getName() + '/' + product.getPageURL() + '/' + almaProductHelper.getProductId(product) + '.html?lang=' + locale;
+}
+
+/**
+ * Get categories for a product
+ * @param {Object} product product
+ * @returns {array} categories
+ */
+function getProductCategories(product) {
+    var categories = [];
+
+    almaProductHelper.getProductCategories(product).forEach(function (category) {
+        if (!categories.includes(category.getID())) {
+            categories.push(category.getID());
+        }
+    });
+
+    return categories;
+}
+
+/**
+ * Get fomated item for a product line
+ * @param {Object} product product
+ * @param {Object} productLine product line
+ * @param {string} locale locale
+ * @returns {Object} item
+ */
+function formatItem(product, productLine, locale) {
+    return {
+        sku: product.getID(),
+        title: product.getName(),
+        quantity: productLine.getQuantityValue(),
+        unit_price: parseInt(product.getPriceModel().getPrice() * 100, 10),
+        line_price: parseInt(productLine.getProratedPrice() * 100, 10),
+        categories: getProductCategories(product),
+        url: getFullPageUrl(product, locale),
+        picture_url: product.getImage('large').getHttpsURL().toString(),
+        requires_shipping: !!productLine.getShipment()
+    };
+}
+
 
 module.exports = {
     addHeaders: addHeaders,
@@ -169,5 +218,6 @@ module.exports = {
     isAlmaEnable: isAlmaEnable,
     isAlmaOnShipment: isAlmaOnShipment,
     getSfccVersion: getSfccVersion,
-    haveExcludedCategory: haveExcludedCategory
+    haveExcludedCategory: haveExcludedCategory,
+    formatItem: formatItem
 };
