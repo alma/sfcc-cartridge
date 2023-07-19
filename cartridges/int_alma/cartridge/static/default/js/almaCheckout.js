@@ -136,7 +136,7 @@ window.addEventListener('DOMContentLoaded',
             return Alma.InPage.initialize(
                 {
                     merchantId: almaContext.merchantId,
-                    amountInCents :almaContext.payment.purchaseAmount,
+                    amountInCents : purchase_amount,
                     installmentsCount :installments_count,
                     selector :"#" + inPageContainer,
                     locale : almaContext.locale.slice(0,2),
