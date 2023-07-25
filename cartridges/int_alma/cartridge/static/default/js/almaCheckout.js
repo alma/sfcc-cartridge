@@ -58,10 +58,13 @@ window.addEventListener('DOMContentLoaded',
                         document.getElementById(`${plan.key + '-inpage'}`).innerHTML = "";
 
                         if (plan.payment_plans) {
-                            document.getElementById(plan.key)
-                                .removeAttribute('hidden');
-                            document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)
-                                .removeAttribute('hidden');
+                            if (document.getElementById(plan.key).hasAttribute("hidden")){
+                                document.getElementById(plan.key)
+                                    .removeAttribute('hidden');
+                                document.getElementById(`${'alma-tab-' + plan.key + '-img'}`)
+                                    .removeAttribute('hidden');
+                            }
+
 
                             assignAlmaElementsValues(plan);
                             continue;
