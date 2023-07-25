@@ -44,7 +44,7 @@
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
             <attribute-definition attribute-id="ALMA_Inpage_Payment">
-                <display-name xml:lang="x-default">Activate in-page payment when possible</display-name>
+                <display-name xml:lang="x-default">Activate in-page checkout for P1X, P2X, P3X and P4X</display-name>
                 <type>boolean</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
