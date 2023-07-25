@@ -51,7 +51,12 @@
                     <span class="fa fa-chevron-right"></span>
                 </div>
             </div>
-            <div id="${plan.key}-inpage"></div>
+            <isif condition="${plan.key === 'ALMA_general_1_0'}">
+                <div id="${plan.key}-inpage" hidden></div>
+                <iselse>
+                    <div id="${plan.key}-inpage"></div>
+                </iselse>
+            </isif>
         </isloop>
     </isif>
 </isloop>

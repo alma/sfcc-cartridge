@@ -136,11 +136,11 @@ window.addEventListener('DOMContentLoaded',
             return Alma.InPage.initialize(
                 {
                     merchantId: almaContext.merchantId,
-                    amountInCents : purchase_amount,
-                    installmentsCount :installments_count,
-                    selector :"#" + inPageContainer,
-                    locale : almaContext.locale.slice(0,2),
-                    environment : almaContext.almaMode
+                    amountInCents: purchase_amount,
+                    installmentsCount: installments_count,
+                    selector: "#" + inPageContainer,
+                    locale: almaContext.locale.slice(0, 2),
+                    environment: almaContext.almaMode
                 }
             );
         }
@@ -192,11 +192,13 @@ window.addEventListener('DOMContentLoaded',
                                 var inPagePaymentResponse = await ajaxInPageResponse.json();
                                 switch (ajaxInPageResponse.status) {
                                     case 200:
-                                        $.spinner().start();
+                                        $.spinner()
+                                            .start();
                                         inPage.startPayment({
-                                            paymentId :inPagePaymentResponse.payment_id,
+                                            paymentId: inPagePaymentResponse.payment_id,
                                             onUserCloseModal: () => {
-                                                $.spinner().stop();
+                                                $.spinner()
+                                                    .stop();
                                             }
                                         });
                                         checkoutInpageCallInProgress = false;

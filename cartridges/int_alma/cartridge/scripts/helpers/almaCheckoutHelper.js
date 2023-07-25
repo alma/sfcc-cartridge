@@ -263,7 +263,7 @@ function formatPlanForCheckout(plan, currencyCode) {
     }
     if (plan.installments_count === 1 && plan.deferred_days === 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PAY_NOW_ID), plan)) {
         formatPlan = {
-            in_page: false,
+            in_page: isAvailableForInpage(plan.installments_count, plan.deferred_days) && isInpageActivated(),
             selector: getSelectorNameFromPlan(plan),
             installments_count: plan.installments_count,
             deferred_days: plan.deferred_days,
