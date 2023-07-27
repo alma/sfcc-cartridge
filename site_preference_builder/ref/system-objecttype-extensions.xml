@@ -48,6 +48,13 @@
                 <type>boolean</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
+                <default-value>false</default-value>
+            </attribute-definition>
+            <attribute-definition attribute-id="ALMA_Deferred_Capture_Activation">
+                <display-name xml:lang="x-default">Activate deferred capture</display-name>
+                <type>boolean</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
                 <default-value>true</default-value>
             </attribute-definition>
             <attribute-definition attribute-id="isWidgetEnable">
@@ -96,6 +103,7 @@
                 <attribute attribute-id="ALMA_APIKey"/>
                 <attribute attribute-id="ALMA_Merchant_Id"/>
                 <attribute attribute-id="ALMA_Inpage_Payment"/>
+                <attribute attribute-id="ALMA_Deferred_Capture_Activation"/>
                 <attribute attribute-id="isWidgetEnable"/>
                 <attribute attribute-id="cartSelector"/>
                 <attribute attribute-id="isProductWidgetEnable"/>
