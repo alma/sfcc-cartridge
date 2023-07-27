@@ -271,10 +271,12 @@ function createOrderFromBasket(almaPaymentMethod) {
  */
 function createPayment(param) {
     var service = require('*/cartridge/scripts/services/alma');
-
     var httpResult = service.createPayment().call(param);
+
     if (httpResult.msg !== 'OK') {
-        throw new Error('API error : ' + httpResult.status);
+        var e = new Error('API error : ' + httpResult.status);
+        e.name = 'create_payment_error';
+        throw e;
     }
     return JSON.parse(httpResult.getObject().text);
 }
@@ -290,10 +292,16 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
     var BasketMgr = require('dw/order/BasketMgr');
     var URLUtils = require('dw/web/URLUtils');
     var almaHelper = require('*/cartridge/scripts/helpers/almaHelpers');
+    var almaCheckoutHelper = require('*/cartridge/scripts/helpers/almaCheckoutHelper');
 
     var formatAddress = require('*/cartridge/scripts/helpers/almaAddressHelper').formatAddress;
     var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
     var formatCustomerData = require('*/cartridge/scripts/helpers/almaHelpers').formatCustomerData;
+
+    var origin = 'online';
+    if (almaCheckoutHelper.isAvailableForInpage(installmentsCount, deferredDays) && almaCheckoutHelper.isInpageActivated()) {
+        origin = 'online_in_page';
+    }
 
     var currentBasket = BasketMgr.getCurrentBasket();
     var isEnableOnShipment = isOnShipmentPaymentEnabled(installmentsCount);
@@ -308,7 +316,7 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
             ipn_callback_url: URLUtils.http('Alma-IPN').toString(),
             customer_cancel_url: URLUtils.https('Alma-CustomerCancel').toString(),
             locale: locale,
-            origin: 'online',
+            origin: origin,
             shipping_address: formatAddress(currentBasket.getDefaultShipment().shippingAddress),
             billing_address: formatAddress(currentBasket.getBillingAddress()),
             deferred: isEnableOnShipment ? 'trigger' : '',
