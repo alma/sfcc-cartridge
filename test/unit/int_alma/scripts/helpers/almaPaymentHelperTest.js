@@ -22,12 +22,24 @@ describe('almaPaymentHelper', function () {
         });
     });
     describe('Build payment data for deferred capture', function () {
-        it('Payment data for deferred capture has capture method', function () {
+        it('Payment data for pnx has not capture method if deferred capture is not enabled', function () {
+            var payment = almaPaymentHelper.buildPaymentData(3, 0, 'fr_FR', false);
+            assert.notProperty(payment.payment, 'capture_method');
+        });
+        it('Payment data for pnx has capture method', function () {
             var payment = almaPaymentHelper.buildPaymentData(3, 0, 'fr_FR', true);
             assert.property(payment.payment, 'capture_method');
         });
-        it('Payment data for credit has no capture_method in deferred capture', function () {
+        it('Payment data for credit has no capture method in', function () {
             var payment = almaPaymentHelper.buildPaymentData(12, 0, 'fr_FR', true);
+            assert.notProperty(payment.payment, 'capture_method');
+        });
+        it('Payment data for pay now has capture method', function () {
+            var payment = almaPaymentHelper.buildPaymentData(1, 0, 'fr_FR', true);
+            assert.property(payment.payment, 'capture_method');
+        });
+        it('Payment data for pay later has no capture method', function () {
+            var payment = almaPaymentHelper.buildPaymentData(1, 15, 'fr_FR', true);
             assert.notProperty(payment.payment, 'capture_method');
         });
     });
