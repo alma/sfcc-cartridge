@@ -21,7 +21,7 @@ function proxyModel() {
     });
 }
 
-function resolvedPaymentData(installmentsCount, defferedDays, locale, origin, hasCart = false) {
+function resolvedPaymentData(installmentsCount, defferedDays, locale, origin, hasCart = false, hasCaptureMethod = false) {
     var paymentData = {
         payment: {
             purchase_amount: 25000,

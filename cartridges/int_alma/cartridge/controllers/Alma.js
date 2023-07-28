@@ -269,12 +269,14 @@ server.get('OrderAmount', server.middleware.https, function (req, res, next) {
 server.post('CreatePaymentUrl', server.middleware.https, function (req, res, next) {
     var getLocale = require('*/cartridge/scripts/helpers/almaHelpers').getLocale;
     var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
+    var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfiqHelper');
 
-    var paymentData = almaPaymentHelper.buildPaymentData(
-        req.querystring.installments,
-        req.querystring.deferred_days,
-        getLocale(req)
-    );
+    var paymentData = almaPaymentHelper.getPaymentData(
+            req.querystring.installments,
+            req.querystring.deferred_days,
+            getLocale(req),
+            almaConfigHelper.isDeferredCaptureEnable()
+        );
 
     try {
         var result = almaPaymentHelper.createPayment(paymentData);
@@ -325,10 +327,13 @@ server.get(
     function (req, res, next) {
         var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
         var getLocale = require('*/cartridge/scripts/helpers/almaHelpers').getLocale;
-        var paymentData = almaPaymentHelper.buildPaymentData(
+        var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfiqHelper');
+
+        var paymentData = almaPaymentHelper.getPaymentData(
             req.querystring.installments,
             req.querystring.deferred_days,
-            getLocale(req)
+            getLocale(req),
+            almaConfigHelper.isDeferredCaptureEnable()
         );
 
         try {

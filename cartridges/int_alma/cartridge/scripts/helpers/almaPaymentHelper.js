@@ -282,13 +282,25 @@ function createPayment(param) {
 }
 
 /**
+ * Check if manual capture is available
+ * @param {boolean} isManualCaptureEnabled  manual capture is enabled
+ * @param {number} installmentsCount installments count
+ * @param {number} deferredDays deferred days
+ * @return {boolean} is available
+ */
+function isAvailableForManualCapture(isManualCaptureEnabled, installmentsCount, deferredDays) {
+    return isManualCaptureEnabled && installmentsCount <= 4 && deferredDays <= 0;
+}
+
+/**
  * Build the data to give to the payment endpoint
  * @param {number} installmentsCount number of installments to pay
  * @param {number} deferredDays number of days to the first payment
  * @param {string} locale the user locale
+ * @param {boolean} isManualCaptureEnabled for capture_method
  * @returns {Object} to give to the payment endpoint
  */
-function buildPaymentData(installmentsCount, deferredDays, locale) {
+function buildPaymentData(installmentsCount, deferredDays, locale, isManualCaptureEnabled) {
     var BasketMgr = require('dw/order/BasketMgr');
     var URLUtils = require('dw/web/URLUtils');
     var almaHelper = require('*/cartridge/scripts/helpers/almaHelpers');
@@ -329,6 +341,10 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
         },
         customer: formatCustomerData(currentBasket.getCustomer().profile, currentBasket.getCustomerEmail(), formatAddress(currentBasket.getDefaultShipment().shippingAddress))
     };
+
+    if (isAvailableForManualCapture(isManualCaptureEnabled, installmentsCount, deferredDays)) {
+        paymentData.payment.capture_method = 'manual';
+    }
 
     if (installmentsCount >= 5) {
         var products = currentBasket.getAllProductLineItems();
@@ -383,6 +399,23 @@ function setOrderMerchantReference(pid, order) {
     setOrderMerchantReferenceAPI.call(param);
 }
 
+/**
+ * return payment data
+ * @param {number} installments installments
+ * @param {number} deferredDays deferred days
+ * @param {string} locale locale
+ * @param {boolean} isManualCaptureEnabled manual capture
+ * @return {Object} payment data
+ */
+function getPaymentData(installments, deferredDays, locale, isManualCaptureEnabled) {
+    return buildPaymentData(
+        installments,
+        deferredDays,
+        locale,
+        isManualCaptureEnabled
+    );
+}
+
 
 module.exports = {
     orderStatusEquals: orderStatusEquals,
@@ -398,5 +431,7 @@ module.exports = {
     buildPaymentData: buildPaymentData,
     flagAsPotentialFraud: flagAsPotentialFraud,
     createOrderFromBasketUUID: createOrderFromBasketUUID,
-    setOrderMerchantReference: setOrderMerchantReference
+    setOrderMerchantReference: setOrderMerchantReference,
+    getPaymentData: getPaymentData,
+    isAvailableForManualCapture: isAvailableForManualCapture
 };
