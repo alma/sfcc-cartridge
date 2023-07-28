@@ -1,11 +1,11 @@
 'use strict';
 
-var proxyquire = require('proxyquire').noCallThru().noPreserveCache();
+var proxyquire = require('proxyquire')
+    .noCallThru()
+    .noPreserveCache();
 var sinon = require('sinon');
 
-var getCustomPreferenceValue = sinon.stub().returns(false);
-
-
+var getCustomPreferenceValue;
 var site = {
     getCurrent: function () {
         return {
@@ -13,6 +13,12 @@ var site = {
         };
     }
 };
+
+function setCustomPreferenceValue(preferenceKey) {
+    getCustomPreferenceValue = sinon.stub()
+        .returns(preferenceKey);
+}
+
 function proxyModel() {
     return proxyquire('../../../cartridges/int_alma/cartridge/scripts/helpers/almaConfigHelper', {
         'dw/system/Site': site
@@ -21,5 +27,6 @@ function proxyModel() {
 
 module.exports = {
     almaConfigHelpers: proxyModel(),
-    site: site
+    site: site,
+    setCustomPreferenceValue: setCustomPreferenceValue
 };

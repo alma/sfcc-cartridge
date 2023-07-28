@@ -57,6 +57,13 @@
                 <externally-managed-flag>false</externally-managed-flag>
                 <default-value>true</default-value>
             </attribute-definition>
+            <attribute-definition attribute-id="ALMA_Deferred_Capture_Event_Title">
+                <display-name xml:lang="x-default">Event title for deferred capture</display-name>
+                <type>string</type>
+                <mandatory-flag>true</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <default-value>Please, define this value if you activate deferred capture</default-value>
+            </attribute-definition>
             <attribute-definition attribute-id="isWidgetEnable">
                 <display-name xml:lang="x-default">Displays Alma badge showing available payment methods in cart
                 </display-name>
@@ -104,6 +111,7 @@
                 <attribute attribute-id="ALMA_Merchant_Id"/>
                 <attribute attribute-id="ALMA_Inpage_Payment"/>
                 <attribute attribute-id="ALMA_Deferred_Capture_Activation"/>
+                <attribute attribute-id="ALMA_Deferred_Capture_Event_Title"/>
                 <attribute attribute-id="isWidgetEnable"/>
                 <attribute attribute-id="cartSelector"/>
                 <attribute attribute-id="isProductWidgetEnable"/>
