@@ -29,6 +29,7 @@
   "license": "ISC",
   "homepage": "https://github.com/alma/sfcc-plugin",
   "devDependencies": {
+    "@types/chai": "^4.3.5",
     "chai": "^3.5.0",
     "chai-subset": "^1.6.0",
     "del": "^6.1.1",
@@ -53,7 +54,7 @@
     "request-promise": "^4.2.4",
     "sass-loader": "^7.3.1",
     "sgmf-scripts": "^2.4.2",
-    "sinon": "^1.17.7",
+    "sinon": "^15.2.0",
     "style-loader": "^0.21.0",
     "stylelint": "^8.4.0",
     "stylelint-config-standard": "^17.0.0",
