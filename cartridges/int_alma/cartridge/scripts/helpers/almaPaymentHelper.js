@@ -282,6 +282,25 @@ function createPayment(param) {
 }
 
 /**
+ * Calls the capture payment endpoint
+ * @param {Object} params to give to the payment endpoint
+ * @returns {Object} api response
+ */
+function capturePayment(params) {
+    var service = require('*/cartridge/scripts/services/alma');
+    var httpResult = service.captures().call(params);
+    console.log(httpResult);
+    //
+    // if (httpResult.msg !== 'OK') {
+    //     var e = new Error('API error : ' + httpResult.status);
+    //     e.name = 'create_payment_error';
+    //     throw e;
+    // }
+    // return JSON.parse(httpResult.getObject().text);
+    return '';
+}
+
+/**
  * Check if manual capture is available
  * @param {boolean} isManualCaptureEnabled  manual capture is enabled
  * @param {number} installmentsCount installments count
@@ -414,5 +433,6 @@ module.exports = {
     buildPaymentData: buildPaymentData,
     flagAsPotentialFraud: flagAsPotentialFraud,
     createOrderFromBasketUUID: createOrderFromBasketUUID,
-    setOrderMerchantReference: setOrderMerchantReference
+    setOrderMerchantReference: setOrderMerchantReference,
+    capturePayment: capturePayment
 };
