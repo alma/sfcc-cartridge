@@ -5,6 +5,7 @@ var formatCurrency = require('*/cartridge/scripts/util/formatting').formatCurren
 var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
 var PaymentMgr = require('dw/order/PaymentMgr');
 var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
+var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
 
 var ALMA_PNX_ID = 'ALMA_PNX';
 var ALMA_CREDIT_ID = 'ALMA_CREDIT';
@@ -23,7 +24,7 @@ function getSelectorNameFromPlan(plan) {
         + plan.installments_count + '_'
         // by how many days is the payment defered
         + plan.deferred_days
-    ;
+        ;
 }
 
 /**
@@ -71,7 +72,8 @@ function getCreditInfo(plan, currencyCode) {
     var costOfCredit = formatCurrency(plan.customer_total_cost_amount / 100, currencyCode);
     var purchaseAmount = formatCurrency(plan.purchaseAmount, currencyCode);
     var totalCost = formatCurrency(plan.purchaseAmount + (plan.customer_total_cost_amount / 100), currencyCode);
-    var rate = Math.round(plan.annual_interest_rate / 100).toString() + '.' + (plan.annual_interest_rate % 100) + '%';
+    var rate = Math.round(plan.annual_interest_rate / 100)
+        .toString() + '.' + (plan.annual_interest_rate % 100) + '%';
     return {
         basket_cost: Resource.msgf('alma.credit.basket_cost', 'alma', null, purchaseAmount),
         amount: Resource.msgf('alma.credit.cost_of_credit', 'alma', null, costOfCredit),
@@ -130,14 +132,22 @@ function getPaymentInstallments(plan, currencyCode) {
             Resource.msg(getPropertyCategory(plan) + '.installments.onshipment', 'alma', null) + ' ' +
             getInstallmentCountAfterFirst(plan) +
             formatCurrency(plan.payment_plan[1].purchase_amount / 100, currencyCode)
-        ;
+            ;
+    }
+    // on deferred capture
+    if (almaPaymentHelper.isAvailableForManualCapture(almaConfigHelper.isDeferredCaptureEnable(), plan.installments_count, plan.deferred_days)) {
+        return formatCurrency(plan.payment_plan[0].purchase_amount / 100, currencyCode) + ' ' +
+            Resource.msg(getPropertyCategory(plan) + '.installments.deferred_capture', 'alma', null) + ' ' +
+            getInstallmentCountAfterFirst(plan) +
+            formatCurrency(plan.payment_plan[1].purchase_amount / 100, currencyCode)
+            ;
     }
     // installment payment
     return formatCurrency(plan.payment_plan[0].purchase_amount / 100, currencyCode) + ' ' +
         Resource.msg(getPropertyCategory(plan) + '.installments', 'alma', null) + ' ' +
         getInstallmentCountAfterFirst(plan) +
         formatCurrency(plan.payment_plan[1].purchase_amount / 100, currencyCode)
-    ;
+        ;
 }
 
 /**
@@ -174,7 +184,10 @@ function isAvailableForInpage(installmentsCount, deferredDays) {
  * @returns {boolean} payment method ID
  */
 function planIsActivated(paymentMethod, plan) {
-    var almaActivated = paymentMethod.getCustom().almaActivated.trim().split('|');
+    var almaActivated = paymentMethod.getCustom()
+        .almaActivated
+        .trim()
+        .split('|');
 
     return almaActivated.some(function (element) {
         return element.includes(plan.installments_count) || element.includes(plan.deferred_days);

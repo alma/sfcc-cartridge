@@ -14,7 +14,9 @@ describe('Get back-office variables', function () {
             almaConfigHelpers.isDeferredCaptureEnable();
 
             assert.isTrue(site.getCurrent().getCustomPreferenceValue.calledOnce);
-            assert.isTrue(site.getCurrent().getCustomPreferenceValue.calledWith('ALMA_Deferred_Capture_Activation'));
+            assert.isTrue(site.getCurrent()
+                .getCustomPreferenceValue
+                .calledWith('ALMA_Deferred_Capture_Activation'));
         });
         it('should call site preferences and return default value', function () {
             setCustomPreferenceValue(false);

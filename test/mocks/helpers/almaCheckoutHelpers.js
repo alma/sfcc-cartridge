@@ -1,7 +1,9 @@
 'use strict';
 
 
-var proxyquire = require('proxyquire').noCallThru().noPreserveCache();
+var proxyquire = require('proxyquire')
+    .noCallThru()
+    .noPreserveCache();
 var almaConfigHelpers = require('./almaConfigHelpers').almaConfigHelpers;
 var setCustomPreferenceValue = require('./almaConfigHelpers').setCustomPreferenceValue;
 
@@ -49,6 +51,12 @@ var paymentMgr = {
     }
 };
 
+var isAvailableForManualCapture;
+
+function setIsAvailableForManualCapture(value) {
+    isAvailableForManualCapture = value;
+}
+
 
 function proxyModel() {
     return proxyquire('../../../cartridges/int_alma/cartridge/scripts/helpers/almaCheckoutHelper', {
@@ -65,11 +73,17 @@ function proxyModel() {
         },
         'dw/system/Site': site,
         '*/cartridge/scripts/helpers/almaConfigHelper': almaConfigHelpers,
-        'dw/order/PaymentMgr': paymentMgr
+        'dw/order/PaymentMgr': paymentMgr,
+        '*/cartridge/scripts/helpers/almaPaymentHelper': {
+            isAvailableForManualCapture: function () {
+                return isAvailableForManualCapture;
+            }
+        }
     });
 }
 
 module.exports = {
     almaCheckoutHelpers: proxyModel(),
-    setCustomPreferenceValue: setCustomPreferenceValue
+    setCustomPreferenceValue: setCustomPreferenceValue,
+    setIsAvailableForManualCapture: setIsAvailableForManualCapture
 };
