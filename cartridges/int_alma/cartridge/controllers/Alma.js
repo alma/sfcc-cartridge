@@ -271,7 +271,7 @@ server.post('CreatePaymentUrl', server.middleware.https, function (req, res, nex
     var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
     var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfiqHelper');
 
-    var paymentData = almaPaymentHelper.getPaymentData(
+    var paymentData = almaPaymentHelper.buildPaymentData(
             req.querystring.installments,
             req.querystring.deferred_days,
             getLocale(req),
@@ -329,7 +329,7 @@ server.get(
         var getLocale = require('*/cartridge/scripts/helpers/almaHelpers').getLocale;
         var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfiqHelper');
 
-        var paymentData = almaPaymentHelper.getPaymentData(
+        var paymentData = almaPaymentHelper.buildPaymentData(
             req.querystring.installments,
             req.querystring.deferred_days,
             getLocale(req),

@@ -399,23 +399,6 @@ function setOrderMerchantReference(pid, order) {
     setOrderMerchantReferenceAPI.call(param);
 }
 
-/**
- * return payment data
- * @param {number} installments installments
- * @param {number} deferredDays deferred days
- * @param {string} locale locale
- * @param {boolean} isManualCaptureEnabled manual capture
- * @return {Object} payment data
- */
-function getPaymentData(installments, deferredDays, locale, isManualCaptureEnabled) {
-    return buildPaymentData(
-        installments,
-        deferredDays,
-        locale,
-        isManualCaptureEnabled
-    );
-}
-
 
 module.exports = {
     orderStatusEquals: orderStatusEquals,
@@ -431,6 +414,5 @@ module.exports = {
     buildPaymentData: buildPaymentData,
     flagAsPotentialFraud: flagAsPotentialFraud,
     createOrderFromBasketUUID: createOrderFromBasketUUID,
-    setOrderMerchantReference: setOrderMerchantReference,
-    getPaymentData: getPaymentData
+    setOrderMerchantReference: setOrderMerchantReference
 };
