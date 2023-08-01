@@ -9,8 +9,11 @@ var almaHelper = require('../helpers/almaHelpers');
 var almaCheckoutHelper = require('../helpers/almaCheckoutHelpers');
 var almaAddressHelper = require('../helpers/almaAddressHelper');
 var almaOnShipmentHelper = require('../helpers/almaOnShipmentHelpers');
+var almaConfigHelpers = require('./almaConfigHelpers').almaConfigHelpers;
+
 const sinon = require('sinon');
 var call;
+var isAvailableForInpage;
 
 function setHttpReturnStatusCode(statusCode) {
     call = sinon.stub()
@@ -37,6 +40,12 @@ var service = {
     }
 };
 
+
+function setIsAvailableForInpage(value) {
+    isAvailableForInpage = value;
+}
+
+
 function proxyModel() {
     return proxyquire('../../../cartridges/int_alma/cartridge/scripts/helpers/almaPaymentHelper', {
         'dw/order/BasketMgr': BasketMgr,
@@ -45,7 +54,8 @@ function proxyModel() {
         '*/cartridge/scripts/helpers/almaCheckoutHelper': almaCheckoutHelper,
         '*/cartridge/scripts/helpers/almaAddressHelper': almaAddressHelper,
         '*/cartridge/scripts/helpers/almaOnShipmentHelper': almaOnShipmentHelper,
-        '*/cartridge/scripts/services/alma': service
+        '*/cartridge/scripts/services/alma': service,
+        '*/cartridge/scripts/helpers/almaConfigHelper': almaConfigHelpers
     });
 }
 
@@ -116,5 +126,6 @@ module.exports = {
     proxyModel: proxyModel(),
     resolvedPaymentData: resolvedPaymentData,
     service: service,
-    setHttpReturnStatusCode: setHttpReturnStatusCode
+    setHttpReturnStatusCode: setHttpReturnStatusCode,
+    setIsAvailableForInpage: setIsAvailableForInpage
 };

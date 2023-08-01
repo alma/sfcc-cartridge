@@ -8,18 +8,26 @@ var almaPaymentHelper = require('../../../../mocks/helpers/almaPaymentHelpers').
 var resolvedPaymentData = require('../../../../mocks/helpers/almaPaymentHelpers').resolvedPaymentData;
 var service = require('../../../../mocks/helpers/almaPaymentHelpers').service;
 var setHttpReturnStatusCode = require('../../../../mocks/helpers/almaPaymentHelpers').setHttpReturnStatusCode;
+var setIsAvailableForInpage = require('../../../../mocks/helpers/almaPaymentHelpers').setIsAvailableForInpage;
+var setCustomPreferenceValue = require('../../../../mocks/helpers/almaConfigHelpers').setCustomPreferenceValue;
 
 describe('almaPaymentHelper', function () {
     describe('Build payment data', function () {
         it('payment data for pnx', function () {
+            setIsAvailableForInpage(true);
+            setCustomPreferenceValue(true);
+
             var payment = almaPaymentHelper.buildPaymentData(3, 0, 'fr_FR', false);
             assert.deepEqual(payment, resolvedPaymentData(3, 0, 'fr_FR', 'online_in_page'));
         });
         it('payment data for deferred', function () {
+            setIsAvailableForInpage(false);
             var payment = almaPaymentHelper.buildPaymentData(1, 15, 'fr_FR', false);
             assert.deepEqual(payment, resolvedPaymentData(1, 15, 'fr_FR', 'online'));
         });
         it('payment data for credit has car property', function () {
+            setIsAvailableForInpage(false);
+
             var payment = almaPaymentHelper.buildPaymentData(12, 0, 'fr_FR', false);
             assert.deepEqual(payment, resolvedPaymentData(12, 0, 'fr_FR', 'online', true));
         });
@@ -34,7 +42,7 @@ describe('almaPaymentHelper', function () {
             assert.property(payment.payment, 'capture_method');
         });
         it('Payment data for credit has no capture method in', function () {
-            var payment = almaPaymentHelper.buildPaymentData(12, 0, 'fr_FR', false);
+            var payment = almaPaymentHelper.buildPaymentData(12, 0, 'fr_FR', true);
             assert.notProperty(payment.payment, 'capture_method');
         });
         it('Payment data for pay now has capture method', function () {
@@ -42,7 +50,7 @@ describe('almaPaymentHelper', function () {
             assert.property(payment.payment, 'capture_method');
         });
         it('Payment data for pay later has no capture method', function () {
-            var payment = almaPaymentHelper.buildPaymentData(1, 15, 'fr_FR', false);
+            var payment = almaPaymentHelper.buildPaymentData(1, 15, 'fr_FR', true);
             assert.notProperty(payment.payment, 'capture_method');
         });
     });

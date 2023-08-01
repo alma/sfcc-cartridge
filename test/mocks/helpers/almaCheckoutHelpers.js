@@ -2,6 +2,8 @@
 
 
 var proxyquire = require('proxyquire').noCallThru().noPreserveCache();
+var almaConfigHelpers = require('./almaConfigHelpers').almaConfigHelpers;
+var setCustomPreferenceValue = require('./almaConfigHelpers').setCustomPreferenceValue;
 
 var resource = {
     msg: function (param1) {
@@ -62,8 +64,12 @@ function proxyModel() {
             }
         },
         'dw/system/Site': site,
+        '*/cartridge/scripts/helpers/almaConfigHelper': almaConfigHelpers,
         'dw/order/PaymentMgr': paymentMgr
     });
 }
 
-module.exports = proxyModel();
+module.exports = {
+    almaCheckoutHelpers: proxyModel(),
+    setCustomPreferenceValue: setCustomPreferenceValue
+};

@@ -2,7 +2,8 @@
 
 var assert = require('chai').assert;
 
-var almaCheckoutHelpers = require('../../../../mocks/helpers/almaCheckoutHelpers');
+var almaCheckoutHelpers = require('../../../../mocks/helpers/almaCheckoutHelpers').almaCheckoutHelpers;
+var setCustomPreferenceValue = require('../../../../mocks/helpers/almaCheckoutHelpers').setCustomPreferenceValue;
 
 var plan = {
     installments_count: 3,
@@ -75,6 +76,7 @@ var currencyCode = 'EUR';
 describe('almaCheckoutHelpers', function () {
     describe('formatPlanForCheckout', function () {
         it('check in page', function () {
+            setCustomPreferenceValue(true);
             var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(plan, currencyCode);
             assert.equal(checkoutData.in_page, true);
 
