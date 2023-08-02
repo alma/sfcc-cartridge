@@ -39,20 +39,6 @@ function buildViewParams(paymentObj, order, localeId, reqProfile) {
 }
 
 /**
- * Synchronize order and payment details
- * @param {string} pid payment id
- * @param {Object} order order
- * @throw Error
- */
-function syncOrderAndPaymentDetails(pid, order) {
-    var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
-    var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
-
-    orderHelper.addPidToOrder(order, pid);
-    almaPaymentHelper.setOrderMerchantReference(pid, order);
-}
-
-/**
  * Ensure that Alma received the right amount and that SFCC order is synced
  * @param {Object} paymentObj the payment to describe
  * @param {dw/order/Order} order the current order
@@ -115,6 +101,7 @@ function buildPaymentObj(pid) {
 server.get('PaymentSuccess', function (req, res, next) {
     var paymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
     var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
+    var configHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
     var paymentObj = null;
 
     try {
@@ -128,9 +115,16 @@ server.get('PaymentSuccess', function (req, res, next) {
     }
     var order = getOrderByAlmaPaymentId(req.querystring.pid);
 
+    var isDeferredCapture = paymentHelper.isAvailableForManualCapture(
+        configHelper.isDeferredCaptureEnable(),
+        paymentObj.installments_count,
+        paymentObj.deferred_days
+    );
+
     if (!order) {
         order = paymentHelper.createOrderFromBasket(req.querystring.alma_payment_method);
-        syncOrderAndPaymentDetails(req.querystring.pid, order);
+        orderHelper.addAlmaDataToOrder(req.querystring.pid, order, isDeferredCapture);
+        paymentHelper.setOrderMerchantReference(req.querystring.pid, order);
     }
 
     // we probably should throw an error if we don't have an order
@@ -272,11 +266,11 @@ server.post('CreatePaymentUrl', server.middleware.https, function (req, res, nex
     var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
 
     var paymentData = almaPaymentHelper.buildPaymentData(
-            req.querystring.installments,
-            req.querystring.deferred_days,
-            getLocale(req),
-            almaConfigHelper.isDeferredCaptureEnable()
-        );
+        req.querystring.installments,
+        req.querystring.deferred_days,
+        getLocale(req),
+        almaConfigHelper.isDeferredCaptureEnable()
+    );
 
     try {
         var result = almaPaymentHelper.createPayment(paymentData);
@@ -328,6 +322,8 @@ server.get(
         var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
         var getLocale = require('*/cartridge/scripts/helpers/almaHelpers').getLocale;
         var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
+        var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
+        var configHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
 
         var paymentData = almaPaymentHelper.buildPaymentData(
             req.querystring.installments,
@@ -336,13 +332,20 @@ server.get(
             almaConfigHelper.isDeferredCaptureEnable()
         );
 
+        var isDeferredCapture = almaPaymentHelper.isAvailableForManualCapture(
+            configHelper.isDeferredCaptureEnable(),
+            req.querystring.installments,
+            req.querystring.deferred_days
+        );
+
         try {
             var almaPayment = almaPaymentHelper.createPayment(paymentData);
             var order = getOrderByAlmaPaymentId(almaPayment.id);
 
             if (!order) {
                 order = almaPaymentHelper.createOrderFromBasket(req.querystring.alma_payment_method);
-                syncOrderAndPaymentDetails(almaPayment.id, order);
+                orderHelper.addAlmaDataToOrder(almaPayment.id, order, isDeferredCapture);
+                almaPaymentHelper.setOrderMerchantReference(almaPayment.id, order);
             }
             res.setStatusCode(200);
             res.json({

@@ -440,5 +440,6 @@ module.exports = {
     flagAsPotentialFraud: flagAsPotentialFraud,
     createOrderFromBasketUUID: createOrderFromBasketUUID,
     setOrderMerchantReference: setOrderMerchantReference,
-    capturePayment: capturePayment
+    capturePayment: capturePayment,
+    isAvailableForManualCapture: isAvailableForManualCapture
 };

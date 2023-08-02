@@ -26,8 +26,35 @@ function addAlmaPaymentDetails(order, payDetail) {
     });
 }
 
+/**
+ * Add alma deferred capture in order
+ * @param {Order} order order
+ * @param {string} deferredCapture payDetail
+ */
+function setAlmaDeferredCapture(order, deferredCapture) {
+    Transaction.wrap(function () {
+        // eslint-disable-next-line no-param-reassign
+        order.custom.ALMA_Deferred_Capture = deferredCapture;
+    });
+}
+
+/**
+ * Add Alma data to order
+ * @param {string} pid payment id
+ * @param {Object} order order
+ * @param {boolean} isDeferredCapture is deferred capture
+ * @throw Error
+ */
+function addAlmaDataToOrder(pid, order, isDeferredCapture) {
+    addPidToOrder(order, pid);
+    if (isDeferredCapture) {
+        setAlmaDeferredCapture(order, 'true');
+    }
+}
+
 
 module.exports = {
     addPidToOrder: addPidToOrder,
-    addAlmaPaymentDetails: addAlmaPaymentDetails
+    addAlmaPaymentDetails: addAlmaPaymentDetails,
+    addAlmaDataToOrder: addAlmaDataToOrder
 };
