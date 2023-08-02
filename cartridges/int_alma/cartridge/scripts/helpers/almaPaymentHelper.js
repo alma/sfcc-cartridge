@@ -25,7 +25,8 @@ function getPaymentObj(almaPaymentId) {
         pid: almaPaymentId
     };
 
-    var httpResult = service.getPaymentDetails().call(param);
+    var httpResult = service.getPaymentDetails()
+        .call(param);
     if (httpResult.msg !== 'OK') {
         throw new Error('API error');
     }
@@ -242,7 +243,8 @@ function createOrderFromBasket(almaPaymentMethod) {
             var paymentMethodErrorContext = {
                 Alma_Payment_Method: almaPaymentMethod
             };
-            var Logger = require('dw/system/Logger').getLogger('alma');
+            var Logger = require('dw/system/Logger')
+                .getLogger('alma');
             Logger.error('Unable to process payment: payment method not found. | {0}', [JSON.stringify(paymentMethodErrorContext)]);
             throw new Error('Unable to process payment: payment method not found');
         }
@@ -271,7 +273,8 @@ function createOrderFromBasket(almaPaymentMethod) {
  */
 function createPayment(param) {
     var service = require('*/cartridge/scripts/services/alma');
-    var httpResult = service.createPayment().call(param);
+    var httpResult = service.createPayment()
+        .call(param);
 
     if (httpResult.msg !== 'OK') {
         var e = new Error('API error : ' + httpResult.status);
@@ -288,16 +291,15 @@ function createPayment(param) {
  */
 function capturePayment(params) {
     var service = require('*/cartridge/scripts/services/alma');
-    var httpResult = service.captures().call(params);
-    console.log(httpResult);
-    //
-    // if (httpResult.msg !== 'OK') {
-    //     var e = new Error('API error : ' + httpResult.status);
-    //     e.name = 'create_payment_error';
-    //     throw e;
-    // }
-    // return JSON.parse(httpResult.getObject().text);
-    return '';
+    var httpResult = service.captures()
+        .call(params);
+
+    if (httpResult.status !== 201) {
+        var e = new Error('API error : ' + httpResult.status);
+        e.name = 'capture_payment_error';
+        throw e;
+    }
+    return JSON.parse(JSON.stringify(httpResult.getObject().text));
 }
 
 /**
@@ -343,15 +345,19 @@ function buildPaymentData(installmentsCount, deferredDays, locale, isManualCaptu
             installments_count: parseInt(installmentsCount, 10),
             deferred_days: parseInt(deferredDays, 10),
             deferred_months: 0,
-            return_url: URLUtils.http('Alma-PaymentSuccess').toString(),
-            ipn_callback_url: URLUtils.http('Alma-IPN').toString(),
-            customer_cancel_url: URLUtils.https('Alma-CustomerCancel').toString(),
+            return_url: URLUtils.http('Alma-PaymentSuccess')
+                .toString(),
+            ipn_callback_url: URLUtils.http('Alma-IPN')
+                .toString(),
+            customer_cancel_url: URLUtils.https('Alma-CustomerCancel')
+                .toString(),
             locale: locale,
             origin: origin,
             shipping_address: formatAddress(currentBasket.getDefaultShipment().shippingAddress),
             billing_address: formatAddress(currentBasket.getBillingAddress()),
             deferred: isEnableOnShipment ? 'trigger' : '',
-            deferred_description: isEnableOnShipment ? require('dw/web/Resource').msg('alma.at_shipping', 'alma', null) : '',
+            deferred_description: isEnableOnShipment ? require('dw/web/Resource')
+                .msg('alma.at_shipping', 'alma', null) : '',
             custom_data: {
                 cms_name: 'SFCC',
                 cms_version: almaHelper.getSfccVersion(),

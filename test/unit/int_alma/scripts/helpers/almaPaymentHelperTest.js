@@ -6,6 +6,7 @@ var assert = require('chai').assert;
 var almaPaymentHelper = require('../../../../mocks/helpers/almaPaymentHelpers').proxyModel;
 var resolvedPaymentData = require('../../../../mocks/helpers/almaPaymentHelpers').resolvedPaymentData;
 var service = require('../../../../mocks/helpers/almaPaymentHelpers').service;
+var setHttpReturnStatusCode = require('../../../../mocks/helpers/almaPaymentHelpers').setHttpReturnStatusCode;
 
 describe('almaPaymentHelper', function () {
     describe('Build payment data', function () {
@@ -47,10 +48,23 @@ describe('almaPaymentHelper', function () {
 
     describe('Capture endpoint', function () {
         it('Capture endpoint is call with the Alma payment external_id', function () {
+            setHttpReturnStatusCode(201);
             var params = { external_id: 'payment_12345' };
-            almaPaymentHelper.capturePayment(params);
+            assert.doesNotThrow(function () {
+                almaPaymentHelper.capturePayment(params);
+            });
             assert.isTrue(service.captures().call.calledOnce);
-            assert.isTrue(service.captures().call.calledWith(params));
+            assert.isTrue(service.captures()
+                .call
+                .calledWith(params));
+        });
+
+        it('Capture endpoint throw an error if http status code not equal 201', function () {
+            setHttpReturnStatusCode(400);
+            var params = { external_id: 'payment_12345' };
+            assert.throws(function () {
+                almaPaymentHelper.capturePayment(params);
+            });
         });
     });
 });

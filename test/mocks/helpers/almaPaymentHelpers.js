@@ -10,9 +10,19 @@ var almaCheckoutHelper = require('../helpers/almaCheckoutHelpers');
 var almaAddressHelper = require('../helpers/almaAddressHelper');
 var almaOnShipmentHelper = require('../helpers/almaOnShipmentHelpers');
 const sinon = require('sinon');
+var call;
 
-var call = sinon.stub();
-
+function setHttpReturnStatusCode(statusCode) {
+    call = sinon.stub()
+        .returns({
+            status: statusCode,
+            getObject: function () {
+                return {
+                    text: 'object test'
+                };
+            }
+        });
+}
 
 var service = {
     captures: function () {
@@ -21,6 +31,7 @@ var service = {
         };
     }
 };
+
 function proxyModel() {
     return proxyquire('../../../cartridges/int_alma/cartridge/scripts/helpers/almaPaymentHelper', {
         'dw/order/BasketMgr': BasketMgr,
@@ -99,5 +110,6 @@ function resolvedPaymentData(installmentsCount, defferedDays, locale, origin, ha
 module.exports = {
     proxyModel: proxyModel(),
     resolvedPaymentData: resolvedPaymentData,
-    service: service
+    service: service,
+    setHttpReturnStatusCode: setHttpReturnStatusCode
 };
