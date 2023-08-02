@@ -9,6 +9,28 @@ var almaHelper = require('../helpers/almaHelpers');
 var almaCheckoutHelper = require('../helpers/almaCheckoutHelpers');
 var almaAddressHelper = require('../helpers/almaAddressHelper');
 var almaOnShipmentHelper = require('../helpers/almaOnShipmentHelpers');
+const sinon = require('sinon');
+var call;
+
+function setHttpReturnStatusCode(statusCode) {
+    call = sinon.stub()
+        .returns({
+            status: statusCode,
+            getObject: function () {
+                return {
+                    text: 'object test'
+                };
+            }
+        });
+}
+
+var service = {
+    captures: function () {
+        return {
+            call: call
+        };
+    }
+};
 
 function proxyModel() {
     return proxyquire('../../../cartridges/int_alma/cartridge/scripts/helpers/almaPaymentHelper', {
@@ -17,7 +39,8 @@ function proxyModel() {
         '*/cartridge/scripts/helpers/almaHelpers': almaHelper,
         '*/cartridge/scripts/helpers/almaCheckoutHelper': almaCheckoutHelper,
         '*/cartridge/scripts/helpers/almaAddressHelper': almaAddressHelper,
-        '*/cartridge/scripts/helpers/almaOnShipmentHelper': almaOnShipmentHelper
+        '*/cartridge/scripts/helpers/almaOnShipmentHelper': almaOnShipmentHelper,
+        '*/cartridge/scripts/services/alma': service
     });
 }
 
@@ -86,5 +109,7 @@ function resolvedPaymentData(installmentsCount, defferedDays, locale, origin, ha
 
 module.exports = {
     proxyModel: proxyModel(),
-    resolvedPaymentData: resolvedPaymentData
+    resolvedPaymentData: resolvedPaymentData,
+    service: service,
+    setHttpReturnStatusCode: setHttpReturnStatusCode
 };
