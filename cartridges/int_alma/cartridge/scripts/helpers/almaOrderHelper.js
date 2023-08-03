@@ -27,7 +27,7 @@ function addAlmaPaymentDetails(order, payDetail) {
 }
 
 /**
- * Add alma deferred capture in order
+ * Set alma deferred capture in order
  * @param {Order} order order
  * @param {string} deferredCapture payDetail
  */
