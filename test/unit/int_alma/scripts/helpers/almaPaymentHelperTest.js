@@ -33,7 +33,7 @@ describe('almaPaymentHelper', function () {
             assert.property(payment.payment, 'capture_method');
         });
         it('Payment data for credit has no capture method in', function () {
-            var payment = almaPaymentHelper.buildPaymentData(12, 0, 'fr_FR', true);
+            var payment = almaPaymentHelper.buildPaymentData(12, 0, 'fr_FR', false);
             assert.notProperty(payment.payment, 'capture_method');
         });
         it('Payment data for pay now has capture method', function () {
@@ -41,7 +41,7 @@ describe('almaPaymentHelper', function () {
             assert.property(payment.payment, 'capture_method');
         });
         it('Payment data for pay later has no capture method', function () {
-            var payment = almaPaymentHelper.buildPaymentData(1, 15, 'fr_FR', true);
+            var payment = almaPaymentHelper.buildPaymentData(1, 15, 'fr_FR', false);
             assert.notProperty(payment.payment, 'capture_method');
         });
     });

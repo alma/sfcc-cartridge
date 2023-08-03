@@ -367,7 +367,7 @@ function buildPaymentData(installmentsCount, deferredDays, locale, isManualCaptu
         customer: formatCustomerData(currentBasket.getCustomer().profile, currentBasket.getCustomerEmail(), formatAddress(currentBasket.getDefaultShipment().shippingAddress))
     };
 
-    if (isAvailableForManualCapture(isManualCaptureEnabled, installmentsCount, deferredDays)) {
+    if (isManualCaptureEnabled) {
         paymentData.payment.capture_method = 'manual';
     }
 

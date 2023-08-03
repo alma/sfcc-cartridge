@@ -265,11 +265,17 @@ server.post('CreatePaymentUrl', server.middleware.https, function (req, res, nex
     var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
     var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
 
+    var isDeferredCapture = almaPaymentHelper.isAvailableForManualCapture(
+        almaConfigHelper.isDeferredCaptureEnable(),
+        req.querystring.installments,
+        req.querystring.deferred_days
+    );
+
     var paymentData = almaPaymentHelper.buildPaymentData(
         req.querystring.installments,
         req.querystring.deferred_days,
         getLocale(req),
-        almaConfigHelper.isDeferredCaptureEnable()
+        isDeferredCapture
     );
 
     try {
@@ -323,19 +329,18 @@ server.get(
         var getLocale = require('*/cartridge/scripts/helpers/almaHelpers').getLocale;
         var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
         var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
-        var configHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
+
+        var isDeferredCapture = almaPaymentHelper.isAvailableForManualCapture(
+            almaConfigHelper.isDeferredCaptureEnable(),
+            req.querystring.installments,
+            req.querystring.deferred_days
+        );
 
         var paymentData = almaPaymentHelper.buildPaymentData(
             req.querystring.installments,
             req.querystring.deferred_days,
             getLocale(req),
-            almaConfigHelper.isDeferredCaptureEnable()
-        );
-
-        var isDeferredCapture = almaPaymentHelper.isAvailableForManualCapture(
-            configHelper.isDeferredCaptureEnable(),
-            req.querystring.installments,
-            req.querystring.deferred_days
+            isDeferredCapture
         );
 
         try {
