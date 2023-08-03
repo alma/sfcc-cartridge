@@ -7,7 +7,7 @@ var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper')
 var Logger = require('dw/system/Logger');
 
 exports.execute = function () {
-    var orders = OrderMgr.searchOrders("custom.ALMA_Deferred_Capture='toBeCaptured'", null);
+    var orders = OrderMgr.searchOrders("custom.ALMA_Deferred_Capture='toBeCaptured' and status != 8 and status != 6", null);
     var errors = [];
 
     if (orders.count > 0) {
