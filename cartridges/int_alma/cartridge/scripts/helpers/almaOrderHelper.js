@@ -48,7 +48,7 @@ function setAlmaDeferredCapture(order, deferredCapture) {
 function addAlmaDataToOrder(pid, order, isDeferredCapture) {
     addPidToOrder(order, pid);
     if (isDeferredCapture) {
-        setAlmaDeferredCapture(order, 'true');
+        setAlmaDeferredCapture(order, 'toBeCaptured');
     }
 }
 
@@ -56,5 +56,6 @@ function addAlmaDataToOrder(pid, order, isDeferredCapture) {
 module.exports = {
     addPidToOrder: addPidToOrder,
     addAlmaPaymentDetails: addAlmaPaymentDetails,
-    addAlmaDataToOrder: addAlmaDataToOrder
+    addAlmaDataToOrder: addAlmaDataToOrder,
+    setAlmaDeferredCapture: setAlmaDeferredCapture
 };

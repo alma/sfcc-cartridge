@@ -179,7 +179,7 @@ function captures() {
          */
         createRequest: function (service, params) {
             service.setRequestMethod('POST');
-            service.URL = almaHelpers.getUrl('/v1/payments/' + params.pid + 'captures'); // eslint-disable-line no-param-reassign
+            service.URL = almaHelpers.getUrl('/v1/payments/' + params.external_id + '/captures'); // eslint-disable-line no-param-reassign
             almaHelpers.addHeaders(service);
 
             return JSON.stringify(params);

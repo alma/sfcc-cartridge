@@ -48,7 +48,7 @@ describe('almaPaymentHelper', function () {
 
     describe('Capture endpoint', function () {
         it('Capture endpoint is call with the Alma payment external_id', function () {
-            setHttpReturnStatusCode(201);
+            setHttpReturnStatusCode('OK');
             var params = { external_id: 'payment_12345' };
             assert.doesNotThrow(function () {
                 almaPaymentHelper.capturePayment(params);
