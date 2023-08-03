@@ -14,12 +14,20 @@
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
+            <attribute-definition attribute-id="ALMA_Deferred_Capture">
+                <display-name xml:lang="x-default">ALMA Deferred Capture</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
             <attribute-group group-id="Alma">
                 <display-name xml:lang="x-default">Alma</display-name>
                 <attribute attribute-id="almaPaymentId"/>
                 <attribute attribute-id="ALMA_ResponseDetails"/>
+                <attribute attribute-id="ALMA_Deferred_Capture"/>
             </attribute-group>
 
         </group-definitions>

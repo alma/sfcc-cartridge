@@ -318,10 +318,10 @@ function isAvailableForManualCapture(isManualCaptureEnabled, installmentsCount, 
  * @param {number} installmentsCount number of installments to pay
  * @param {number} deferredDays number of days to the first payment
  * @param {string} locale the user locale
- * @param {boolean} isManualCaptureEnabled for capture_method
+ * @param {boolean} isManualCapture for capture_method
  * @returns {Object} to give to the payment endpoint
  */
-function buildPaymentData(installmentsCount, deferredDays, locale, isManualCaptureEnabled) {
+function buildPaymentData(installmentsCount, deferredDays, locale, isManualCapture) {
     var BasketMgr = require('dw/order/BasketMgr');
     var URLUtils = require('dw/web/URLUtils');
     var almaHelper = require('*/cartridge/scripts/helpers/almaHelpers');
@@ -367,7 +367,7 @@ function buildPaymentData(installmentsCount, deferredDays, locale, isManualCaptu
         customer: formatCustomerData(currentBasket.getCustomer().profile, currentBasket.getCustomerEmail(), formatAddress(currentBasket.getDefaultShipment().shippingAddress))
     };
 
-    if (isAvailableForManualCapture(isManualCaptureEnabled, installmentsCount, deferredDays)) {
+    if (isManualCapture) {
         paymentData.payment.capture_method = 'manual';
     }
 
@@ -440,5 +440,6 @@ module.exports = {
     flagAsPotentialFraud: flagAsPotentialFraud,
     createOrderFromBasketUUID: createOrderFromBasketUUID,
     setOrderMerchantReference: setOrderMerchantReference,
-    capturePayment: capturePayment
+    capturePayment: capturePayment,
+    isAvailableForManualCapture: isAvailableForManualCapture
 };
