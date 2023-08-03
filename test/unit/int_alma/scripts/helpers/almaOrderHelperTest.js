@@ -22,13 +22,11 @@ describe('Alma order helper', function () {
     it('For a non deferred capture payment transaction is called once', function () {
         createNewTransaction();
         almaOrderHelper.addAlmaDataToOrder('payment_fake_id', order, false);
-        // Wrap is called twice for one save
         assert.isTrue(transaction.wrap.calledOnce);
     });
     it('For a deferred capture payment transaction is called twice', function () {
         createNewTransaction();
         almaOrderHelper.addAlmaDataToOrder('payment_fake_id', order, true);
-        // Wrap is called twice for one save
         assert.isTrue(transaction.wrap.calledTwice);
     });
 });
