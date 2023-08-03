@@ -22,12 +22,8 @@ var almaOrderHelper = {
 var warnStub = sinon.stub();
 
 var logger = {
-    getLogger: function () {
-        return {
-            warn: warnStub,
-            info: function () {}
-        };
-    }
+    warn: warnStub,
+    info: function () {}
 };
 
 function proxyModel() {

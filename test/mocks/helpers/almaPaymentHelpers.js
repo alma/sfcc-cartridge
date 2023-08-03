@@ -18,7 +18,7 @@ function setHttpReturnStatusCode(statusCode) {
             status: statusCode,
             getObject: function () {
                 return {
-                    text: 'object test'
+                    text: '{"amount":10000, "id":"1234567890"}'
                 };
             }
         });

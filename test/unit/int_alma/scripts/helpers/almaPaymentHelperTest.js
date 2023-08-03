@@ -50,9 +50,7 @@ describe('almaPaymentHelper', function () {
         it('Capture endpoint is call with the Alma payment external_id', function () {
             setHttpReturnStatusCode('OK');
             var params = { external_id: 'payment_12345' };
-            assert.doesNotThrow(function () {
-                almaPaymentHelper.capturePayment(params);
-            });
+            assert.deepEqual(almaPaymentHelper.capturePayment(params), { amount: 10000, id: '1234567890' });
             assert.isTrue(service.captures().call.calledOnce);
             assert.isTrue(service.captures()
                 .call

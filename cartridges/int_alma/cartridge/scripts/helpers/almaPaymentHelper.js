@@ -294,7 +294,6 @@ function capturePayment(params) {
     var service = require('*/cartridge/scripts/services/alma');
     var httpResult = service.captures()
         .call(params);
-
     if (httpResult.status !== 'OK') {
         var e = new Error('API error : ' + httpResult.status);
         e.name = 'capture_payment_error';

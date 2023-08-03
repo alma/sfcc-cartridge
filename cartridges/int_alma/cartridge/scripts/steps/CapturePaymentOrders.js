@@ -4,8 +4,7 @@ var OrderMgr = require('dw/order/OrderMgr');
 var Status = require('dw/system/Status');
 var almaOrderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
 var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
-var logger = require('dw/system/Logger')
-    .getLogger('alma');
+var Logger = require('dw/system/Logger');
 
 exports.execute = function () {
     var orders = OrderMgr.searchOrders("custom.ALMA_Deferred_Capture='toBeCaptured'", null);
@@ -19,9 +18,9 @@ exports.execute = function () {
             try {
                 var capture = almaPaymentHelper.capturePayment(params);
                 almaOrderHelper.setAlmaDeferredCapture(order, capture.id);
-                logger.warn('Capture payment: order id: {0}, payment id: {1}', [order.orderNo, order.custom.almaPaymentId]);
+                Logger.info('Capture payment: order id: {0}, payment id: {1}', [order.orderNo, order.custom.almaPaymentId]);
             } catch (e) {
-                logger.warn('Unable to capture payment: order id: {0}, payment id: {1}', [order.orderNo, order.custom.almaPaymentId]);
+                Logger.warn('Unable to capture payment: order id: {0}, payment id: {1}', [order.orderNo, order.custom.almaPaymentId]);
                 errors.push(e);
             }
         }
