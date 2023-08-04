@@ -15,7 +15,7 @@
                 <min-length>0</min-length>
             </attribute-definition>
             <attribute-definition attribute-id="ALMA_Deferred_Capture">
-                <display-name xml:lang="x-default">Capture ID</display-name>
+                <display-name xml:lang="x-default">Capture Status</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>true</externally-managed-flag>

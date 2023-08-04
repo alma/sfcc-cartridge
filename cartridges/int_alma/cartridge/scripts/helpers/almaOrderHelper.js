@@ -49,6 +49,8 @@ function addAlmaDataToOrder(pid, order, isDeferredCapture) {
     addPidToOrder(order, pid);
     if (isDeferredCapture) {
         setAlmaDeferredCapture(order, 'toCapture');
+    } else {
+        setAlmaDeferredCapture(order, 'AutoCapture');
     }
 }
 

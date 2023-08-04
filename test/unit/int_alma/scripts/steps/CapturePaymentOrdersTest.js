@@ -62,7 +62,7 @@ describe('Deferred capture job', function () {
 
         sinon.assert.calledOnce(OrderMgr.searchOrders);
         // status : 8 failed - 6 canceled
-        sinon.assert.calledWith(OrderMgr.searchOrders, "custom.ALMA_Deferred_Capture='toCapture' and status != 8 and status != 6", null);
+        sinon.assert.calledWith(OrderMgr.searchOrders, "custom.ALMA_Deferred_Capture='toCapture' and status != {0} and status != {1}", null, 8, 6);
     });
 
     it('Should not call Capture where their is no order', function () {
@@ -91,6 +91,15 @@ describe('Deferred capture job', function () {
         CapturePaymentOrders.execute();
 
         sinon.assert.calledOnce(almaOrderHelper.setAlmaDeferredCapture);
+        sinon.assert.calledWith(
+            almaOrderHelper.setAlmaDeferredCapture,
+            {
+                custom: {
+                    almaPaymentId: 'payment_0'
+                }
+            },
+            'Captured'
+        );
     });
 
     it('Should not call setAlmaDeferredCapture when capture throw an error', function () {
