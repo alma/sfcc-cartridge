@@ -17,7 +17,7 @@
             <attribute-definition attribute-id="ALMA_Deferred_Capture">
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
+                <externally-managed-flag>true</externally-managed-flag>
             </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
@@ -109,7 +109,7 @@
                 <attribute attribute-id="ALMA_APIKey"/>
                 <attribute attribute-id="ALMA_Merchant_Id"/>
                 <attribute attribute-id="ALMA_Inpage_Payment"/>
-                <attribute attribute-id="ALMA_Deferred_Capture_Activation"/>
+                <attribute attribute-id="ALMA_Deferred_Capture_ActivationALMA_Deferred_Capture_Activation"/>
                 <attribute attribute-id="isWidgetEnable"/>
                 <attribute attribute-id="cartSelector"/>
                 <attribute attribute-id="isProductWidgetEnable"/>
