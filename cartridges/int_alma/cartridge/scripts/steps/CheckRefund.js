@@ -55,12 +55,12 @@ exports.execute = function () {
                 try {
                     if (orderItem.custom.ALMA_Deferred_Capture === 'toCapture') {
                         var amount = 0;
-
+                        var deferredStatus = 'toCapture';
                         if (orderItem.custom.almaRefundType.toString() === 'Total') {
                             var params = { external_id: orderItem.custom.almaPaymentId };
-                            amount = orderItem.getTotalGrossPrice();
-
+                            amount = orderItem.getTotalGrossPrice().value;
                             AlmaPaymentHelper.cancelAlmaPayment(params);
+                            deferredStatus = 'Canceled';
                         }
 
                         if (orderItem.custom.almaRefundType.toString() === 'Partial') {
@@ -69,6 +69,7 @@ exports.execute = function () {
 
                         // eslint-disable-next-line no-loop-func
                         Transaction.wrap(function () {
+                            orderItem.custom.ALMA_Deferred_Capture = deferredStatus;
                             // eslint-disable-next-line no-param-reassign
                             orderItem.custom.almaRefundedAmount = amount;
                             // eslint-disable-next-line no-param-reassign
