@@ -19,6 +19,9 @@ var refundHelper = {
     refundPaymentForOrder: sinon.stub()
 };
 
+var almaPaymentHelper = {
+    cancelAlmaPayment: sinon.stub()
+};
 
 function proxyModel() {
     return proxyquire(
@@ -27,7 +30,8 @@ function proxyModel() {
             'dw/system/Logger': logger,
             'dw/system/Status': sinon.mock(),
             'dw/order/OrderMgr': OrderMgr,
-            '*/cartridge/scripts/helpers/almaRefundHelper': refundHelper
+            '*/cartridge/scripts/helpers/almaRefundHelper': refundHelper,
+            '*/cartridge/scripts/helpers/almaPaymentHelper': almaPaymentHelper
         }
     );
 }
@@ -35,5 +39,7 @@ function proxyModel() {
 module.exports = {
     CheckRefund: proxyModel(),
     OrderMgr: OrderMgr,
-    refundHelper: refundHelper
+    refundHelper: refundHelper,
+    almaPaymentHelper: almaPaymentHelper,
+    logger: logger
 };

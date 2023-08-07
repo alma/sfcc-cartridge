@@ -42,6 +42,7 @@ function refundPaymentForOrder(order) {
 exports.execute = function () {
     var Logger = require('dw/system/Logger');
     var Status = require('dw/system/Status');
+    var AlmaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
     var orders = getOrdersRefunded();
     var errors = [];
 
@@ -51,6 +52,13 @@ exports.execute = function () {
             var orderItem = orders.next();
             if (isOrderToBeRefund(orderItem)) {
                 try {
+                    if (orderItem.custom.ALMA_Deferred_Capture === 'ToCapture' && orderItem.custom.almaRefundType.toString() === 'Total') {
+                        var params = { external_id: orderItem.custom.almaPaymentId };
+                        AlmaPaymentHelper.cancelAlmaPayment(params);
+                    }
+                    if (orderItem.custom.ALMA_Deferred_Capture === 'ToCapture' && orderItem.custom.almaRefundType.toString() === 'Partial') {
+                        Logger.warn('Partial refund is not yet implemented with deferred payment - order id {0}', [orderItem.currentOrderNo()]);
+                    }
                     refundPaymentForOrder(orderItem);
                 } catch (e) {
                     Logger.error('[ERROR][ALMA refund] : ' + e);
