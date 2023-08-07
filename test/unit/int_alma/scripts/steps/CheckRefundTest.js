@@ -5,6 +5,7 @@ var CheckRefund = require('../../../../mocks/steps/CheckRefundMocks').CheckRefun
 var refundHelper = require('../../../../mocks/steps/CheckRefundMocks').refundHelper;
 var almaPaymentHelper = require('../../../../mocks/steps/CheckRefundMocks').almaPaymentHelper;
 var logger = require('../../../../mocks/steps/CheckRefundMocks').logger;
+var transaction = require('../../../../mocks/steps/CheckRefundMocks').transaction;
 
 function orderFactory(count, refundType, partialRefundAmount, capture) {
     return {
@@ -23,6 +24,9 @@ function orderFactory(count, refundType, partialRefundAmount, capture) {
         },
         currentOrderNo: function () {
             return 'order_id';
+        },
+        getTotalGrossPrice: function () {
+            return 10000;
         }
     };
 }
@@ -161,13 +165,15 @@ describe('Refund job test', function () {
             CheckRefund.execute();
             sinon.assert.calledOnce(almaPaymentHelper.cancelAlmaPayment);
             sinon.assert.calledWith(almaPaymentHelper.cancelAlmaPayment, { external_id: 'payment_0' });
+            sinon.assert.calledOnce(transaction.wrap);
         });
         it('should not call cancel for an order whose payment is toCapture for a Partial refund and write a error log', function () {
             OrderMgr.searchOrders = sinon.stub()
                 .returns(mockOrderFactory(1, 'Partial', 3000, 'ToCapture'));
             CheckRefund.execute();
             sinon.assert.notCalled(almaPaymentHelper.cancelAlmaPayment);
-            sinon.assert.calledWith(logger.warn, 'Partial refund is not yet implemented with deferred payment - order id {0}', ['order_id']);
+            sinon.assert.calledWith(logger.info, 'Partial refund is not yet implemented with deferred payment - order id {0}', ['order_id']);
+            sinon.assert.calledOnce(transaction.wrap);
         });
     });
 });
