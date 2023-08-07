@@ -190,6 +190,30 @@ function captures() {
     });
 }
 
+/**
+ * Cancel an alma payment
+ * @return {dw.svc.Service} service instances
+ */
+function cancelAlmaPayment() {
+    return LocalServiceRegistry.createService('alma', {
+        /**
+         * @param {dw.svc.HTTPService} service service
+         * @param {array} params parameters
+         * @returns {string} json parameters as string
+         */
+        createRequest: function (service, params) {
+            service.setRequestMethod('PUT');
+            service.URL = almaHelpers.getUrl('/v1/payments/' + params.external_id + '/cancel'); // eslint-disable-line no-param-reassign
+            almaHelpers.addHeaders(service);
+
+            return JSON.stringify(params);
+        },
+        parseResponse: function (svc, client) {
+            return client;
+        }
+    });
+}
+
 module.exports = {
     getPaymentDetails: getPaymentDetails,
     checkEligibility: checkEligibility,
@@ -198,5 +222,6 @@ module.exports = {
     createPayment: createPayment,
     potentialFraud: flagAsPotentialFraud,
     setOrderMerchantReferenceAPI: setOrderMerchantReferenceAPI,
-    captures: captures
+    captures: captures,
+    cancelAlmaPayment: cancelAlmaPayment
 };

@@ -29,6 +29,11 @@ var service = {
         return {
             call: call
         };
+    },
+    cancelAlmaPayment: function () {
+        return {
+            call: call
+        };
     }
 };
 

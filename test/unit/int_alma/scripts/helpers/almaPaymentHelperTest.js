@@ -3,6 +3,7 @@
 // almaPayment.js unit tests
 
 var assert = require('chai').assert;
+var sinon = require('sinon');
 var almaPaymentHelper = require('../../../../mocks/helpers/almaPaymentHelpers').proxyModel;
 var resolvedPaymentData = require('../../../../mocks/helpers/almaPaymentHelpers').resolvedPaymentData;
 var service = require('../../../../mocks/helpers/almaPaymentHelpers').service;
@@ -62,6 +63,22 @@ describe('almaPaymentHelper', function () {
             var params = { external_id: 'payment_12345' };
             assert.throws(function () {
                 almaPaymentHelper.capturePayment(params);
+            });
+        });
+    });
+    describe('Cancel Payment', function () {
+        it('should call cancel service with good params', function () {
+            setHttpReturnStatusCode('OK');
+            var params = { external_id: 'payment_12345' };
+            almaPaymentHelper.cancelAlmaPayment(params);
+            sinon.assert.calledOnce(service.cancelAlmaPayment().call);
+            sinon.assert.calledWith(service.cancelAlmaPayment().call, params);
+        });
+        it('Cancel endpoint throw an error if http status code not equal 204', function () {
+            setHttpReturnStatusCode(400);
+            var params = { external_id: 'payment_12345' };
+            assert.throws(function () {
+                almaPaymentHelper.cancelAlmaPayment(params);
             });
         });
     });
