@@ -22,9 +22,7 @@ function orderFactory(count, refundType, partialRefundAmount, capture) {
         totalGrossPrice: {
             value: 10000
         },
-        currentOrderNo: function () {
-            return 'order_id';
-        },
+        orderNo: 'order_id',
         getTotalGrossPrice: function () {
             return 10000;
         }
@@ -161,7 +159,7 @@ describe('Refund job test', function () {
         });
         it('should call cancel for an order whose payment is ToCapture for a total refund', function () {
             OrderMgr.searchOrders = sinon.stub()
-                .returns(mockOrderFactory(1, 'Total', null, 'ToCapture'));
+                .returns(mockOrderFactory(1, 'Total', null, 'toCapture'));
             CheckRefund.execute();
             sinon.assert.calledOnce(almaPaymentHelper.cancelAlmaPayment);
             sinon.assert.calledWith(almaPaymentHelper.cancelAlmaPayment, { external_id: 'payment_0' });
@@ -169,7 +167,7 @@ describe('Refund job test', function () {
         });
         it('should not call cancel for an order whose payment is toCapture for a Partial refund and write a error log', function () {
             OrderMgr.searchOrders = sinon.stub()
-                .returns(mockOrderFactory(1, 'Partial', 3000, 'ToCapture'));
+                .returns(mockOrderFactory(1, 'Partial', 3000, 'toCapture'));
             CheckRefund.execute();
             sinon.assert.notCalled(almaPaymentHelper.cancelAlmaPayment);
             sinon.assert.calledWith(logger.info, 'Partial refund is not yet implemented with deferred payment - order id {0}', ['order_id']);

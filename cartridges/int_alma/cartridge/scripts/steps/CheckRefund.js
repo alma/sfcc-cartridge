@@ -53,7 +53,7 @@ exports.execute = function () {
             var orderItem = orders.next();
             if (isOrderToBeRefund(orderItem)) {
                 try {
-                    if (orderItem.custom.ALMA_Deferred_Capture === 'ToCapture') {
+                    if (orderItem.custom.ALMA_Deferred_Capture === 'toCapture') {
                         var amount = 0;
 
                         if (orderItem.custom.almaRefundType.toString() === 'Total') {
@@ -64,7 +64,7 @@ exports.execute = function () {
                         }
 
                         if (orderItem.custom.almaRefundType.toString() === 'Partial') {
-                            Logger.info('Partial refund is not yet implemented with deferred payment - order id {0}', [orderItem.currentOrderNo()]);
+                            Logger.info('Partial refund is not yet implemented with deferred payment - order id {0}', [orderItem.orderNo]);
                         }
 
                         // eslint-disable-next-line no-loop-func
@@ -76,8 +76,9 @@ exports.execute = function () {
                             // eslint-disable-next-line no-param-reassign
                             orderItem.custom.almaRefundType = null;
                         });
+                    } else {
+                        refundPaymentForOrder(orderItem);
                     }
-                    refundPaymentForOrder(orderItem);
                 } catch (e) {
                     Logger.error('[ERROR][ALMA refund] : ' + e);
                     errors.push(e);
