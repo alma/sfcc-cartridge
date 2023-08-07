@@ -288,18 +288,18 @@ function createPayment(param) {
  * Calls the capture payment endpoint
  * @param {Object} params to give to the payment endpoint
  * @returns {Object} api response
+ * @throws Error
  */
 function capturePayment(params) {
     var service = require('*/cartridge/scripts/services/alma');
     var httpResult = service.captures()
         .call(params);
-
-    if (httpResult.status !== 201) {
+    if (httpResult.status !== 'OK') {
         var e = new Error('API error : ' + httpResult.status);
         e.name = 'capture_payment_error';
         throw e;
     }
-    return JSON.parse(JSON.stringify(httpResult.getObject().text));
+    return JSON.parse(httpResult.getObject().text);
 }
 
 /**

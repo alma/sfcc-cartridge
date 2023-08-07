@@ -3,6 +3,7 @@
 // almaOrderHelper unit tests
 
 var assert = require('chai').assert;
+var sinon = require('sinon');
 var almaOrderHelper = require('../../../../mocks/helpers/almaOrderHelpers').almaOrderHelpers;
 var transaction = require('../../../../mocks/helpers/almaOrderHelpers').transaction;
 var createNewTransaction = require('../../../../mocks/helpers/almaOrderHelpers').createNewTransaction;
@@ -19,14 +20,10 @@ describe('Alma order helper', function () {
             almaOrderHelper.addAlmaDataToOrder('payment_fake_id', order, true);
         });
     });
-    it('For a non deferred capture payment transaction is called once', function () {
-        createNewTransaction();
-        almaOrderHelper.addAlmaDataToOrder('payment_fake_id', order, false);
-        assert.isTrue(transaction.wrap.calledOnce);
-    });
-    it('For a deferred capture payment transaction is called twice', function () {
+
+    it('For payment transaction.wrap is called twice first for payment ID Second for Deferred Status', function () {
         createNewTransaction();
         almaOrderHelper.addAlmaDataToOrder('payment_fake_id', order, true);
-        assert.isTrue(transaction.wrap.calledTwice);
+        sinon.assert.calledTwice(transaction.wrap);
     });
 });

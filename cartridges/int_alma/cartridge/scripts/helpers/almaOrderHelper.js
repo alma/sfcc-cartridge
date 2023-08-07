@@ -27,7 +27,7 @@ function addAlmaPaymentDetails(order, payDetail) {
 }
 
 /**
- * Add alma deferred capture in order
+ * Set alma deferred capture in order
  * @param {Order} order order
  * @param {string} deferredCapture payDetail
  */
@@ -48,7 +48,9 @@ function setAlmaDeferredCapture(order, deferredCapture) {
 function addAlmaDataToOrder(pid, order, isDeferredCapture) {
     addPidToOrder(order, pid);
     if (isDeferredCapture) {
-        setAlmaDeferredCapture(order, 'true');
+        setAlmaDeferredCapture(order, 'toCapture');
+    } else {
+        setAlmaDeferredCapture(order, 'AutoCapture');
     }
 }
 
@@ -56,5 +58,6 @@ function addAlmaDataToOrder(pid, order, isDeferredCapture) {
 module.exports = {
     addPidToOrder: addPidToOrder,
     addAlmaPaymentDetails: addAlmaPaymentDetails,
-    addAlmaDataToOrder: addAlmaDataToOrder
+    addAlmaDataToOrder: addAlmaDataToOrder,
+    setAlmaDeferredCapture: setAlmaDeferredCapture
 };
