@@ -301,6 +301,23 @@ function capturePayment(params) {
     }
     return JSON.parse(httpResult.getObject().text);
 }
+/**
+ * Calls the cancel payment endpoint
+ * @param {Object} params to give to the payment endpoint
+ * @returns {Object} api response
+ * @throws Error
+ */
+function cancelAlmaPayment(params) {
+    var service = require('*/cartridge/scripts/services/alma');
+    var httpResult = service.cancelAlmaPayment()
+        .call(params);
+    if (httpResult.status !== 'OK') {
+        var e = new Error('API error : ' + httpResult.status);
+        e.name = 'cancel_payment_error';
+        throw e;
+    }
+    return JSON.parse(httpResult.getObject().text);
+}
 
 /**
  * Check if manual capture is available
@@ -441,5 +458,6 @@ module.exports = {
     createOrderFromBasketUUID: createOrderFromBasketUUID,
     setOrderMerchantReference: setOrderMerchantReference,
     capturePayment: capturePayment,
-    isAvailableForManualCapture: isAvailableForManualCapture
+    isAvailableForManualCapture: isAvailableForManualCapture,
+    cancelAlmaPayment: cancelAlmaPayment
 };

@@ -42,6 +42,8 @@ function refundPaymentForOrder(order) {
 exports.execute = function () {
     var Logger = require('dw/system/Logger');
     var Status = require('dw/system/Status');
+    var Transaction = require('dw/system/Transaction');
+    var AlmaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
     var orders = getOrdersRefunded();
     var errors = [];
 
@@ -51,7 +53,33 @@ exports.execute = function () {
             var orderItem = orders.next();
             if (isOrderToBeRefund(orderItem)) {
                 try {
-                    refundPaymentForOrder(orderItem);
+                    if (orderItem.custom.ALMA_Deferred_Capture === 'toCapture') {
+                        var amount = 0;
+                        var deferredStatus = 'toCapture';
+                        if (orderItem.custom.almaRefundType.toString() === 'Total') {
+                            var params = { external_id: orderItem.custom.almaPaymentId };
+                            amount = orderItem.getTotalGrossPrice().value;
+                            AlmaPaymentHelper.cancelAlmaPayment(params);
+                            deferredStatus = 'Canceled';
+                        }
+
+                        if (orderItem.custom.almaRefundType.toString() === 'Partial') {
+                            Logger.info('Partial refund is not yet implemented with deferred payment - order id {0}', [orderItem.orderNo]);
+                        }
+
+                        // eslint-disable-next-line no-loop-func
+                        Transaction.wrap(function () {
+                            orderItem.custom.ALMA_Deferred_Capture = deferredStatus;
+                            // eslint-disable-next-line no-param-reassign
+                            orderItem.custom.almaRefundedAmount = amount;
+                            // eslint-disable-next-line no-param-reassign
+                            orderItem.custom.almaWantedRefundAmount = 0;
+                            // eslint-disable-next-line no-param-reassign
+                            orderItem.custom.almaRefundType = null;
+                        });
+                    } else {
+                        refundPaymentForOrder(orderItem);
+                    }
                 } catch (e) {
                     Logger.error('[ERROR][ALMA refund] : ' + e);
                     errors.push(e);
