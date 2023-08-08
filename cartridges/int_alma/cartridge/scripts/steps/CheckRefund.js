@@ -45,7 +45,6 @@ exports.execute = function () {
     var Transaction = require('dw/system/Transaction');
     var AlmaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
     var orders = getOrdersRefunded();
-    var errors = [];
 
     Logger.info('[INFO][ALMA refund] job launched for: ' + orders.count + ' orders.');
     if (orders.count > 0) {
@@ -53,9 +52,9 @@ exports.execute = function () {
             var orderItem = orders.next();
             if (isOrderToBeRefund(orderItem)) {
                 try {
-                    if (orderItem.custom.ALMA_Deferred_Capture === 'toCapture') {
+                    if (orderItem.custom.ALMA_Deferred_Capture === 'ToCapture') {
                         var amount = 0;
-                        var deferredStatus = 'toCapture';
+                        var deferredStatus = 'ToCapture';
                         if (orderItem.custom.almaRefundType.toString() === 'Total') {
                             var params = { external_id: orderItem.custom.almaPaymentId };
                             amount = orderItem.getTotalGrossPrice().value;
@@ -82,14 +81,9 @@ exports.execute = function () {
                     }
                 } catch (e) {
                     Logger.error('[ERROR][ALMA refund] : ' + e);
-                    errors.push(e);
                 }
             }
         }
-    }
-
-    if (errors.length > 0) {
-        return new Status(Status.ERROR);
     }
 
     return new Status(Status.OK);

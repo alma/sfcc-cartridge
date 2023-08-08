@@ -16,9 +16,20 @@
             </attribute-definition>
             <attribute-definition attribute-id="ALMA_Deferred_Capture">
                 <display-name xml:lang="x-default">Capture Status</display-name>
-                <type>string</type>
+                <type>enum-of-string</type>
                 <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>true</externally-managed-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <value-definitions>
+                    <value-definition>
+                        <value>ToCapture</value>
+                    </value-definition>
+                    <value-definition>
+                        <value>Captured</value>
+                    </value-definition>
+                    <value-definition>
+                        <value>Failed</value>
+                    </value-definition>
+                </value-definitions>
             </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>

@@ -67,14 +67,14 @@ describe('Refund job test', function () {
     it('should call refund once per order for Total Refund', function () {
         var count = 3;
         OrderMgr.searchOrders = sinon.stub()
-            .returns(mockOrderFactory(count, 'Total', 10000, 'AutoCapture'));
+            .returns(mockOrderFactory(count, 'Total', 10000, 'Captured'));
 
         CheckRefund.execute();
         sinon.assert.callCount(refundHelper.refundPaymentForOrder, count);
     });
     it('should call refund for Total Refund with good params', function () {
         OrderMgr.searchOrders = sinon.stub()
-            .returns(mockOrderFactory(1, 'Total', null, 'AutoCapture'));
+            .returns(mockOrderFactory(1, 'Total', null, 'Captured'));
 
         CheckRefund.execute();
         sinon.assert.calledOnce(refundHelper.refundPaymentForOrder);
@@ -94,7 +94,7 @@ describe('Refund job test', function () {
     });
     it('should call partial refund with good params', function () {
         OrderMgr.searchOrders = sinon.stub()
-            .returns(mockOrderFactory(1, 'Partial', 3000, 'AutoCapture'));
+            .returns(mockOrderFactory(1, 'Partial', 3000, 'Captured'));
 
         CheckRefund.execute();
 
@@ -117,7 +117,7 @@ describe('Refund job test', function () {
     it('should be not call for a partial refund with negative amount', function () {
         var count = 1;
         OrderMgr.searchOrders = sinon.stub()
-            .returns(mockOrderFactory(count, 'Partial', -10000, 'AutoCapture'));
+            .returns(mockOrderFactory(count, 'Partial', -10000, 'Captured'));
 
         CheckRefund.execute();
         sinon.assert.notCalled(refundHelper.refundPaymentForOrder);
@@ -125,7 +125,7 @@ describe('Refund job test', function () {
     it('should be not call for a partial refund with not a valid amount', function () {
         var count = 1;
         OrderMgr.searchOrders = sinon.stub()
-            .returns(mockOrderFactory(count, 'Partial', 'azertyui', 'AutoCapture'));
+            .returns(mockOrderFactory(count, 'Partial', 'azertyui', 'Captured'));
 
         CheckRefund.execute();
         sinon.assert.notCalled(refundHelper.refundPaymentForOrder);
@@ -133,7 +133,7 @@ describe('Refund job test', function () {
     it('should be not call for a partial refund with an amount upper than the order amount', function () {
         var count = 1;
         OrderMgr.searchOrders = sinon.stub()
-            .returns(mockOrderFactory(count, 'Partial', 1000000, 'AutoCapture'));
+            .returns(mockOrderFactory(count, 'Partial', 1000000, 'Captured'));
 
         CheckRefund.execute();
         sinon.assert.notCalled(refundHelper.refundPaymentForOrder);
@@ -141,7 +141,7 @@ describe('Refund job test', function () {
     describe('Deferred payment', function () {
         it('should call refund for an order whose payment is in auto capture', function () {
             OrderMgr.searchOrders = sinon.stub()
-                .returns(mockOrderFactory(1, 'Total', null, 'AutoCapture'));
+                .returns(mockOrderFactory(1, 'Total', null, 'Captured'));
             CheckRefund.execute();
             sinon.assert.calledOnce(refundHelper.refundPaymentForOrder);
         });
@@ -159,16 +159,16 @@ describe('Refund job test', function () {
         });
         it('should call cancel for an order whose payment is ToCapture for a total refund', function () {
             OrderMgr.searchOrders = sinon.stub()
-                .returns(mockOrderFactory(1, 'Total', null, 'toCapture'));
+                .returns(mockOrderFactory(1, 'Total', null, 'ToCapture'));
             CheckRefund.execute();
             sinon.assert.notCalled(refundHelper.refundPaymentForOrder);
             sinon.assert.calledOnce(almaPaymentHelper.cancelAlmaPayment);
             sinon.assert.calledWith(almaPaymentHelper.cancelAlmaPayment, { external_id: 'payment_0' });
             sinon.assert.calledOnce(transaction.wrap);
         });
-        it('should not call cancel for an order whose payment is toCapture for a Partial refund and write a error log', function () {
+        it('should not call cancel for an order whose payment is ToCapture for a Partial refund and write a error log', function () {
             OrderMgr.searchOrders = sinon.stub()
-                .returns(mockOrderFactory(1, 'Partial', 3000, 'toCapture'));
+                .returns(mockOrderFactory(1, 'Partial', 3000, 'ToCapture'));
             CheckRefund.execute();
             sinon.assert.notCalled(refundHelper.refundPaymentForOrder);
             sinon.assert.notCalled(almaPaymentHelper.cancelAlmaPayment);
