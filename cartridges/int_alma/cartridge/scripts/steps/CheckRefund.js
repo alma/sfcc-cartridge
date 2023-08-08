@@ -53,9 +53,9 @@ exports.execute = function () {
             var orderItem = orders.next();
             if (isOrderToBeRefund(orderItem)) {
                 try {
-                    if (orderItem.custom.ALMA_Deferred_Capture === 'toCapture') {
+                    if (orderItem.custom.ALMA_Deferred_Capture === 'ToCapture') {
                         var amount = 0;
-                        var deferredStatus = 'toCapture';
+                        var deferredStatus = 'ToCapture';
                         if (orderItem.custom.almaRefundType.toString() === 'Total') {
                             var params = { external_id: orderItem.custom.almaPaymentId };
                             amount = orderItem.getTotalGrossPrice().value;
