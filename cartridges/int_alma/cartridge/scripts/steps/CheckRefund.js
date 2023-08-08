@@ -45,7 +45,6 @@ exports.execute = function () {
     var Transaction = require('dw/system/Transaction');
     var AlmaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
     var orders = getOrdersRefunded();
-    var errors = [];
 
     Logger.info('[INFO][ALMA refund] job launched for: ' + orders.count + ' orders.');
     if (orders.count > 0) {
@@ -82,14 +81,9 @@ exports.execute = function () {
                     }
                 } catch (e) {
                     Logger.error('[ERROR][ALMA refund] : ' + e);
-                    errors.push(e);
                 }
             }
         }
-    }
-
-    if (errors.length > 0) {
-        return new Status(Status.ERROR);
     }
 
     return new Status(Status.OK);
