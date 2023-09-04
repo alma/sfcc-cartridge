@@ -37,7 +37,8 @@ var baseReturn =
             country: 'address.countryCode.value',
             state_province: 'address.stateCode',
             phone: 'address.phone'
-        }
+        },
+        capture_method: 'automatic'
     };
 
 var baseBasket = basketMock.getCurrentBasket();

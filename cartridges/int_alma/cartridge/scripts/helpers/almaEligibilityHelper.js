@@ -51,7 +51,8 @@ function getParams(plansForEligibility, locale, currentBasket) {
         queries: plansForEligibility,
         locale: locale,
         billing_address: billingAddress,
-        shipping_address: shippingAddress
+        shipping_address: shippingAddress,
+        capture_method: 'automatic'
     };
     return params;
 }
