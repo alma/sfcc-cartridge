@@ -9,6 +9,15 @@ function isDeferredCaptureEnable() {
     return Site.getCurrent().getCustomPreferenceValue('ALMA_Deferred_Capture_Activation');
 }
 
+/**
+ * Returns true if the merchant want in-page payment
+ * @returns {boolean} if we can use inpage
+ */
+function isInpageActivated() {
+    return Site.getCurrent().getCustomPreferenceValue('ALMA_Inpage_Payment');
+}
+
 module.exports = {
-    isDeferredCaptureEnable: isDeferredCaptureEnable
+    isDeferredCaptureEnable: isDeferredCaptureEnable,
+    isInpageActivated: isInpageActivated
 };

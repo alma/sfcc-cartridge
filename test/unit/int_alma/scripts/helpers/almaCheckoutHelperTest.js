@@ -2,7 +2,9 @@
 
 var assert = require('chai').assert;
 
-var almaCheckoutHelpers = require('../../../../mocks/helpers/almaCheckoutHelpers');
+var almaCheckoutHelpers = require('../../../../mocks/helpers/almaCheckoutHelpers').almaCheckoutHelpers;
+var setCustomPreferenceValue = require('../../../../mocks/helpers/almaCheckoutHelpers').setCustomPreferenceValue;
+var setIsAvailableForManualCapture = require('../../../../mocks/helpers/almaCheckoutHelpers').setIsAvailableForManualCapture;
 
 var plan = {
     installments_count: 3,
@@ -75,6 +77,7 @@ var currencyCode = 'EUR';
 describe('almaCheckoutHelpers', function () {
     describe('formatPlanForCheckout', function () {
         it('check in page', function () {
+            setCustomPreferenceValue(true);
             var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(plan, currencyCode);
             assert.equal(checkoutData.in_page, true);
 
@@ -97,7 +100,8 @@ describe('almaCheckoutHelpers', function () {
             assert.equal(checkoutData.selector, 'ALMA_general_1_15');
         });
 
-        it('check properties', function () {
+        it('check properties for pnx', function () {
+            setIsAvailableForManualCapture(true);
             var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(plan, currencyCode);
             assert.deepEqual(checkoutData.properties, {
                 title: 'alma.pay.in_x_installment',
@@ -110,7 +114,43 @@ describe('almaCheckoutHelpers', function () {
                     basket_cost: 'alma.credit.basket_cost',
                     total_cost: 'alma.credit.total_cost'
                 },
-                payment_installments: '117 alma.pay.in_x_installment.installments  2x116'
+                payment_installments: '117 alma.pay.in_x_installment.installments.deferred_capture  2x116'
+            });
+        });
+
+        it('check properties for credit', function () {
+            setIsAvailableForManualCapture(false);
+            var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(planCredit, currencyCode);
+            assert.deepEqual(checkoutData.properties, {
+                title: 'alma.pay.in_x_installment',
+                img: 'alma.pay.in_x_installment.img',
+                description: 'alma.pay.in_x_installment.description',
+                fees: 'alma.not_fee',
+                credit: {
+                    amount: 'alma.credit.cost_of_credit',
+                    rate: 'alma.credit.fixed_apr',
+                    basket_cost: 'alma.credit.basket_cost',
+                    total_cost: 'alma.credit.total_cost'
+                },
+                payment_installments: '60 alma.pay.in_x_installment.installments  5x60'
+            });
+        });
+
+        it('check properties for deffered', function () {
+            setIsAvailableForManualCapture(false);
+            var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(plansDeferred, currencyCode);
+            assert.deepEqual(checkoutData.properties, {
+                title: 'alma.pay.after_x_days',
+                img: 'alma.pay.after_x_days.img',
+                description: 'alma.pay.after_x_days.description',
+                fees: 'alma.not_fee',
+                credit: {
+                    amount: 'alma.credit.cost_of_credit',
+                    rate: 'alma.credit.fixed_apr',
+                    basket_cost: 'alma.credit.basket_cost',
+                    total_cost: 'alma.credit.total_cost'
+                },
+                payment_installments: 'alma.pay.after_x_days.installments'
             });
         });
 
