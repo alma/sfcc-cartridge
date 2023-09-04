@@ -29,17 +29,16 @@ function callEligibility(param) {
 
 
 /**
- * Get eligibility for a given set of plan, a locale and a basket
+ * Get eligibility params for a given set of plan, a locale and a basket
  * @param  {Object} plansForEligibility Alma plans
  * @param {string} locale e.g. 'fr_FR'
  * @param {dw.order.Basket} currentBasket current basket
  * @returns {array} of eligibility plan Object
  */
-function getEligibility(plansForEligibility, locale, currentBasket) {
+function getParams(plansForEligibility, locale, currentBasket) {
     if (currentBasket === null) {
         return [];
     }
-
     var purchaseAmount = Math.round(currentBasket.totalGrossPrice.multiply(100).value);
     var billingAddress = formatAddress(currentBasket.getBillingAddress(), currentBasket.getCustomerEmail());
     var shippingAddress = formatAddress(
@@ -47,16 +46,29 @@ function getEligibility(plansForEligibility, locale, currentBasket) {
         currentBasket.getCustomerEmail()
     );
 
-    var param = {
+    var params = {
         purchase_amount: purchaseAmount,
         queries: plansForEligibility,
         locale: locale,
         billing_address: billingAddress,
         shipping_address: shippingAddress
     };
-    return callEligibility(param);
+    return params;
+}
+
+/**
+ * Get eligibility for a given set of plan, a locale and a basket
+ * @param  {Object} plansForEligibility Alma plans
+ * @param {string} locale e.g. 'fr_FR'
+ * @param {dw.order.Basket} currentBasket current basket
+ * @returns {array} of eligibility plan Object
+ */
+function getEligibility(plansForEligibility, locale, currentBasket) {
+    var params = getParams(plansForEligibility, locale, currentBasket);
+    return callEligibility(params);
 }
 
 module.exports = {
-    getEligibility: getEligibility
+    getEligibility: getEligibility,
+    getParams: getParams
 };
