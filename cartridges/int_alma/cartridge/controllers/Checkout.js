@@ -45,6 +45,8 @@ server.append('Begin', function (req, res, next) {
     var almaPlanHelper = require('*/cartridge/scripts/helpers/almaPlanHelper');
     var almaHelpers = require('*/cartridge/scripts/helpers/almaHelpers');
     var almaConfigInfo = getAlmaInfo();
+    var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
+
 
     var BasketMgr = require('dw/order/BasketMgr');
     var currentBasket = BasketMgr.getCurrentBasket();
@@ -60,6 +62,8 @@ server.append('Begin', function (req, res, next) {
         return;
     }
 
+    var isDeferredCaptureEnabled = almaConfigHelper.isDeferredCaptureEnable();
+
     var viewData = Object.assign(
         res.getViewData(),
         almaConfigInfo,
@@ -67,7 +71,7 @@ server.append('Begin', function (req, res, next) {
         {
             currencyCode: currentBasket.currencyCode,
             purchase_amount: Math.round(currentBasket.totalGrossPrice.multiply(100).value),
-            plans: almaPlanHelper.getPlansForCheckout(getLocale(req), currentBasket),
+            plans: almaPlanHelper.getPlansForCheckout(getLocale(req), currentBasket, isDeferredCaptureEnabled),
             inpage_on_close_message: Resource.msg('alma.inpage_on_close_message', 'alma', null),
             inpage_on_failure_message: Resource.msg('alma.inpage_on_failure_message', 'alma', null),
             locale: getLocale(req)

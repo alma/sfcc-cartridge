@@ -381,10 +381,13 @@ server.get('Plans',
         var almaPlanHelper = require('*/cartridge/scripts/helpers/almaPlanHelper');
 
         var BasketMgr = require('dw/order/BasketMgr');
+        var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
+
+        var isDeferredCaptureEnabled = almaConfigHelper.isDeferredCaptureEnable();
         var currentBasket = BasketMgr.getCurrentBasket();
 
         res.json({
-            plans: almaPlanHelper.getPlansForCheckout(getLocale(req), currentBasket)
+            plans: almaPlanHelper.getPlansForCheckout(getLocale(req), currentBasket, isDeferredCaptureEnabled)
         });
         return next();
     });

@@ -33,9 +33,10 @@ function callEligibility(param) {
  * @param  {Object} plansForEligibility Alma plans
  * @param {string} locale e.g. 'fr_FR'
  * @param {dw.order.Basket} currentBasket current basket
+ * @param {bool} isDeferredCaptureEnabled deferred capture is enabled
  * @returns {array} of eligibility plan Object
  */
-function getParams(plansForEligibility, locale, currentBasket) {
+function getParams(plansForEligibility, locale, currentBasket, isDeferredCaptureEnabled) {
     if (currentBasket === null) {
         return [];
     }
@@ -54,6 +55,9 @@ function getParams(plansForEligibility, locale, currentBasket) {
         shipping_address: shippingAddress,
         capture_method: 'automatic'
     };
+    if (isDeferredCaptureEnabled) {
+        params.capture_method = 'manual';
+    }
     return params;
 }
 
@@ -62,10 +66,11 @@ function getParams(plansForEligibility, locale, currentBasket) {
  * @param  {Object} plansForEligibility Alma plans
  * @param {string} locale e.g. 'fr_FR'
  * @param {dw.order.Basket} currentBasket current basket
+ * @param {bool} isDeferredCaptureEnabled deferred capture is enabled
  * @returns {array} of eligibility plan Object
  */
-function getEligibility(plansForEligibility, locale, currentBasket) {
-    var params = getParams(plansForEligibility, locale, currentBasket);
+function getEligibility(plansForEligibility, locale, currentBasket, isDeferredCaptureEnabled) {
+    var params = getParams(plansForEligibility, locale, currentBasket, isDeferredCaptureEnabled);
     return callEligibility(params);
 }
 
