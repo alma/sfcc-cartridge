@@ -6,6 +6,8 @@ var assert = require('chai').assert;
 var expect = require('chai').expect;
 var almaEligibilityHelperMocks = require('../../../../mocks/helpers/almaEligibilityHelperMocks').almaEligibilityHelperMocks;
 var basketMock = require('../../../../mocks/dw/order/BasketMgr');
+var deferredCaptureEnabled = true;
+var deferredCaptureDisabled = false;
 
 var baseReturn =
     {
@@ -37,18 +39,27 @@ var baseReturn =
             country: 'address.countryCode.value',
             state_province: 'address.stateCode',
             phone: 'address.phone'
-        }
+        },
+        capture_method: 'automatic'
     };
 
 var baseBasket = basketMock.getCurrentBasket();
 describe('Construct eligibility payload', function () {
     it('return a empty array for a null current bask', function () {
-        var params = almaEligibilityHelperMocks.getParams([], 'fr_FR', null);
+        var params = almaEligibilityHelperMocks.getParams([], 'fr_FR', null, deferredCaptureDisabled);
         // eslint-disable-next-line no-unused-expressions
         expect(params).to.be.an('array').that.is.empty;
     });
     it('Return full eligibility payload for a basket', function () {
-        var params = almaEligibilityHelperMocks.getParams([], 'fr_FR', baseBasket);
+        var params = almaEligibilityHelperMocks.getParams([], 'fr_FR', baseBasket, deferredCaptureDisabled);
+        assert.deepEqual(
+            params,
+            baseReturn
+        );
+    });
+    it('Return eligibility payload with capture method manual ', function () {
+        var params = almaEligibilityHelperMocks.getParams([], 'fr_FR', baseBasket, deferredCaptureEnabled);
+        baseReturn.capture_method = 'manual';
         assert.deepEqual(
             params,
             baseReturn
