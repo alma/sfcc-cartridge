@@ -14,15 +14,18 @@ var plan = {
     payment_plan: [
         {
             customer_fee: 0,
-            purchase_amount: 11700
+            purchase_amount: 11700,
+            localized_due_date: 'Order processing'
         },
         {
             customer_fee: 0,
-            purchase_amount: 11600
+            purchase_amount: 11600,
+            localized_due_date: '1 months later'
         },
         {
             customer_fee: 0,
-            purchase_amount: 11600
+            purchase_amount: 11600,
+            localized_due_date: '2 months later'
         }
     ]
 };
@@ -114,7 +117,7 @@ describe('almaCheckoutHelpers', function () {
                     basket_cost: 'alma.credit.basket_cost',
                     total_cost: 'alma.credit.total_cost'
                 },
-                payment_installments: '117 alma.pay.in_x_installment.installments.deferred_capture  2x116'
+                payment_installments: '117 Order processingalma.pay.in_x_installment.installments.then  2x116'
             });
         });
 
