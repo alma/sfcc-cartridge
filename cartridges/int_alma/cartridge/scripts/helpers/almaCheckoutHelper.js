@@ -17,12 +17,8 @@ var paymentMethodId = '';
  * @returns {string} the custom site preference name
  */
 function getSelectorNameFromPlan(plan) {
-    return 'ALMA_general_'
-        // number of installments (p1x, p3x, p4x, ....)
-        + plan.installments_count + '_'
-        // by how many days is the payment defered
-        + plan.deferred_days
-    ;
+    // ALMA_general + number of installments (p1x, p3x, p4x, ....) + by how many days is the payment defered
+    return 'ALMA_general_' + plan.installments_count + '_' + plan.deferred_days;
 }
 
 /**
@@ -205,9 +201,7 @@ function getPlanPaymentMethodID(plan) {
     if (plan.deferred_days > 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_DEFERRED_ID), plan)) {
         paymentMethodId = ALMA_DEFERRED_ID;
     }
-    if (plan.installments_count === 1
-        && plan.deferred_days === 0
-        && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PAY_NOW_ID), plan)) {
+    if (plan.installments_count === 1 && plan.deferred_days === 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PAY_NOW_ID), plan)) {
         paymentMethodId = ALMA_PAY_NOW_ID;
     }
 

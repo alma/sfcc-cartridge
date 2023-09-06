@@ -7,10 +7,9 @@
  */
 function isOrderToBeRefund(order) {
     return (
-        order.custom.almaRefundType.toString() === 'Total'
-        || (order.custom.almaRefundType.toString() === 'Partial'
-            && order.custom.almaWantedRefundAmount > 0
-            && order.custom.almaWantedRefundAmount < order.totalGrossPrice.value)
+        order.custom.almaRefundType.toString() === 'Total' || (
+            order.custom.almaRefundType.toString() === 'Partial' && order.custom.almaWantedRefundAmount > 0 && order.custom.almaWantedRefundAmount < order.totalGrossPrice.value
+        )
     );
 }
 
@@ -66,6 +65,7 @@ exports.execute = function () {
                             Logger.info('Partial refund is not yet implemented with deferred payment - order id {0}', [orderItem.orderNo]);
                         }
 
+                        /* jshint loopfunc: true */
                         // eslint-disable-next-line no-loop-func
                         Transaction.wrap(function () {
                             orderItem.custom.ALMA_Deferred_Capture = deferredStatus;
