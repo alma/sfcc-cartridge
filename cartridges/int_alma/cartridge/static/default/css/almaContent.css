@@ -1,5 +1,4 @@
 .alma-content .pay-type {
-    /* background: #cccccc7a;*/
     border-radius: 5px;
     margin-top: 10px;
     cursor: pointer;
@@ -42,11 +41,11 @@
 }
 
 .alma-content .pay-type p {
-    color:  var(--color-grey6);
+    color: var(--color-grey6);
 }
 
 .alma-content .pay-type .no-margin {
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 .alma-content .loading {
@@ -86,7 +85,8 @@
 .alma-lds-ring div:nth-child(3) {
     animation-delay: -0.15s;
 }
-.alma-error-message{
+
+.alma-error-message {
     color: red;
     font-size: small;
     text-align: center;
