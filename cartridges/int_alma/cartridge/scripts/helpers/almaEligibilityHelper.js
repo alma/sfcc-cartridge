@@ -29,17 +29,17 @@ function callEligibility(param) {
 
 
 /**
- * Get eligibility for a given set of plan, a locale and a basket
+ * Get eligibility params for a given set of plan, a locale and a basket
  * @param  {Object} plansForEligibility Alma plans
  * @param {string} locale e.g. 'fr_FR'
  * @param {dw.order.Basket} currentBasket current basket
+ * @param {bool} isDeferredCaptureEnabled deferred capture is enabled
  * @returns {array} of eligibility plan Object
  */
-function getEligibility(plansForEligibility, locale, currentBasket) {
+function getParams(plansForEligibility, locale, currentBasket, isDeferredCaptureEnabled) {
     if (currentBasket === null) {
         return [];
     }
-
     var purchaseAmount = Math.round(currentBasket.totalGrossPrice.multiply(100).value);
     var billingAddress = formatAddress(currentBasket.getBillingAddress(), currentBasket.getCustomerEmail());
     var shippingAddress = formatAddress(
@@ -47,16 +47,34 @@ function getEligibility(plansForEligibility, locale, currentBasket) {
         currentBasket.getCustomerEmail()
     );
 
-    var param = {
+    var params = {
         purchase_amount: purchaseAmount,
         queries: plansForEligibility,
         locale: locale,
         billing_address: billingAddress,
-        shipping_address: shippingAddress
+        shipping_address: shippingAddress,
+        capture_method: 'automatic'
     };
-    return callEligibility(param);
+    if (isDeferredCaptureEnabled) {
+        params.capture_method = 'manual';
+    }
+    return params;
+}
+
+/**
+ * Get eligibility for a given set of plan, a locale and a basket
+ * @param  {Object} plansForEligibility Alma plans
+ * @param {string} locale e.g. 'fr_FR'
+ * @param {dw.order.Basket} currentBasket current basket
+ * @param {bool} isDeferredCaptureEnabled deferred capture is enabled
+ * @returns {array} of eligibility plan Object
+ */
+function getEligibility(plansForEligibility, locale, currentBasket, isDeferredCaptureEnabled) {
+    var params = getParams(plansForEligibility, locale, currentBasket, isDeferredCaptureEnabled);
+    return callEligibility(params);
 }
 
 module.exports = {
-    getEligibility: getEligibility
+    getEligibility: getEligibility,
+    getParams: getParams
 };

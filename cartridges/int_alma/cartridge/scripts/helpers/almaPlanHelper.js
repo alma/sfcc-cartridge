@@ -137,10 +137,11 @@ function getFeePlansBoFormat(feePlans) {
  * @param {string} locale locale
  * @param {Object} currentBasket currentBasket
  * @param {array} plans plans
+ * @param {bool} isDeferredCaptureEnabled deferred capture is enabled
  * @returns {array} eligible plans
  */
-function buildEligiblePlans(purchaseAmount, feePlans, locale, currentBasket, plans) {
-    var plansEligible = almaEligibilityHelper.getEligibility(feePlans, locale, currentBasket);
+function buildEligiblePlans(purchaseAmount, feePlans, locale, currentBasket, plans, isDeferredCaptureEnabled) {
+    var plansEligible = almaEligibilityHelper.getEligibility(feePlans, locale, currentBasket, isDeferredCaptureEnabled);
     if (!Array.isArray(plansEligible)) {
         plansEligible = [plansEligible];
     }
@@ -214,9 +215,10 @@ function getFormattedPlans(plans) {
  * Get data to initialize widget in cart and product detail
  * @param {string} locale e.g. "fr_FR"
  * @param {dw.order.Basket} currentBasket current basket
+ * @param {bool} isDeferredCaptureEnabled deferred capture is enabled
  * @returns {array} eligible data
  */
-function getPlansForCheckout(locale, currentBasket) {
+function getPlansForCheckout(locale, currentBasket, isDeferredCaptureEnabled) {
     var feePlans = getFeePlans();
 
     feePlans = getFeePlansBoFormat(feePlans);
@@ -235,7 +237,7 @@ function getPlansForCheckout(locale, currentBasket) {
         return filterWithMerchantConfig(feePlan, purchaseAmount);
     });
 
-    plans = buildEligiblePlans(purchaseAmount, feePlans, locale, currentBasket, plans);
+    plans = buildEligiblePlans(purchaseAmount, feePlans, locale, currentBasket, plans, isDeferredCaptureEnabled);
 
     return getFormattedPlans(plans);
 }

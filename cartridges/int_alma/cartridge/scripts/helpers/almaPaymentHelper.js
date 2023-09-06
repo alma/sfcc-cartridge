@@ -344,13 +344,14 @@ function buildPaymentData(installmentsCount, deferredDays, locale, isManualCaptu
     var URLUtils = require('dw/web/URLUtils');
     var almaHelper = require('*/cartridge/scripts/helpers/almaHelpers');
     var almaCheckoutHelper = require('*/cartridge/scripts/helpers/almaCheckoutHelper');
+    var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
 
     var formatAddress = require('*/cartridge/scripts/helpers/almaAddressHelper').formatAddress;
     var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
     var formatCustomerData = require('*/cartridge/scripts/helpers/almaHelpers').formatCustomerData;
 
     var origin = 'online';
-    if (almaCheckoutHelper.isAvailableForInpage(installmentsCount, deferredDays) && almaCheckoutHelper.isInpageActivated()) {
+    if (almaCheckoutHelper.isAvailableForInpage(installmentsCount, deferredDays) && almaConfigHelper.isInpageActivated()) {
         origin = 'online_in_page';
     }
 
