@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+v4.4.0
+------
+* Feat: In Page checkout
+
 v4.3.1
 ------
 * Feat: add Pay Now with credit card with Alma.
