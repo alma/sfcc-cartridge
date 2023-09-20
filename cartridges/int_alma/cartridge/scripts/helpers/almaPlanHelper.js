@@ -27,11 +27,8 @@ function getFeePlans() {
  * @returns {string} site preference name
  */
 function getSitePrefNameFromPlan(plan) {
-    return 'ALMA_general_'
-        // number of installments (p1x, p3x, p4x, ....)
-        + plan.installments_count + '_'
-        // by how many days is the payment deferred
-        + plan.deferred_days
+    // ALMA_general + number of installments (p1x, p3x, p4x, ....) + by how many days is the payment deferred
+    return 'ALMA_general_' + plan.installments_count + '_' + plan.deferred_days
     ;
 }
 
@@ -77,8 +74,7 @@ function applyMerchantConfig(currentPlan) {
  * @returns {Object} plan any alma plan
  */
 function filterWithMerchantConfig(plan, purchaseAmount) {
-    return (purchaseAmount > (plan.min_display_amount / 100))
-        && (purchaseAmount < (plan.max_display_amount / 100));
+    return (purchaseAmount > (plan.min_display_amount / 100)) && (purchaseAmount < (plan.max_display_amount / 100));
 }
 
 /**
