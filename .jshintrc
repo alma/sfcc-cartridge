@@ -1,6 +1,7 @@
 {
   "node": true,
   "esversion": 8,
+  "expr": true,
   "predef": [
     "describe",
     "it"

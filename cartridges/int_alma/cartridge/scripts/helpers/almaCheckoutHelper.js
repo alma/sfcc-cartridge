@@ -128,7 +128,7 @@ function getPaymentInstallments(plan, currencyCode) {
             Resource.msg(getPropertyCategory(plan) + '.installments.onshipment', 'alma', null) + ' ' +
             getInstallmentCountAfterFirst(plan) +
             formatCurrency(plan.payment_plan[1].purchase_amount / 100, currencyCode)
-            ;
+        ;
     }
     // on deferred capture
     if (almaPaymentHelper.isAvailableForManualCapture(almaConfigHelper.isDeferredCaptureEnable(), plan.installments_count, plan.deferred_days)) {
@@ -137,14 +137,14 @@ function getPaymentInstallments(plan, currencyCode) {
             Resource.msg(getPropertyCategory(plan) + '.installments.then', 'alma', null) + ' ' +
             getInstallmentCountAfterFirst(plan) +
             formatCurrency(plan.payment_plan[1].purchase_amount / 100, currencyCode)
-            ;
+        ;
     }
     // installment payment
     return formatCurrency(plan.payment_plan[0].purchase_amount / 100, currencyCode) + ' ' +
         Resource.msg(getPropertyCategory(plan) + '.installments', 'alma', null) + ' ' +
         getInstallmentCountAfterFirst(plan) +
         formatCurrency(plan.payment_plan[1].purchase_amount / 100, currencyCode)
-        ;
+    ;
 }
 
 /**
