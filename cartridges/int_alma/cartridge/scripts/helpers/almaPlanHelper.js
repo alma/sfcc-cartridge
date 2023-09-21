@@ -6,6 +6,8 @@ var almaUtilsHelpers = require('*/cartridge/scripts/helpers/almaUtilsHelper');
 var almaEligibilityHelper = require('*/cartridge/scripts/helpers/almaEligibilityHelper');
 var almaCheckoutHelper = require('*/cartridge/scripts/helpers/almaCheckoutHelper');
 var almaWidgetHelper = require('*/cartridge/scripts/helpers/almaWidgetHelper');
+var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
+var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
 
 /**
  * Calls /me/fee-plans and fetch the available plans for the current merchant
@@ -138,7 +140,7 @@ function getFeePlansBoFormat(feePlans) {
  * @param {Object} currentBasket currentBasket
  * @param {array} plans plans
  * @param {bool} isDeferredCaptureEnabled deferred capture is enabled
- * @returns {array} eligible plans
+ * @returns {Object} eligible plans
  */
 function buildEligiblePlans(purchaseAmount, feePlans, locale, currentBasket, plans, isDeferredCaptureEnabled) {
     var plansEligible = almaEligibilityHelper.getEligibility(feePlans, locale, currentBasket, isDeferredCaptureEnabled);
@@ -171,7 +173,7 @@ function buildEligiblePlans(purchaseAmount, feePlans, locale, currentBasket, pla
 
 /**
  * Get plans formatted for front integration
- * @param {array} plans plans before format
+ * @param {Object} plans plans before format
  * @returns {array} formatted plans
  */
 function getFormattedPlans(plans) {
@@ -183,6 +185,16 @@ function getFormattedPlans(plans) {
 
         Object.keys(plans[paymentMethod]).forEach(function (keys) {
             paymentMethodPlans.push(plans[paymentMethod][keys]);
+            plans[paymentMethod][keys].captureMethod = 'automatic';
+
+            if (almaPaymentHelper.isAvailableForManualCapture(
+                almaConfigHelper.isDeferredCaptureEnable(),
+                plans[paymentMethod][keys].installments_count,
+                plans[paymentMethod][keys].deferred_days
+            )) {
+                plans[paymentMethod][keys].captureMethod = 'manual';
+            }
+
             if (!plans[paymentMethod][keys].properties) {
                 plans[paymentMethod][keys].properties = {
                     title: '',
@@ -207,7 +219,6 @@ function getFormattedPlans(plans) {
         formattedPaymentMethod.plans = paymentMethodPlans;
         formattedPlans.push(formattedPaymentMethod);
     });
-
     return formattedPlans;
 }
 
@@ -245,5 +256,6 @@ function getPlansForCheckout(locale, currentBasket, isDeferredCaptureEnabled) {
 module.exports = {
     getAllowedPlans: getAllowedPlans,
     getPlansForWidget: getPlansForWidget,
-    getPlansForCheckout: getPlansForCheckout
+    getPlansForCheckout: getPlansForCheckout,
+    getFormattedPlans: getFormattedPlans
 };

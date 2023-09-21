@@ -6,6 +6,7 @@
                  data-deferred-days="${plan.deferred_days}"
                  data-in-page="${plan.in_page}"
                  data-alma-payment-method="${paymentOption.ID}"
+                 data-captureMethod="${plan.captureMethod}"
             >
                 <div class="col-2 img-content">
                     <div class="img">
