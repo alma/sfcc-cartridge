@@ -17,7 +17,16 @@ function isInpageActivated() {
     return Site.getCurrent().getCustomPreferenceValue('ALMA_Inpage_Payment');
 }
 
+/**
+ * Return amount for partial capture
+ * @return {number} the amount value
+ */
+function getPartialCaptureAmount() {
+    return Site.getCurrent().getCustomPreferenceValue('ALMA_Deferred_Capture_Partial_Amount');
+}
+
 module.exports = {
     isDeferredCaptureEnable: isDeferredCaptureEnable,
-    isInpageActivated: isInpageActivated
+    isInpageActivated: isInpageActivated,
+    getPartialCaptureAmount: getPartialCaptureAmount
 };

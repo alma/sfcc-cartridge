@@ -31,6 +31,12 @@
                     </value-definition>
                 </value-definitions>
             </attribute-definition>
+            <attribute-definition attribute-id="ALMA_Deferred_Capture_Partial_Amount">
+                <display-name xml:lang="x-default">Amount for partial capture</display-name>
+                <type>double</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>true</externally-managed-flag>
+            </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
             <attribute-group group-id="Alma">
@@ -38,6 +44,7 @@
                 <attribute attribute-id="almaPaymentId"/>
                 <attribute attribute-id="ALMA_ResponseDetails"/>
                 <attribute attribute-id="ALMA_Deferred_Capture"/>
+                <attribute attribute-id="ALMA_Deferred_Capture_Partial_Amount"/>
             </attribute-group>
 
         </group-definitions>
