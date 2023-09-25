@@ -82,8 +82,8 @@ function affectOrder(paymentObj, order) {
 
     if (almaPaymentHelper.isPaymentAuthorizationExpired(paymentObj)) {
         Transaction.wrap(function () {
-            order.trackOrderChange('Authorization is expired');
-            OrderMgr.failOrder(order, true);
+            order.trackOrderChange('Payment’s authorization is expired');
+            OrderMgr.cancelOrder(order);
         });
 
         logger.warn('Authorization for the payment: {0} is expired', [paymentObj.id]);
