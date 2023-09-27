@@ -70,6 +70,26 @@ function affectOrder(paymentObj, order) {
         throw new Error(reason);
     }
 
+    if (almaPaymentHelper.isPaymentExpired(paymentObj)) {
+        Transaction.wrap(function () {
+            order.trackOrderChange('Payment is expired');
+            OrderMgr.failOrder(order, true);
+        });
+
+        logger.warn('Payment: {0} is expired', [paymentObj.id]);
+        throw new Error('payment_expired');
+    }
+
+    if (almaPaymentHelper.isPaymentAuthorizationExpired(paymentObj)) {
+        Transaction.wrap(function () {
+            order.trackOrderChange('Payment’s authorization is expired');
+            OrderMgr.cancelOrder(order);
+        });
+
+        logger.warn('Authorization for the payment: {0} is expired', [paymentObj.id]);
+        throw new Error('authorization_expired');
+    }
+
     var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
     var paymentStatus = isOnShipmentPaymentEnabled(paymentObj.installments_count) ? Order.PAYMENT_STATUS_NOTPAID : Order.PAYMENT_STATUS_PAID;
     acceptOrder(order, paymentStatus);

@@ -443,6 +443,27 @@ function setOrderMerchantReference(pid, order) {
     setOrderMerchantReferenceAPI.call(param);
 }
 
+/**
+ * Check if a payment is expired
+ * @param {Object} paymentObj payment object
+ * @return {boolean} payment is expired
+ */
+function isPaymentExpired(paymentObj) {
+    return paymentObj.expired_at !== null;
+}
+
+/**
+ * Check if an authorization for a payment is expired
+ * @param {Object} paymentObj payment object
+ * @return {boolean} payment’s authorization is expired
+ */
+function isPaymentAuthorizationExpired(paymentObj) {
+    var timeElapsed = Date.now();
+    var today = new Date(timeElapsed);
+    var authorizationExpiresAtDate = new Date(paymentObj.authorization_expires_at);
+    return authorizationExpiresAtDate.getTime() < today.getTime();
+}
+
 
 module.exports = {
     orderStatusEquals: orderStatusEquals,
@@ -461,5 +482,7 @@ module.exports = {
     setOrderMerchantReference: setOrderMerchantReference,
     capturePayment: capturePayment,
     isAvailableForManualCapture: isAvailableForManualCapture,
-    cancelAlmaPayment: cancelAlmaPayment
+    cancelAlmaPayment: cancelAlmaPayment,
+    isPaymentExpired: isPaymentExpired,
+    isPaymentAuthorizationExpired: isPaymentAuthorizationExpired
 };
