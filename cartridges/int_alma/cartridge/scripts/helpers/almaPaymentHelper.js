@@ -458,8 +458,8 @@ function isPaymentExpired(paymentObj) {
 function isPaymentAuthorizationExpired(paymentObj) {
     var timeElapsed = Date.now();
     var today = new Date(timeElapsed);
-
-    return paymentObj.authorization_expires_at < today.toUTCString();
+    var authorizationExpiresAtDate = new Date(paymentObj.authorization_expires_at);
+    return authorizationExpiresAtDate.getTime() < today.getTime();
 }
 
 

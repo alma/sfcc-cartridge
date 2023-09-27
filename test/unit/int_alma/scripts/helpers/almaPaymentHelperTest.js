@@ -17,15 +17,18 @@ var paymentObjNotExpired = {
     expired_at: null
 };
 
+var timeElapsedExpired = Date.now();
+var todayExpired = new Date(timeElapsedExpired);
+todayExpired = todayExpired.setHours(todayExpired.getHours() - 1);
 var paymentAuthorizationExpired = {
-    authorization_expires_at: 'Thu, 17 Aug 2023 08:08:06 GMT'
+    authorization_expires_at: todayExpired
 };
 
-var timeElapsed = Date.now();
-var today = new Date(timeElapsed);
-today = today.setHours(today.getHours() + 1);
+var timeElapsedNotEpired = Date.now();
+var todayNotExpired = new Date(timeElapsedNotEpired);
+todayNotExpired = todayNotExpired.setHours(todayNotExpired.getHours() + 1);
 var paymentAuthorizationNotExpired = {
-    authorization_expires_at: today
+    authorization_expires_at: todayNotExpired
 };
 
 describe('almaPaymentHelper', function () {
