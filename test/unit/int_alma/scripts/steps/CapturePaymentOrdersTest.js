@@ -5,6 +5,7 @@ var OrderMgr = require('../../../../mocks/steps/CapturePaymentOrders').OrderMgr;
 var almaPaymentHelper = require('../../../../mocks/steps/CapturePaymentOrders').almaPaymentHelper;
 var CapturePaymentOrders = require('../../../../mocks/steps/CapturePaymentOrders').CapturePaymentOrders;
 var almaOrderHelper = require('../../../../mocks/steps/CapturePaymentOrders').almaOrderHelper;
+var setPartialCaptureAmount = require('../../../../mocks/steps/CapturePaymentOrders').setPartialCaptureAmount;
 var warnStub = require('../../../../mocks/steps/CapturePaymentOrders').warnStub;
 
 function hasNextFactory(count) {
@@ -30,7 +31,8 @@ function nextFactory(count) {
             .returns({
                 custom: {
                     almaPaymentId: 'payment_' + i
-                }
+                },
+                getTotalGrossPrice: sinon.stub().returns({ value: 100 })
             });
     }
     return next;
@@ -62,7 +64,7 @@ describe('Deferred capture job', function () {
 
         sinon.assert.calledOnce(OrderMgr.searchOrders);
         // status : 8 failed - 6 canceled
-        sinon.assert.calledWith(OrderMgr.searchOrders, "custom.ALMA_Deferred_Capture='ToCapture' and status != {0} and status != {1}", null, 8, 6);
+        sinon.assert.calledWith(OrderMgr.searchOrders, "custom.ALMA_Deferred_Capture_Status='ToCapture' and status != {0} and status != {1}", null, 8, 6);
     });
 
     it('Should not call Capture where their is no order', function () {
@@ -83,40 +85,46 @@ describe('Deferred capture job', function () {
 
         sinon.assert.callCount(almaPaymentHelper.capturePayment, count);
         for (var i = 0; i < count; i++) {
-            sinon.assert.calledWith(almaPaymentHelper.capturePayment.getCall(i), { external_id: 'payment_' + i });
+            sinon.assert.calledWith(almaPaymentHelper.capturePayment.getCall(i), { external_id: 'payment_' + i, amount: 10000 });
         }
     });
 
     it('Should set capture ID when capture is validated', function () {
         CapturePaymentOrders.execute();
 
-        sinon.assert.calledOnce(almaOrderHelper.setAlmaDeferredCapture);
-        sinon.assert.calledWith(
-            almaOrderHelper.setAlmaDeferredCapture,
-            {
-                custom: {
-                    almaPaymentId: 'payment_0'
-                }
-            },
-            'Captured'
+        sinon.assert.calledOnce(almaOrderHelper.setAlmaDeferredCaptureFields);
+        sinon.assert.calledWithMatch(
+            almaOrderHelper.setAlmaDeferredCaptureFields,
+            {},
+            'Captured',
+            100
         );
     });
 
-    it('Should not call setAlmaDeferredCapture when capture throw an error', function () {
+    it('Should not call setAlmaDeferredCaptureFields when capture throw an error', function () {
         almaPaymentHelper.capturePayment = sinon.stub()
             .throws();
 
         CapturePaymentOrders.execute();
 
         sinon.assert.calledOnce(warnStub);
-        sinon.assert.calledWith(
-            almaOrderHelper.setAlmaDeferredCapture,
-            {
-                custom: {
-                    almaPaymentId: 'payment_0'
-                }
-            },
+        sinon.assert.calledWithMatch(
+            almaOrderHelper.setAlmaDeferredCaptureFields,
+            {},
             'Failed'
+        );
+    });
+
+    it('should get call capture with right amount and code for partial capture', function () {
+        almaOrderHelper.getPartialCaptureAmount = sinon.stub().returns(25);
+        CapturePaymentOrders.execute();
+
+        sinon.assert.calledOnce(almaOrderHelper.setAlmaDeferredCaptureFields);
+        sinon.assert.calledWithMatch(
+            almaOrderHelper.setAlmaDeferredCaptureFields,
+            {},
+            'PartialCaptured',
+            25
         );
     });
 });

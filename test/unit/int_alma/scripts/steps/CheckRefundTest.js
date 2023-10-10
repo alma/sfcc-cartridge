@@ -17,7 +17,7 @@ function orderFactory(count, refundType, partialRefundAmount, capture) {
                 }
             },
             almaWantedRefundAmount: partialRefundAmount,
-            ALMA_Deferred_Capture: capture
+            ALMA_Deferred_Capture_Status: capture
         },
         totalGrossPrice: {
             value: 10000

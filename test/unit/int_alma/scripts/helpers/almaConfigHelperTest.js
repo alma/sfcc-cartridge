@@ -22,10 +22,5 @@ describe('Get back-office variables', function () {
             setCustomPreferenceValue(false);
             assert.equal(false, almaConfigHelpers.isDeferredCaptureEnable());
         });
-
-        it('should call site preferences and return default value for partial capture amount', function () {
-            setCustomPreferenceValue(100);
-            assert.equal(100, almaConfigHelpers.getPartialCaptureAmount());
-        });
     });
 });
