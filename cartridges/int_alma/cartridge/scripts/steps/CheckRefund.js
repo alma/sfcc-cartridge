@@ -51,7 +51,7 @@ exports.execute = function () {
             var orderItem = orders.next();
             if (isOrderToBeRefund(orderItem)) {
                 try {
-                    if (orderItem.custom.ALMA_Deferred_Capture === 'ToCapture') {
+                    if (orderItem.custom.ALMA_Deferred_Capture_Status === 'ToCapture') {
                         var amount = 0;
                         var deferredStatus = 'ToCapture';
                         if (orderItem.custom.almaRefundType.toString() === 'Total') {
@@ -68,7 +68,7 @@ exports.execute = function () {
                         /* jshint loopfunc: true */
                         // eslint-disable-next-line no-loop-func
                         Transaction.wrap(function () {
-                            orderItem.custom.ALMA_Deferred_Capture = deferredStatus;
+                            orderItem.custom.ALMA_Deferred_Capture_Status = deferredStatus;
                             // eslint-disable-next-line no-param-reassign
                             orderItem.custom.almaRefundedAmount = amount;
                             // eslint-disable-next-line no-param-reassign

@@ -14,7 +14,7 @@
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
-            <attribute-definition attribute-id="ALMA_Deferred_Capture">
+            <attribute-definition attribute-id="ALMA_Deferred_Capture_Status">
                 <display-name xml:lang="x-default">Capture Status</display-name>
                 <type>enum-of-string</type>
                 <mandatory-flag>false</mandatory-flag>
@@ -22,6 +22,9 @@
                 <value-definitions>
                     <value-definition>
                         <value>ToCapture</value>
+                    </value-definition>
+                    <value-definition>
+                        <value>PartialCaptured</value>
                     </value-definition>
                     <value-definition>
                         <value>Captured</value>
@@ -35,6 +38,12 @@
                 <display-name xml:lang="x-default">Amount for partial capture</display-name>
                 <type>double</type>
                 <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="ALMA_Deferred_Capture_Partial_Amount_Captured">
+                <display-name xml:lang="x-default">Amount captured</display-name>
+                <type>double</type>
+                <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>true</externally-managed-flag>
             </attribute-definition>
         </custom-attribute-definitions>
@@ -43,10 +52,13 @@
                 <display-name xml:lang="x-default">Alma</display-name>
                 <attribute attribute-id="almaPaymentId"/>
                 <attribute attribute-id="ALMA_ResponseDetails"/>
-                <attribute attribute-id="ALMA_Deferred_Capture"/>
-                <attribute attribute-id="ALMA_Deferred_Capture_Partial_Amount"/>
             </attribute-group>
-
+            <attribute-group group-id="ALMA_Deferred_Capture">
+                <display-name xml:lang="x-default">Alma Deferred Capture</display-name>
+                <attribute attribute-id="ALMA_Deferred_Capture_Status"/>
+                <attribute attribute-id="ALMA_Deferred_Capture_Partial_Amount"/>
+                <attribute attribute-id="ALMA_Deferred_Capture_Partial_Amount_Captured"/>
+            </attribute-group>
         </group-definitions>
     </type-extension>
 

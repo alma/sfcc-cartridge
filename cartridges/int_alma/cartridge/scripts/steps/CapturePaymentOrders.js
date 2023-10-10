@@ -10,7 +10,7 @@ var Logger = require('dw/system/Logger');
 exports.execute = function () {
     var Capture = almaPaymentHelper.Capture;
     var orders = OrderMgr.searchOrders(
-        "custom.ALMA_Deferred_Capture='ToCapture' and status != {0} and status != {1}",
+        "custom.ALMA_Deferred_Capture_Status='ToCapture' and status != {0} and status != {1}",
         null,
         Order.ORDER_STATUS_FAILED,
         Order.ORDER_STATUS_CANCELLED
