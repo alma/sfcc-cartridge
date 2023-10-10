@@ -8,6 +8,7 @@ var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper')
 var Logger = require('dw/system/Logger');
 
 exports.execute = function () {
+    var Capture = almaPaymentHelper.Capture;
     var orders = OrderMgr.searchOrders(
         "custom.ALMA_Deferred_Capture='ToCapture' and status != {0} and status != {1}",
         null,
@@ -19,14 +20,21 @@ exports.execute = function () {
         while (orders.hasNext()) {
             var order = orders.next();
             var params = { external_id: order.custom.almaPaymentId };
-
+            var amount = order.getTotalGrossPrice().value;
+            var captureType = Capture.total;
+            var partialCaptureAmount = almaOrderHelper.getPartialCaptureAmount(order);
             try {
+                if (partialCaptureAmount) {
+                    captureType = Capture.partial;
+                    amount = partialCaptureAmount;
+                }
+                params.amount = amount * 100;
+                almaOrderHelper.setAlmaDeferredCaptureFields(order, captureType.code, amount);
                 var capture = almaPaymentHelper.capturePayment(params);
-                almaOrderHelper.setAlmaDeferredCapture(order, 'Captured');
-                Logger.info('Capture payment: order id: {0} - payment id: {1} - capture id : {2}', [order.orderNo, order.custom.almaPaymentId, capture.id]);
+                Logger.info(captureType.description + ' payment: order id: {0} - payment id: {1} - capture id : {2}', [order.orderNo, order.custom.almaPaymentId, capture.id]);
             } catch (e) {
-                almaOrderHelper.setAlmaDeferredCapture(order, 'Failed');
-                Logger.warn('Unable to capture payment: order id: {0}, payment id: {1}', [order.orderNo, order.custom.almaPaymentId]);
+                almaOrderHelper.setAlmaDeferredCaptureFields(order, Capture.failed.code);
+                Logger.warn(Capture.failed.description + ' payment: order id: {0}, payment id: {1}', [order.orderNo, order.custom.almaPaymentId]);
             }
         }
     }
