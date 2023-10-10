@@ -135,7 +135,7 @@ window.addEventListener('DOMContentLoaded',
             window.location = body.url;
         }
 
-        async function inPageInitialize(inPageContainer, installments_count) {
+        async function inPageInitialize(inPageContainer, installments_count, captureMethod) {
             return Alma.InPage.initialize(
                 {
                     merchantId: almaContext.merchantId,
@@ -143,7 +143,8 @@ window.addEventListener('DOMContentLoaded',
                     installmentsCount: installments_count,
                     selector: "#" + inPageContainer,
                     locale: almaContext.locale.slice(0, 2),
-                    environment: almaContext.almaMode
+                    environment: almaContext.almaMode,
+                    captureMethod: captureMethod
                 }
             );
         }
@@ -179,11 +180,13 @@ window.addEventListener('DOMContentLoaded',
                 var deferred_days = parseInt(t.getAttribute('data-deferred-days'));
                 var alma_payment_method = t.getAttribute('data-alma-payment-method');
                 var in_page = t.getAttribute('data-in-page') === 'true';
+                var captureMethod = t.getAttribute('data-captureMethod');
 
                 if (in_page) {
                     await inPageInitialize(
                         t.id + "-inpage",
-                        installments_count
+                        installments_count,
+                        captureMethod
                     )
                         .then(function (inPage) {
                             var checkoutInpageCall = async function () {
