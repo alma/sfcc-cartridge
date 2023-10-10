@@ -5,7 +5,6 @@ var OrderMgr = require('../../../../mocks/steps/CapturePaymentOrders').OrderMgr;
 var almaPaymentHelper = require('../../../../mocks/steps/CapturePaymentOrders').almaPaymentHelper;
 var CapturePaymentOrders = require('../../../../mocks/steps/CapturePaymentOrders').CapturePaymentOrders;
 var almaOrderHelper = require('../../../../mocks/steps/CapturePaymentOrders').almaOrderHelper;
-var setPartialCaptureAmount = require('../../../../mocks/steps/CapturePaymentOrders').setPartialCaptureAmount;
 var warnStub = require('../../../../mocks/steps/CapturePaymentOrders').warnStub;
 
 function hasNextFactory(count) {
