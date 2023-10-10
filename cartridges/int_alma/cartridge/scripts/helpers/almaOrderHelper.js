@@ -27,15 +27,26 @@ function addAlmaPaymentDetails(order, payDetail) {
 }
 
 /**
- * Set alma deferred capture in order
- * @param {Order} order order
- * @param {string} deferredCapture payDetail
+ * Set alma deferred capture status in order
+ * @param {Object} order order
+ * @param {string} deferredCaptureStatus payDetail
+ * @param {number} [amount] amount capture
  */
-function setAlmaDeferredCapture(order, deferredCapture) {
-    Transaction.wrap(function () {
-        // eslint-disable-next-line no-param-reassign
-        order.custom.ALMA_Deferred_Capture = deferredCapture;
-    });
+function setAlmaDeferredCaptureFields(order, deferredCaptureStatus, amount) {
+    if (amount) {
+        Transaction.wrap(function () {
+            // eslint-disable-next-line no-param-reassign
+            order.custom.ALMA_Deferred_Capture_Status = deferredCaptureStatus;
+            order.custom.ALMA_Deferred_Capture_Partial_Amount_Captured = amount;
+            order.custom.ALMA_Deferred_Capture_Partial_Amount = null;
+        });
+    } else {
+        Transaction.wrap(function () {
+            // eslint-disable-next-line no-param-reassign
+            order.custom.ALMA_Deferred_Capture_Status = deferredCaptureStatus;
+            order.custom.ALMA_Deferred_Capture_Partial_Amount = null;
+        });
+    }
 }
 
 /**
@@ -48,10 +59,19 @@ function setAlmaDeferredCapture(order, deferredCapture) {
 function addAlmaDataToOrder(pid, order, isDeferredCapture) {
     addPidToOrder(order, pid);
     if (isDeferredCapture) {
-        setAlmaDeferredCapture(order, 'ToCapture');
+        setAlmaDeferredCaptureFields(order, 'ToCapture');
     } else {
-        setAlmaDeferredCapture(order, 'Captured');
+        setAlmaDeferredCaptureFields(order, 'Captured');
     }
+}
+
+/**
+ * Return amount for partial capture
+ * @param {Object} order order from get partial capture amount
+ * @return {number|null} the amount value
+ */
+function getPartialCaptureAmount(order) {
+    return order.custom.ALMA_Deferred_Capture_Partial_Amount;
 }
 
 
@@ -59,5 +79,6 @@ module.exports = {
     addPidToOrder: addPidToOrder,
     addAlmaPaymentDetails: addAlmaPaymentDetails,
     addAlmaDataToOrder: addAlmaDataToOrder,
-    setAlmaDeferredCapture: setAlmaDeferredCapture
+    setAlmaDeferredCaptureFields: setAlmaDeferredCaptureFields,
+    getPartialCaptureAmount: getPartialCaptureAmount
 };
