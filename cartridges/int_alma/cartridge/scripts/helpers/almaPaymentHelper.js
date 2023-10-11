@@ -2,6 +2,21 @@
 
 var pkg = require('../../../package.json');
 
+var Capture = {
+    total: {
+        code: 'Captured',
+        description: 'Total Capture'
+    },
+    partial: {
+        code: 'PartialCaptured',
+        description: 'Partial captured'
+    },
+    failed: {
+        code: 'Failed',
+        description: 'Unable to capture'
+    }
+};
+
 /**
  * Allow to check an order status
  * @param {dw.order.Order} order the order to check
@@ -483,6 +498,7 @@ module.exports = {
     capturePayment: capturePayment,
     isAvailableForManualCapture: isAvailableForManualCapture,
     cancelAlmaPayment: cancelAlmaPayment,
+    Capture: Capture,
     isPaymentExpired: isPaymentExpired,
     isPaymentAuthorizationExpired: isPaymentAuthorizationExpired
 };

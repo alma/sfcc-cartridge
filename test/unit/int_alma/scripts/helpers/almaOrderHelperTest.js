@@ -10,7 +10,7 @@ var createNewTransaction = require('../../../../mocks/helpers/almaOrderHelpers')
 var order = {
     custom: {
         almaPaymentId: '',
-        ALMA_Deferred_Capture: ''
+        ALMA_Deferred_Capture_Status: ''
     }
 };
 describe('Alma order helper', function () {

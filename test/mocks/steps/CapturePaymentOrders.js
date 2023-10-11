@@ -5,18 +5,21 @@ var proxyquire = require('proxyquire')
     .noPreserveCache();
 
 var sinon = require('sinon');
-
+var almaConfigHelpers = require('../helpers/almaConfigHelpers').almaConfigHelpers;
+var Capture = require('../../../cartridges/int_alma/cartridge/scripts/helpers/almaPaymentHelper').Capture;
 var OrderMgr = {
     searchOrders: sinon.stub()
         .returns({})
 };
 
 var almaPaymentHelper = {
-    capturePayment: sinon.stub()
+    capturePayment: sinon.stub(),
+    Capture: Capture
 };
 
 var almaOrderHelper = {
-    setAlmaDeferredCapture: sinon.stub()
+    setAlmaDeferredCaptureFields: sinon.stub(),
+    getPartialCaptureAmount: sinon.stub().returns(null)
 };
 
 var warnStub = sinon.stub();
@@ -37,7 +40,8 @@ function proxyModel() {
         'dw/system/Logger': logger,
         'dw/system/Status': sinon.mock(),
         '*/cartridge/scripts/helpers/almaPaymentHelper': almaPaymentHelper,
-        '*/cartridge/scripts/helpers/almaOrderHelper': almaOrderHelper
+        '*/cartridge/scripts/helpers/almaOrderHelper': almaOrderHelper,
+        '*/cartridge/scripts/helpers/almaConfigHelper': almaConfigHelpers
     });
 }
 

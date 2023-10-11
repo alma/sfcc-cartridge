@@ -6,8 +6,10 @@ var proxyquire = require('proxyquire')
 var sinon = require('sinon');
 
 var getCustomPreferenceValue;
+
 function setCustomPreferenceValue(value) {
-    getCustomPreferenceValue = sinon.stub().returns(value);
+    getCustomPreferenceValue = sinon.stub()
+        .returns(value);
 }
 
 
@@ -19,6 +21,13 @@ var site = {
     }
 };
 
+var order = {
+    custom: {
+        ALMA_Deferred_Capture_Partial_Amount: 100
+    }
+};
+
+
 function proxyModel() {
     return proxyquire('../../../cartridges/int_alma/cartridge/scripts/helpers/almaConfigHelper', {
         'dw/system/Site': site
@@ -28,5 +37,6 @@ function proxyModel() {
 module.exports = {
     almaConfigHelpers: proxyModel(),
     site: site,
+    order: order,
     setCustomPreferenceValue: setCustomPreferenceValue
 };
