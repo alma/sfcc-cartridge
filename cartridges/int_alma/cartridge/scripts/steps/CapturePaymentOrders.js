@@ -29,8 +29,8 @@ exports.execute = function () {
                     amount = partialCaptureAmount;
                 }
                 params.amount = amount * 100;
-                almaOrderHelper.setAlmaDeferredCaptureFields(order, captureType.code, amount);
                 var capture = almaPaymentHelper.capturePayment(params);
+                almaOrderHelper.setAlmaDeferredCaptureFields(order, captureType.code, amount);
                 Logger.info(captureType.description + ' payment: order id: {0} - payment id: {1} - capture id : {2}', [order.orderNo, order.custom.almaPaymentId, capture.id]);
             } catch (e) {
                 almaOrderHelper.setAlmaDeferredCaptureFields(order, Capture.failed.code);
