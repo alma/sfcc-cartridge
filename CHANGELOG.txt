@@ -6,6 +6,10 @@ v4.5.0
 * Feat: add Deferred Capture feature.
 * Chore: add pre-commit tool.
 
+v4.4.0
+------
+* Feat: In Page checkout
+
 v4.3.1
 ------
 * Feat: add Pay Now with credit card with Alma.
