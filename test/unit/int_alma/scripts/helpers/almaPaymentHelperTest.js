@@ -35,7 +35,7 @@ var paymentAuthorizationNotExpired = {
 
 describe('almaPaymentHelper', function () {
     describe('Build payment data', function () {
-        it('payment data for pnx', function () {
+        it('payment data for pnx is well formed', function () {
             setIsAvailableForInpage(true);
             setCustomPreferenceValue(true);
 

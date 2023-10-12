@@ -45,7 +45,7 @@ var baseReturn =
 
 var baseBasket = basketMock.getCurrentBasket();
 describe('Construct eligibility payload', function () {
-    it('return a empty array for a null current bask', function () {
+    it('Return a empty array for a null current bask', function () {
         var params = almaEligibilityHelperMocks.getParams([], 'fr_FR', null, deferredCaptureDisabled);
         // eslint-disable-next-line no-unused-expressions
         expect(params).to.be.an('array').that.is.empty;

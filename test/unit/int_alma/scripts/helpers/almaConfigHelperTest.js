@@ -9,7 +9,7 @@ var setCustomPreferenceValue = require('../../../../mocks/helpers/almaConfigHelp
 
 describe('Get back-office variables', function () {
     describe('Deferred Capture', function () {
-        it('should call site preferences with deferred capture key', function () {
+        it('Should call site preferences with deferred capture key', function () {
             setCustomPreferenceValue(true);
             almaConfigHelpers.isDeferredCaptureEnable();
 
@@ -18,7 +18,7 @@ describe('Get back-office variables', function () {
                 .getCustomPreferenceValue
                 .calledWith('ALMA_Deferred_Capture_Activation'));
         });
-        it('should call site preferences and return default value', function () {
+        it('Should call site preferences and return default value', function () {
             setCustomPreferenceValue(false);
             assert.equal(false, almaConfigHelpers.isDeferredCaptureEnable());
         });

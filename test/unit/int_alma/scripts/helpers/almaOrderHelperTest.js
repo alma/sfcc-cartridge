@@ -21,7 +21,7 @@ describe('Alma order helper', function () {
         });
     });
 
-    it('For payment transaction.wrap is called twice first for payment ID Second for Deferred Status', function () {
+    it('Payment transaction.wrap is called twice; first for payment ID, then for Deferred Status', function () {
         createNewTransaction();
         almaOrderHelper.addAlmaDataToOrder('payment_fake_id', order, true);
         sinon.assert.calledTwice(transaction.wrap);
