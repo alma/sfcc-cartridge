@@ -6,7 +6,7 @@ var proxyquire = require('proxyquire')
 
 var sinon = require('sinon');
 var almaConfigHelpers = require('../helpers/almaConfigHelpers').almaConfigHelpers;
-var Capture = require('../../../cartridges/int_alma/cartridge/scripts/helpers/almaPaymentHelper').Capture;
+var CAPTURE = require('../../../cartridges/int_alma/cartridge/scripts/helpers/almaPaymentHelper').CAPTURE;
 var OrderMgr = {
     searchOrders: sinon.stub()
         .returns({})
@@ -14,7 +14,7 @@ var OrderMgr = {
 
 var almaPaymentHelper = {
     capturePayment: sinon.stub(),
-    Capture: Capture
+    CAPTURE: CAPTURE
 };
 
 var almaOrderHelper = {
