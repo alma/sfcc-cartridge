@@ -20,7 +20,7 @@ var CAPTURE = {
     }
 };
 var MAX_INSTALLMENTS_COUNT_FOR_PNX = 4;
-var MAX_DEFERRED_DAYS_FOR_PNX = 0;
+var DEFERRED_DAYS_FOR_PNX = 0;
 
 /**
  * Allow to check an order status
@@ -348,7 +348,7 @@ function cancelAlmaPayment(params) {
  * @return {boolean} is available
  */
 function isAvailableForManualCapture(isManualCaptureEnabled, installmentsCount, deferredDays) {
-    return isManualCaptureEnabled && installmentsCount <= MAX_INSTALLMENTS_COUNT_FOR_PNX && deferredDays <= MAX_DEFERRED_DAYS_FOR_PNX;
+    return isManualCaptureEnabled && installmentsCount <= MAX_INSTALLMENTS_COUNT_FOR_PNX && deferredDays <= DEFERRED_DAYS_FOR_PNX;
 }
 
 /**
