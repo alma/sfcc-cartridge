@@ -18,9 +18,8 @@ function isOnShipmentPaymentEnabled(installmentsCount, deferredDays) {
         return plan.installments_count === parseInt(installmentsCount, 10) && plan.deferred_days === parseInt(deferredDays, 10);
     });
 
-    return Site.getCurrent().getCustomPreferenceValue('ALMA_On_Shipment_Payment')
-        && requestedPlan !== null
-        && requestedPlan.deferred_trigger_limit_days !== null;
+    return Site.getCurrent()
+        .getCustomPreferenceValue('ALMA_On_Shipment_Payment') && requestedPlan !== null && requestedPlan.deferred_trigger_limit_days !== null;
 }
 
 module.exports = {

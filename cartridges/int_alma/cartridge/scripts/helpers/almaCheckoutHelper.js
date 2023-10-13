@@ -4,6 +4,8 @@ var Resource = require('dw/web/Resource');
 var formatCurrency = require('*/cartridge/scripts/util/formatting').formatCurrency;
 var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
 var PaymentMgr = require('dw/order/PaymentMgr');
+var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
+var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
 
 var ALMA_PNX_ID = 'ALMA_PNX';
 var ALMA_CREDIT_ID = 'ALMA_CREDIT';
@@ -17,12 +19,8 @@ var paymentMethodId = '';
  * @returns {string} the custom site preference name
  */
 function getSelectorNameFromPlan(plan) {
-    return 'ALMA_general_'
-        // number of installments (p1x, p3x, p4x, ....)
-        + plan.installments_count + '_'
-        // by how many days is the payment defered
-        + plan.deferred_days
-    ;
+    // ALMA_general + number of installments (p1x, p3x, p4x, ....) + by how many days is the payment defered
+    return 'ALMA_general_' + plan.installments_count + '_' + plan.deferred_days;
 }
 
 /**
@@ -70,7 +68,8 @@ function getCreditInfo(plan, currencyCode) {
     var costOfCredit = formatCurrency(plan.customer_total_cost_amount / 100, currencyCode);
     var purchaseAmount = formatCurrency(plan.purchaseAmount, currencyCode);
     var totalCost = formatCurrency(plan.purchaseAmount + (plan.customer_total_cost_amount / 100), currencyCode);
-    var rate = Math.round(plan.annual_interest_rate / 100).toString() + '.' + (plan.annual_interest_rate % 100) + '%';
+    var rate = Math.round(plan.annual_interest_rate / 100)
+        .toString() + '.' + (plan.annual_interest_rate % 100) + '%';
     return {
         basket_cost: Resource.msgf('alma.credit.basket_cost', 'alma', null, purchaseAmount),
         amount: Resource.msgf('alma.credit.cost_of_credit', 'alma', null, costOfCredit),
@@ -131,6 +130,15 @@ function getPaymentInstallments(plan, currencyCode) {
             formatCurrency(plan.payment_plan[1].purchase_amount / 100, currencyCode)
         ;
     }
+    // on deferred capture
+    if (almaPaymentHelper.isAvailableForManualCapture(almaConfigHelper.isDeferredCaptureEnable(), plan.installments_count, plan.deferred_days)) {
+        return formatCurrency(plan.payment_plan[0].purchase_amount / 100, currencyCode) + ' ' +
+            plan.payment_plan[0].localized_due_date +
+            Resource.msg(getPropertyCategory(plan) + '.installments.then', 'alma', null) + ' ' +
+            getInstallmentCountAfterFirst(plan) +
+            formatCurrency(plan.payment_plan[1].purchase_amount / 100, currencyCode)
+        ;
+    }
     // installment payment
     return formatCurrency(plan.payment_plan[0].purchase_amount / 100, currencyCode) + ' ' +
         Resource.msg(getPropertyCategory(plan) + '.installments', 'alma', null) + ' ' +
@@ -167,23 +175,16 @@ function isAvailableForInpage(installmentsCount, deferredDays) {
 }
 
 /**
- * Returns true if the merchant want in-page payment
- * @returns {boolean} if we can use inpage
- */
-function isInpageActivated() {
-    var Site = require('dw/system/Site');
-
-    return Site.getCurrent().getCustomPreferenceValue('ALMA_Inpage_Payment');
-}
-
-/**
  * Return true if plan is activated
  * @param {Object} paymentMethod payment method
  * @param {Object} plan plan
  * @returns {boolean} payment method ID
  */
 function planIsActivated(paymentMethod, plan) {
-    var almaActivated = paymentMethod.getCustom().almaActivated.trim().split('|');
+    var almaActivated = paymentMethod.getCustom()
+        .almaActivated
+        .trim()
+        .split('|');
 
     return almaActivated.some(function (element) {
         return element.includes(plan.installments_count) || element.includes(plan.deferred_days);
@@ -205,9 +206,7 @@ function getPlanPaymentMethodID(plan) {
     if (plan.deferred_days > 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_DEFERRED_ID), plan)) {
         paymentMethodId = ALMA_DEFERRED_ID;
     }
-    if (plan.installments_count === 1
-        && plan.deferred_days === 0
-        && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PAY_NOW_ID), plan)) {
+    if (plan.installments_count === 1 && plan.deferred_days === 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PAY_NOW_ID), plan)) {
         paymentMethodId = ALMA_PAY_NOW_ID;
     }
 
@@ -224,7 +223,7 @@ function formatPlanForCheckout(plan, currencyCode) {
     var formatPlan = {};
     if (plan.installments_count < 5 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PNX_ID), plan)) {
         formatPlan = {
-            in_page: isAvailableForInpage(plan.installments_count, plan.deferred_days) && isInpageActivated(),
+            in_page: isAvailableForInpage(plan.installments_count, plan.deferred_days) && almaConfigHelper.isInpageActivated(),
             selector: getSelectorNameFromPlan(plan),
             installments_count: plan.installments_count,
             deferred_days: plan.deferred_days,
@@ -237,7 +236,7 @@ function formatPlanForCheckout(plan, currencyCode) {
     }
     if (plan.installments_count >= 5 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_CREDIT_ID), plan)) {
         formatPlan = {
-            in_page: isAvailableForInpage(plan.installments_count, plan.deferred_days) && isInpageActivated(),
+            in_page: isAvailableForInpage(plan.installments_count, plan.deferred_days) && almaConfigHelper.isInpageActivated(),
             selector: getSelectorNameFromPlan(plan),
             installments_count: plan.installments_count,
             deferred_days: plan.deferred_days,
@@ -250,7 +249,7 @@ function formatPlanForCheckout(plan, currencyCode) {
     }
     if (plan.deferred_days > 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_DEFERRED_ID), plan)) {
         formatPlan = {
-            in_page: isAvailableForInpage(plan.installments_count, plan.deferred_days) && isInpageActivated(),
+            in_page: isAvailableForInpage(plan.installments_count, plan.deferred_days) && almaConfigHelper.isInpageActivated(),
             selector: getSelectorNameFromPlan(plan),
             installments_count: plan.installments_count,
             deferred_days: plan.deferred_days,
@@ -263,7 +262,7 @@ function formatPlanForCheckout(plan, currencyCode) {
     }
     if (plan.installments_count === 1 && plan.deferred_days === 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PAY_NOW_ID), plan)) {
         formatPlan = {
-            in_page: isAvailableForInpage(plan.installments_count, plan.deferred_days) && isInpageActivated(),
+            in_page: isAvailableForInpage(plan.installments_count, plan.deferred_days) && almaConfigHelper.isInpageActivated(),
             selector: getSelectorNameFromPlan(plan),
             installments_count: plan.installments_count,
             deferred_days: plan.deferred_days,
@@ -280,6 +279,5 @@ function formatPlanForCheckout(plan, currencyCode) {
 module.exports = {
     formatPlanForCheckout: formatPlanForCheckout,
     getPlanPaymentMethodID: getPlanPaymentMethodID,
-    isAvailableForInpage: isAvailableForInpage,
-    isInpageActivated: isInpageActivated
+    isAvailableForInpage: isAvailableForInpage
 };

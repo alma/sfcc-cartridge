@@ -1,5 +1,26 @@
 'use strict';
+
 var pkg = require('../../../package.json');
+
+var CAPTURE = {
+    toCapture: {
+        code: 'ToCapture'
+    },
+    total: {
+        code: 'Captured',
+        description: 'Total Capture'
+    },
+    partial: {
+        code: 'PartialCaptured',
+        description: 'Partial captured'
+    },
+    failed: {
+        code: 'Failed',
+        description: 'Unable to capture'
+    }
+};
+var MAX_INSTALLMENTS_COUNT_FOR_PNX = 4;
+var DEFERRED_DAYS_FOR_PNX = 0;
 
 /**
  * Allow to check an order status
@@ -25,7 +46,8 @@ function getPaymentObj(almaPaymentId) {
         pid: almaPaymentId
     };
 
-    var httpResult = service.getPaymentDetails().call(param);
+    var httpResult = service.getPaymentDetails()
+        .call(param);
     if (httpResult.msg !== 'OK') {
         throw new Error('API error');
     }
@@ -242,7 +264,8 @@ function createOrderFromBasket(almaPaymentMethod) {
             var paymentMethodErrorContext = {
                 Alma_Payment_Method: almaPaymentMethod
             };
-            var Logger = require('dw/system/Logger').getLogger('alma');
+            var Logger = require('dw/system/Logger')
+                .getLogger('alma');
             Logger.error('Unable to process payment: payment method not found. | {0}', [JSON.stringify(paymentMethodErrorContext)]);
             throw new Error('Unable to process payment: payment method not found');
         }
@@ -271,7 +294,8 @@ function createOrderFromBasket(almaPaymentMethod) {
  */
 function createPayment(param) {
     var service = require('*/cartridge/scripts/services/alma');
-    var httpResult = service.createPayment().call(param);
+    var httpResult = service.createPayment()
+        .call(param);
 
     if (httpResult.msg !== 'OK') {
         var e = new Error('API error : ' + httpResult.status);
@@ -282,24 +306,72 @@ function createPayment(param) {
 }
 
 /**
+ * Calls the capture payment endpoint
+ * @param {Object} params to give to the payment endpoint
+ * @returns {Object} api response
+ * @throws Error
+ */
+function capturePayment(params) {
+    var service = require('*/cartridge/scripts/services/alma');
+    var httpResult = service.captures()
+        .call(params);
+    if (httpResult.status !== 'OK') {
+        var e = new Error('API error : ' + httpResult.status);
+        e.name = 'capture_payment_error';
+        throw e;
+    }
+    return JSON.parse(httpResult.getObject().text);
+}
+/**
+ * Calls the cancel payment endpoint
+ * @param {Object} params to give to the payment endpoint
+ * @returns {Object} api response
+ * @throws Error
+ */
+function cancelAlmaPayment(params) {
+    var service = require('*/cartridge/scripts/services/alma');
+    var httpResult = service.cancelAlmaPayment()
+        .call(params);
+    if (httpResult.status !== 'OK') {
+        var e = new Error('API error : ' + httpResult.status);
+        e.name = 'cancel_payment_error';
+        throw e;
+    }
+    return JSON.parse(httpResult.getObject().text);
+}
+
+/**
+ * Check if manual capture is available
+ * @param {boolean} isManualCaptureEnabled  manual capture is enabled
+ * @param {number} installmentsCount installments count
+ * @param {number} deferredDays deferred days
+ * @return {boolean} is available
+ */
+function isAvailableForManualCapture(isManualCaptureEnabled, installmentsCount, deferredDays) {
+    return isManualCaptureEnabled && installmentsCount <= MAX_INSTALLMENTS_COUNT_FOR_PNX && deferredDays <= DEFERRED_DAYS_FOR_PNX;
+}
+
+/**
  * Build the data to give to the payment endpoint
  * @param {number} installmentsCount number of installments to pay
  * @param {number} deferredDays number of days to the first payment
  * @param {string} locale the user locale
+ * @param {boolean} isManualCapture for capture_method
  * @returns {Object} to give to the payment endpoint
  */
-function buildPaymentData(installmentsCount, deferredDays, locale) {
+function buildPaymentData(installmentsCount, deferredDays, locale, isManualCapture) {
     var BasketMgr = require('dw/order/BasketMgr');
     var URLUtils = require('dw/web/URLUtils');
     var almaHelper = require('*/cartridge/scripts/helpers/almaHelpers');
     var almaCheckoutHelper = require('*/cartridge/scripts/helpers/almaCheckoutHelper');
+    var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
 
     var formatAddress = require('*/cartridge/scripts/helpers/almaAddressHelper').formatAddress;
     var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
     var formatCustomerData = require('*/cartridge/scripts/helpers/almaHelpers').formatCustomerData;
 
     var origin = 'online';
-    if (almaCheckoutHelper.isAvailableForInpage(installmentsCount, deferredDays) && almaCheckoutHelper.isInpageActivated()) {
+    if (almaCheckoutHelper.isAvailableForInpage(installmentsCount, deferredDays) && almaConfigHelper.isInpageActivated()) {
         origin = 'online_in_page';
     }
 
@@ -312,15 +384,19 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
             installments_count: parseInt(installmentsCount, 10),
             deferred_days: parseInt(deferredDays, 10),
             deferred_months: 0,
-            return_url: URLUtils.http('Alma-PaymentSuccess').toString(),
-            ipn_callback_url: URLUtils.http('Alma-IPN').toString(),
-            customer_cancel_url: URLUtils.https('Alma-CustomerCancel').toString(),
+            return_url: URLUtils.http('Alma-PaymentSuccess')
+                .toString(),
+            ipn_callback_url: URLUtils.http('Alma-IPN')
+                .toString(),
+            customer_cancel_url: URLUtils.https('Alma-CustomerCancel')
+                .toString(),
             locale: locale,
             origin: origin,
             shipping_address: formatAddress(currentBasket.getDefaultShipment().shippingAddress),
             billing_address: formatAddress(currentBasket.getBillingAddress()),
             deferred: isEnableOnShipment ? 'trigger' : '',
-            deferred_description: isEnableOnShipment ? require('dw/web/Resource').msg('alma.at_shipping', 'alma', null) : '',
+            deferred_description: isEnableOnShipment ? require('dw/web/Resource')
+                .msg('alma.at_shipping', 'alma', null) : '',
             custom_data: {
                 cms_name: 'SFCC',
                 cms_version: almaHelper.getSfccVersion(),
@@ -329,6 +405,10 @@ function buildPaymentData(installmentsCount, deferredDays, locale) {
         },
         customer: formatCustomerData(currentBasket.getCustomer().profile, currentBasket.getCustomerEmail(), formatAddress(currentBasket.getDefaultShipment().shippingAddress))
     };
+
+    if (isManualCapture) {
+        paymentData.payment.capture_method = 'manual';
+    }
 
     if (installmentsCount >= 5) {
         var products = currentBasket.getAllProductLineItems();
@@ -383,6 +463,27 @@ function setOrderMerchantReference(pid, order) {
     setOrderMerchantReferenceAPI.call(param);
 }
 
+/**
+ * Check if a payment is expired
+ * @param {Object} paymentObj payment object
+ * @return {boolean} payment is expired
+ */
+function isPaymentExpired(paymentObj) {
+    return paymentObj.expired_at !== null;
+}
+
+/**
+ * Check if an authorization for a payment is expired
+ * @param {Object} paymentObj payment object
+ * @return {boolean} payment’s authorization is expired
+ */
+function isPaymentAuthorizationExpired(paymentObj) {
+    var timeElapsed = Date.now();
+    var today = new Date(timeElapsed);
+    var authorizationExpiresAtDate = new Date(paymentObj.authorization_expires_at);
+    return authorizationExpiresAtDate.getTime() < today.getTime();
+}
+
 
 module.exports = {
     orderStatusEquals: orderStatusEquals,
@@ -398,5 +499,11 @@ module.exports = {
     buildPaymentData: buildPaymentData,
     flagAsPotentialFraud: flagAsPotentialFraud,
     createOrderFromBasketUUID: createOrderFromBasketUUID,
-    setOrderMerchantReference: setOrderMerchantReference
+    setOrderMerchantReference: setOrderMerchantReference,
+    capturePayment: capturePayment,
+    isAvailableForManualCapture: isAvailableForManualCapture,
+    cancelAlmaPayment: cancelAlmaPayment,
+    CAPTURE: CAPTURE,
+    isPaymentExpired: isPaymentExpired,
+    isPaymentAuthorizationExpired: isPaymentAuthorizationExpired
 };

@@ -7,6 +7,7 @@
         <processor-id>ALMA</processor-id>
         <countries>
             <country country-code="FR"/>
+            <country country-code="GB"/>
         </countries>
         <currencies>
             <currency>EUR</currency>
@@ -22,6 +23,7 @@
         <processor-id>ALMA</processor-id>
         <countries>
             <country country-code="FR"/>
+            <country country-code="GB"/>
         </countries>
         <currencies>
             <currency>EUR</currency>
@@ -37,6 +39,7 @@
         <processor-id>ALMA</processor-id>
         <countries>
             <country country-code="FR"/>
+            <country country-code="GB"/>
         </countries>
         <currencies>
             <currency>EUR</currency>
@@ -52,6 +55,7 @@
         <processor-id>ALMA</processor-id>
         <countries>
             <country country-code="FR"/>
+            <country country-code="GB"/>
         </countries>
         <currencies>
             <currency>EUR</currency>

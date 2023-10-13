@@ -26,8 +26,59 @@ function addAlmaPaymentDetails(order, payDetail) {
     });
 }
 
+/**
+ * Set alma deferred capture status in order
+ * @param {Object} order order
+ * @param {string} deferredCaptureStatus payDetail
+ * @param {number} [amount] amount capture
+ */
+function setAlmaDeferredCaptureFields(order, deferredCaptureStatus, amount) {
+    if (amount) {
+        Transaction.wrap(function () {
+            // eslint-disable-next-line no-param-reassign
+            order.custom.ALMA_Deferred_Capture_Status = deferredCaptureStatus;
+            order.custom.ALMA_Deferred_Capture_Partial_Amount_Captured = amount;
+            order.custom.ALMA_Deferred_Capture_Partial_Amount = null;
+        });
+    } else {
+        Transaction.wrap(function () {
+            // eslint-disable-next-line no-param-reassign
+            order.custom.ALMA_Deferred_Capture_Status = deferredCaptureStatus;
+            order.custom.ALMA_Deferred_Capture_Partial_Amount = null;
+        });
+    }
+}
+
+/**
+ * Add Alma data to order
+ * @param {string} pid payment id
+ * @param {Object} order order
+ * @param {boolean} isDeferredCapture is deferred capture
+ * @throw Error
+ */
+function addAlmaDataToOrder(pid, order, isDeferredCapture) {
+    addPidToOrder(order, pid);
+    if (isDeferredCapture) {
+        setAlmaDeferredCaptureFields(order, 'ToCapture');
+    } else {
+        setAlmaDeferredCaptureFields(order, 'Captured');
+    }
+}
+
+/**
+ * Return amount for partial capture
+ * @param {Object} order order from get partial capture amount
+ * @return {number|null} the amount value
+ */
+function getPartialCaptureAmount(order) {
+    return order.custom.ALMA_Deferred_Capture_Partial_Amount;
+}
+
 
 module.exports = {
     addPidToOrder: addPidToOrder,
-    addAlmaPaymentDetails: addAlmaPaymentDetails
+    addAlmaPaymentDetails: addAlmaPaymentDetails,
+    addAlmaDataToOrder: addAlmaDataToOrder,
+    setAlmaDeferredCaptureFields: setAlmaDeferredCaptureFields,
+    getPartialCaptureAmount: getPartialCaptureAmount
 };

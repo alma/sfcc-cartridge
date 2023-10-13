@@ -39,20 +39,6 @@ function buildViewParams(paymentObj, order, localeId, reqProfile) {
 }
 
 /**
- * Synchronize order and payment details
- * @param {string} pid payment id
- * @param {Object} order order
- * @throw Error
- */
-function syncOrderAndPaymentDetails(pid, order) {
-    var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
-    var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
-
-    orderHelper.addPidToOrder(order, pid);
-    almaPaymentHelper.setOrderMerchantReference(pid, order);
-}
-
-/**
  * Ensure that Alma received the right amount and that SFCC order is synced
  * @param {Object} paymentObj the payment to describe
  * @param {dw/order/Order} order the current order
@@ -82,6 +68,26 @@ function affectOrder(paymentObj, order) {
         };
         logger.warn('Flag potential fraud | {0}', [potentialFraudErrorContext]);
         throw new Error(reason);
+    }
+
+    if (almaPaymentHelper.isPaymentExpired(paymentObj)) {
+        Transaction.wrap(function () {
+            order.trackOrderChange('Payment is expired');
+            OrderMgr.failOrder(order, true);
+        });
+
+        logger.warn('Payment: {0} is expired', [paymentObj.id]);
+        throw new Error('payment_expired');
+    }
+
+    if (almaPaymentHelper.isPaymentAuthorizationExpired(paymentObj)) {
+        Transaction.wrap(function () {
+            order.trackOrderChange('Payment’s authorization is expired');
+            OrderMgr.cancelOrder(order);
+        });
+
+        logger.warn('Authorization for the payment: {0} is expired', [paymentObj.id]);
+        throw new Error('authorization_expired');
     }
 
     var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShipmentHelper').isOnShipmentPaymentEnabled;
@@ -115,6 +121,7 @@ function buildPaymentObj(pid) {
 server.get('PaymentSuccess', function (req, res, next) {
     var paymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
     var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
+    var configHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
     var paymentObj = null;
 
     try {
@@ -128,9 +135,16 @@ server.get('PaymentSuccess', function (req, res, next) {
     }
     var order = getOrderByAlmaPaymentId(req.querystring.pid);
 
+    var isDeferredCapture = paymentHelper.isAvailableForManualCapture(
+        configHelper.isDeferredCaptureEnable(),
+        paymentObj.installments_count,
+        paymentObj.deferred_days
+    );
+
     if (!order) {
         order = paymentHelper.createOrderFromBasket(req.querystring.alma_payment_method);
-        syncOrderAndPaymentDetails(req.querystring.pid, order);
+        orderHelper.addAlmaDataToOrder(req.querystring.pid, order, isDeferredCapture);
+        paymentHelper.setOrderMerchantReference(req.querystring.pid, order);
     }
 
     // we probably should throw an error if we don't have an order
@@ -269,11 +283,19 @@ server.get('OrderAmount', server.middleware.https, function (req, res, next) {
 server.post('CreatePaymentUrl', server.middleware.https, function (req, res, next) {
     var getLocale = require('*/cartridge/scripts/helpers/almaHelpers').getLocale;
     var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
+    var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
+
+    var isDeferredCapture = almaPaymentHelper.isAvailableForManualCapture(
+        almaConfigHelper.isDeferredCaptureEnable(),
+        req.querystring.installments,
+        req.querystring.deferred_days
+    );
 
     var paymentData = almaPaymentHelper.buildPaymentData(
         req.querystring.installments,
         req.querystring.deferred_days,
-        getLocale(req)
+        getLocale(req),
+        isDeferredCapture
     );
 
     try {
@@ -325,10 +347,20 @@ server.get(
     function (req, res, next) {
         var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
         var getLocale = require('*/cartridge/scripts/helpers/almaHelpers').getLocale;
+        var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
+        var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
+
+        var isDeferredCapture = almaPaymentHelper.isAvailableForManualCapture(
+            almaConfigHelper.isDeferredCaptureEnable(),
+            req.querystring.installments,
+            req.querystring.deferred_days
+        );
+
         var paymentData = almaPaymentHelper.buildPaymentData(
             req.querystring.installments,
             req.querystring.deferred_days,
-            getLocale(req)
+            getLocale(req),
+            isDeferredCapture
         );
 
         try {
@@ -337,7 +369,8 @@ server.get(
 
             if (!order) {
                 order = almaPaymentHelper.createOrderFromBasket(req.querystring.alma_payment_method);
-                syncOrderAndPaymentDetails(almaPayment.id, order);
+                orderHelper.addAlmaDataToOrder(almaPayment.id, order, isDeferredCapture);
+                almaPaymentHelper.setOrderMerchantReference(almaPayment.id, order);
             }
             res.setStatusCode(200);
             res.json({
@@ -368,10 +401,13 @@ server.get('Plans',
         var almaPlanHelper = require('*/cartridge/scripts/helpers/almaPlanHelper');
 
         var BasketMgr = require('dw/order/BasketMgr');
+        var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
+
+        var isDeferredCaptureEnabled = almaConfigHelper.isDeferredCaptureEnable();
         var currentBasket = BasketMgr.getCurrentBasket();
 
         res.json({
-            plans: almaPlanHelper.getPlansForCheckout(getLocale(req), currentBasket)
+            plans: almaPlanHelper.getPlansForCheckout(getLocale(req), currentBasket, isDeferredCaptureEnabled)
         });
         return next();
     });

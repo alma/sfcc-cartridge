@@ -1,0 +1,23 @@
+<job job-id="CapturePaymentOrders" priority="0">
+    <description>Capture payment for orders which are on deferred capture</description>
+    <parameters/>
+    <split sequential="false">
+        <flow>
+            <context site-id="[[SITENAME]]"/>
+            <template-ref template-id="template_40"/>
+        </flow>
+        <flow-template template-id="template_40">
+            <step step-id="CapturePaymentOrders" type="ExecuteScriptModule" enforce-restart="false">
+                <description/>
+                <parameters>
+                    <parameter name="ExecuteScriptModule.Module">int_alma/cartridge/scripts/steps/CapturePaymentOrders.js</parameter>
+                    <parameter name="ExecuteScriptModule.FunctionName">execute</parameter>
+                    <parameter name="ExecuteScriptModule.Transactional">true</parameter>
+                </parameters>
+            </step>
+        </flow-template>
+    </split>
+    <rules/>
+    <triggers>
+    </triggers>
+</job>
