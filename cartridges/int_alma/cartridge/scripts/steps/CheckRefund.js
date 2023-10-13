@@ -38,11 +38,43 @@ function refundPaymentForOrder(order) {
     }
 }
 
+/**
+ * Cancel a payment when a refund is made on an order with the status ToCapture
+ * @param {Object} orderItem order
+ * @param {Object} Logger logger
+ */
+function cancelDeferredCapturePaymentForARefund(orderItem, Logger) {
+    var Transaction = require('dw/system/Transaction');
+    var AlmaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
+    var amount = 0;
+    var deferredStatus = 'ToCapture';
+    if (orderItem.custom.almaRefundType.toString() === 'Total') {
+        var params = { external_id: orderItem.custom.almaPaymentId };
+        amount = orderItem.getTotalGrossPrice().value;
+        AlmaPaymentHelper.cancelAlmaPayment(params);
+        deferredStatus = 'Canceled';
+    }
+
+    if (orderItem.custom.almaRefundType.toString() === 'Partial') {
+        Logger.info('Partial refund is not yet implemented with deferred payment - order id {0}', [orderItem.orderNo]);
+    }
+
+    /* jshint loopfunc: true */
+    // eslint-disable-next-line no-loop-func
+    Transaction.wrap(function () {
+        orderItem.custom.ALMA_Deferred_Capture_Status = deferredStatus;
+        // eslint-disable-next-line no-param-reassign
+        orderItem.custom.almaRefundedAmount = amount;
+        // eslint-disable-next-line no-param-reassign
+        orderItem.custom.almaWantedRefundAmount = 0;
+        // eslint-disable-next-line no-param-reassign
+        orderItem.custom.almaRefundType = null;
+    });
+}
+
 exports.execute = function () {
     var Logger = require('dw/system/Logger');
     var Status = require('dw/system/Status');
-    var Transaction = require('dw/system/Transaction');
-    var AlmaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
     var orders = getOrdersRefunded();
 
     Logger.info('[INFO][ALMA refund] job launched for: ' + orders.count + ' orders.');
@@ -52,30 +84,7 @@ exports.execute = function () {
             if (isOrderToBeRefund(orderItem)) {
                 try {
                     if (orderItem.custom.ALMA_Deferred_Capture_Status === 'ToCapture') {
-                        var amount = 0;
-                        var deferredStatus = 'ToCapture';
-                        if (orderItem.custom.almaRefundType.toString() === 'Total') {
-                            var params = { external_id: orderItem.custom.almaPaymentId };
-                            amount = orderItem.getTotalGrossPrice().value;
-                            AlmaPaymentHelper.cancelAlmaPayment(params);
-                            deferredStatus = 'Canceled';
-                        }
-
-                        if (orderItem.custom.almaRefundType.toString() === 'Partial') {
-                            Logger.info('Partial refund is not yet implemented with deferred payment - order id {0}', [orderItem.orderNo]);
-                        }
-
-                        /* jshint loopfunc: true */
-                        // eslint-disable-next-line no-loop-func
-                        Transaction.wrap(function () {
-                            orderItem.custom.ALMA_Deferred_Capture_Status = deferredStatus;
-                            // eslint-disable-next-line no-param-reassign
-                            orderItem.custom.almaRefundedAmount = amount;
-                            // eslint-disable-next-line no-param-reassign
-                            orderItem.custom.almaWantedRefundAmount = 0;
-                            // eslint-disable-next-line no-param-reassign
-                            orderItem.custom.almaRefundType = null;
-                        });
+                        cancelDeferredCapturePaymentForARefund(orderItem, Logger);
                     } else {
                         refundPaymentForOrder(orderItem);
                     }

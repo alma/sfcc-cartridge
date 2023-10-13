@@ -9,6 +9,11 @@ var almaWidgetHelper = require('*/cartridge/scripts/helpers/almaWidgetHelper');
 var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
 var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
 
+var CAPTURE_METHOD = {
+    automatic: 'automatic',
+    manual: 'manual'
+};
+
 /**
  * Calls /me/fee-plans and fetch the available plans for the current merchant
  * @returns {array} plans
@@ -185,14 +190,14 @@ function getFormattedPlans(plans) {
 
         Object.keys(plans[paymentMethod]).forEach(function (keys) {
             paymentMethodPlans.push(plans[paymentMethod][keys]);
-            plans[paymentMethod][keys].captureMethod = 'automatic';
+            plans[paymentMethod][keys].captureMethod = CAPTURE_METHOD.automatic;
 
             if (almaPaymentHelper.isAvailableForManualCapture(
                 almaConfigHelper.isDeferredCaptureEnable(),
                 plans[paymentMethod][keys].installments_count,
                 plans[paymentMethod][keys].deferred_days
             )) {
-                plans[paymentMethod][keys].captureMethod = 'manual';
+                plans[paymentMethod][keys].captureMethod = CAPTURE_METHOD.manual;
             }
 
             if (!plans[paymentMethod][keys].properties) {
@@ -257,5 +262,6 @@ module.exports = {
     getAllowedPlans: getAllowedPlans,
     getPlansForWidget: getPlansForWidget,
     getPlansForCheckout: getPlansForCheckout,
-    getFormattedPlans: getFormattedPlans
+    getFormattedPlans: getFormattedPlans,
+    CAPTURE_METHOD: CAPTURE_METHOD
 };

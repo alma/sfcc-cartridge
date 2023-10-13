@@ -8,15 +8,15 @@ var formattedPlansForCheckoutExpected = require('../../../../mocks/data/plans').
 var plansForCheckout = require('../../../../mocks/data/plans').plansForCheckout;
 
 
-describe('almaPlanHelper', function () {
+describe('AlmaPlanHelper', function () {
     describe('Format plan Helper', function () {
-        it('should return an array for a given plans', function () {
+        it('Check array returned by getFormattedPlans for a given plans is well formed', function () {
             setIsDeferredCaptureEnable(false);
             var formattedPlans = almaPlanHelperMock.getFormattedPlans(plansForCheckout);
             expect(formattedPlans).to.deep.equal(formattedPlansForCheckoutExpected);
         });
 
-        it('should return have a captureMethod property for deferred capture', function () {
+        it('Return must have a captureMethod property for deferred capture', function () {
             setIsDeferredCaptureEnable(true);
             var formattedPlans = almaPlanHelperMock.getFormattedPlans(plansForCheckout);
             var captureMethod = '';

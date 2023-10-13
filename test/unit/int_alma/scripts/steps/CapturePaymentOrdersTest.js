@@ -31,7 +31,8 @@ function nextFactory(count) {
                 custom: {
                     almaPaymentId: 'payment_' + i
                 },
-                getTotalGrossPrice: sinon.stub().returns({ value: 100 })
+                getTotalGrossPrice: sinon.stub()
+                    .returns({ value: 100 })
             });
     }
     return next;
@@ -58,15 +59,19 @@ describe('Deferred capture job', function () {
         sinon.reset();
     });
 
-    it('Should get orders with deferred capture', function () {
+    it('Should get orders with deferred capture status equal to ToCapture', function () {
         CapturePaymentOrders.execute();
 
         sinon.assert.calledOnce(OrderMgr.searchOrders);
         // status : 8 failed - 6 canceled
-        sinon.assert.calledWith(OrderMgr.searchOrders, "custom.ALMA_Deferred_Capture_Status='ToCapture' and status != {0} and status != {1}", null, 8, 6);
+        sinon.assert.calledWith(OrderMgr.searchOrders, 'custom.ALMA_Deferred_Capture_Status={0} and status != {1} and status != {2}',
+            null,
+            'ToCapture',
+            8,
+            6);
     });
 
-    it('Should not call Capture where their is no order', function () {
+    it('Should not call Capture endpoint where their is no order', function () {
         OrderMgr.searchOrders = sinon.stub()
             .returns(mockOrderFactory(0));
 
@@ -75,7 +80,7 @@ describe('Deferred capture job', function () {
         sinon.assert.notCalled(almaPaymentHelper.capturePayment);
     });
 
-    it('Should call Capture for orders with deferred capture', function () {
+    it('Should call Capture endpoint for orders with deferred capture', function () {
         var count = 10;
         OrderMgr.searchOrders = sinon.stub()
             .returns(mockOrderFactory(count));
@@ -84,11 +89,14 @@ describe('Deferred capture job', function () {
 
         sinon.assert.callCount(almaPaymentHelper.capturePayment, count);
         for (var i = 0; i < count; i++) {
-            sinon.assert.calledWith(almaPaymentHelper.capturePayment.getCall(i), { external_id: 'payment_' + i, amount: 10000 });
+            sinon.assert.calledWith(almaPaymentHelper.capturePayment.getCall(i), {
+                external_id: 'payment_' + i,
+                amount: 10000
+            });
         }
     });
 
-    it('Should set capture ID when capture is validated', function () {
+    it('Order’s deferred status is equal to Captured when capture is validated', function () {
         CapturePaymentOrders.execute();
 
         sinon.assert.calledOnce(almaOrderHelper.setAlmaDeferredCaptureFields);
@@ -100,7 +108,7 @@ describe('Deferred capture job', function () {
         );
     });
 
-    it('Should not call setAlmaDeferredCaptureFields when capture throw an error', function () {
+    it('Order’s deferred status is equal to Failed when capture throw an error', function () {
         almaPaymentHelper.capturePayment = sinon.stub()
             .throws();
 
@@ -114,8 +122,9 @@ describe('Deferred capture job', function () {
         );
     });
 
-    it('should get call capture with right amount and code for partial capture', function () {
-        almaOrderHelper.getPartialCaptureAmount = sinon.stub().returns(25);
+    it('Should get call capture with right amount and code for partial capture', function () {
+        almaOrderHelper.getPartialCaptureAmount = sinon.stub()
+            .returns(25);
         CapturePaymentOrders.execute();
 
         sinon.assert.calledOnce(almaOrderHelper.setAlmaDeferredCaptureFields);

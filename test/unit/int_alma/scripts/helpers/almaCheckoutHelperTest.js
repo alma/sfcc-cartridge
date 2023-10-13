@@ -77,9 +77,9 @@ var plansDeferred = {
 };
 var currencyCode = 'EUR';
 
-describe('almaCheckoutHelpers', function () {
-    describe('formatPlanForCheckout', function () {
-        it('check in page', function () {
+describe('AlmaCheckoutHelpers', function () {
+    describe('FormatPlanForCheckout', function () {
+        it('Check value of the fields in_page depending of payment method', function () {
             setCustomPreferenceValue(true);
             var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(plan, currencyCode);
             assert.equal(checkoutData.in_page, true);
@@ -91,7 +91,7 @@ describe('almaCheckoutHelpers', function () {
             assert.equal(checkoutData.in_page, false);
         });
 
-        it('check selector', function () {
+        it('Check field selector depending of the plan', function () {
             var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(plan, currencyCode);
             assert.equal(checkoutData.selector, 'ALMA_general_3_0');
 
@@ -103,7 +103,7 @@ describe('almaCheckoutHelpers', function () {
             assert.equal(checkoutData.selector, 'ALMA_general_1_15');
         });
 
-        it('check properties for pnx', function () {
+        it('Properties for pnx is well formed', function () {
             setIsAvailableForManualCapture(true);
             var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(plan, currencyCode);
             assert.deepEqual(checkoutData.properties, {
@@ -121,7 +121,7 @@ describe('almaCheckoutHelpers', function () {
             });
         });
 
-        it('check properties for credit', function () {
+        it('Properties for credit is well formed', function () {
             setIsAvailableForManualCapture(false);
             var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(planCredit, currencyCode);
             assert.deepEqual(checkoutData.properties, {
@@ -139,7 +139,7 @@ describe('almaCheckoutHelpers', function () {
             });
         });
 
-        it('check properties for deffered', function () {
+        it('Properties for deferred is well formed', function () {
             setIsAvailableForManualCapture(false);
             var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(plansDeferred, currencyCode);
             assert.deepEqual(checkoutData.properties, {
@@ -157,18 +157,18 @@ describe('almaCheckoutHelpers', function () {
             });
         });
 
-        it('check payment method PNX', function () {
+        it('Check payment method for PNX', function () {
             var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(plan, currencyCode);
             assert.equal(checkoutData.payment_method, 'ALMA_PNX'
             );
         });
 
-        it('check payment method CREDIT', function () {
+        it('check payment method for CREDIT', function () {
             var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(planCredit, currencyCode);
             assert.equal(checkoutData.payment_method, 'ALMA_CREDIT');
         });
 
-        it('check payment method DEFERRED', function () {
+        it('Check payment method for DEFERRED', function () {
             var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(plansDeferred, currencyCode);
             assert.equal(checkoutData.payment_method, 'ALMA_DEFERRED');
         });

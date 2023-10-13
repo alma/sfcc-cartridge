@@ -2,7 +2,10 @@
 
 var pkg = require('../../../package.json');
 
-var Capture = {
+var CAPTURE = {
+    toCapture: {
+        code: 'ToCapture'
+    },
     total: {
         code: 'Captured',
         description: 'Total Capture'
@@ -16,6 +19,8 @@ var Capture = {
         description: 'Unable to capture'
     }
 };
+var MAX_INSTALLMENTS_COUNT_FOR_PNX = 4;
+var MAX_DEFERRED_DAYS_FOR_PNX = 0;
 
 /**
  * Allow to check an order status
@@ -343,7 +348,7 @@ function cancelAlmaPayment(params) {
  * @return {boolean} is available
  */
 function isAvailableForManualCapture(isManualCaptureEnabled, installmentsCount, deferredDays) {
-    return isManualCaptureEnabled && installmentsCount <= 4 && deferredDays <= 0;
+    return isManualCaptureEnabled && installmentsCount <= MAX_INSTALLMENTS_COUNT_FOR_PNX && deferredDays <= MAX_DEFERRED_DAYS_FOR_PNX;
 }
 
 /**
@@ -498,7 +503,7 @@ module.exports = {
     capturePayment: capturePayment,
     isAvailableForManualCapture: isAvailableForManualCapture,
     cancelAlmaPayment: cancelAlmaPayment,
-    Capture: Capture,
+    CAPTURE: CAPTURE,
     isPaymentExpired: isPaymentExpired,
     isPaymentAuthorizationExpired: isPaymentAuthorizationExpired
 };

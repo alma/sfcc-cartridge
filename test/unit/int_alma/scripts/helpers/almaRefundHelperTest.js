@@ -16,13 +16,13 @@ var order = {
 var almaRefundHelpers = require('../../../../mocks/helpers/almaRefundHelpers');
 var expect = require('chai').expect;
 
-describe('almaRefundHelpers', function () {
-    it('check properties', function () {
+describe('AlmaRefundHelpers', function () {
+    it('Order refunded amount is equal to total gross price for a total refund', function () {
         almaRefundHelpers.refundPaymentForOrder(order);
         assert.equal(order.custom.almaRefundedAmount, order.getTotalGrossPrice());
     });
 
-    it('when order is null', function () {
+    it('Refund throw an error when order is null', function () {
         expect(function () {
             almaRefundHelpers.refundPaymentForOrder();
         })
@@ -30,13 +30,13 @@ describe('almaRefundHelpers', function () {
             .throw('Order not found');
     });
 
-    it('partial refund', function () {
+    it('Order refunded amount is equal to the partial refund', function () {
         order.custom.almaRefundedAmount = 0;
         almaRefundHelpers.refundPaymentForOrder(order, 10);
         assert.equal(order.custom.almaRefundedAmount, 10);
     });
 
-    it('partial refund with a negative amount', function () {
+    it('Partial refund with a negative amount throw an error', function () {
         expect(function () {
             almaRefundHelpers.refundPaymentForOrder(order, -10);
         })
@@ -44,7 +44,7 @@ describe('almaRefundHelpers', function () {
             .throw('Amount can\'t be negative.');
     });
 
-    it('partial refund with an amount > to the total price', function () {
+    it('Partial refund with an amount > to the total price throw an error', function () {
         expect(function () {
             almaRefundHelpers.refundPaymentForOrder(order, 5000);
         })
@@ -52,14 +52,14 @@ describe('almaRefundHelpers', function () {
             .throw('Amount can\'t be upper than order total gross price.');
     });
 
-    it('check almaRefundedAmount for 2 partial refund', function () {
+    it('Order refunded amount is equal to 2 partial refund', function () {
         order.custom.almaRefundedAmount = 0;
         almaRefundHelpers.refundPaymentForOrder(order, 10);
         almaRefundHelpers.refundPaymentForOrder(order, 40);
         assert.equal(order.custom.almaRefundedAmount, 50);
     });
 
-    it('2 partial refund more than total gross price', function () {
+    it('2 partial refund more than total gross price throw an error', function () {
         order.custom.almaRefundedAmount = 0;
         almaRefundHelpers.refundPaymentForOrder(order, 250);
         expect(function () {
@@ -69,12 +69,7 @@ describe('almaRefundHelpers', function () {
             .throw('Amount can\'t be upper than order total gross price less refunded amount.');
     });
 
-    it('check almaRefundedAmount for total refund', function () {
-        order.custom.almaRefundedAmount = 0;
-        almaRefundHelpers.refundPaymentForOrder(order);
-        assert.equal(order.custom.almaRefundedAmount, order.getTotalGrossPrice());
-    });
-    it('check almaWantedRefundAmount goes back to 0', function () {
+    it('Order refunded amount wanted goes back to 0 after refund', function () {
         almaRefundHelpers.refundPaymentForOrder(order);
         assert.equal(order.custom.almaWantedRefundAmount, 0);
     });
