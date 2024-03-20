@@ -35,6 +35,7 @@ var paymentAuthorizationNotExpired = {
 
 describe('almaPaymentHelper', function () {
     describe('Build payment data', function () {
+        // TODO : Add test for payment deferred and pnx without inpage
         it('payment data for pnx is well formed', function () {
             setIsAvailableForInpage(true);
             setCustomPreferenceValue(true);
@@ -43,9 +44,9 @@ describe('almaPaymentHelper', function () {
             assert.deepEqual(payment, resolvedPaymentData(3, 0, 'fr_FR', 'online_in_page'));
         });
         it('payment data for deferred', function () {
-            setIsAvailableForInpage(false);
+            setIsAvailableForInpage(true);
             var payment = almaPaymentHelper.buildPaymentData(1, 15, 'fr_FR', false);
-            assert.deepEqual(payment, resolvedPaymentData(1, 15, 'fr_FR', 'online'));
+            assert.deepEqual(payment, resolvedPaymentData(1, 15, 'fr_FR', 'online_in_page'));
         });
         it('payment data for credit has car property', function () {
             setIsAvailableForInpage(false);
