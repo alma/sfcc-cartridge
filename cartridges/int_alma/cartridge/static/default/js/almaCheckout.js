@@ -135,12 +135,14 @@ window.addEventListener('DOMContentLoaded',
             window.location = body.url;
         }
 
-        async function inPageInitialize(inPageContainer, installments_count, captureMethod) {
+        async function inPageInitialize(inPageContainer, installments_count, deferred_days, captureMethod) {
             return Alma.InPage.initialize(
                 {
                     merchantId: almaContext.merchantId,
                     amountInCents: purchase_amount,
                     installmentsCount: installments_count,
+                    deferredDays: deferred_days,
+                    deferredMonths: 0,
                     selector: "#" + inPageContainer,
                     locale: almaContext.locale.slice(0, 2),
                     environment: almaContext.almaMode,
@@ -186,6 +188,7 @@ window.addEventListener('DOMContentLoaded',
                     await inPageInitialize(
                         t.id + "-inpage",
                         installments_count,
+                        deferred_days,
                         captureMethod
                     )
                         .then(function (inPage) {
