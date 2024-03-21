@@ -371,7 +371,7 @@ function buildPaymentData(installmentsCount, deferredDays, locale, isManualCaptu
     var formatCustomerData = require('*/cartridge/scripts/helpers/almaHelpers').formatCustomerData;
 
     var origin = 'online';
-    if (almaCheckoutHelper.isAvailableForInpage(installmentsCount, deferredDays) && almaConfigHelper.isInpageActivated()) {
+    if (almaCheckoutHelper.isAvailableForInpage(installmentsCount) && almaConfigHelper.isInpageActivated()) {
         origin = 'online_in_page';
     }
 
