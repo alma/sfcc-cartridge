@@ -410,20 +410,20 @@ function buildPaymentData(installmentsCount, deferredDays, locale, isManualCaptu
         paymentData.payment.capture_method = 'manual';
     }
 
-    if (installmentsCount >= 5) {
-        var products = currentBasket.getAllProductLineItems();
-        var items = [];
 
-        products.toArray()
-            .forEach(function (productLineItem) {
-                var product = productLineItem.getProduct();
-                items.push(almaHelper.formatItem(product, productLineItem, locale));
-            });
+    var products = currentBasket.getAllProductLineItems();
+    var items = [];
 
-        paymentData.payment.cart = {
-            items: items
-        };
-    }
+    products.toArray()
+        .forEach(function (productLineItem) {
+            var product = productLineItem.getProduct();
+            items.push(almaHelper.formatItem(product, productLineItem, locale));
+        });
+
+    paymentData.payment.cart = {
+        items: items
+    };
+
 
     return paymentData;
 }

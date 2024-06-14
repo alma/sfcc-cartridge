@@ -99,6 +99,9 @@ function resolvedPaymentData(installmentsCount, defferedDays, locale, origin, ha
             },
             deferred: '',
             deferred_description: '',
+            cart: {
+                items: []
+            },
             custom_data: {
                 cms_name: 'SFCC',
                 cms_version: '4.0.0',
