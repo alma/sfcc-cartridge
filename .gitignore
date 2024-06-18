@@ -26,3 +26,6 @@ metadata/
 /.editorconfig
 
 package-lock.json
+
+# coverage report
+ coverage/
