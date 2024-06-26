@@ -34,4 +34,4 @@ jobs:
       run: npx sgmf-scripts --lint js && npx sgmf-scripts --lint css
 
     - name: Run tests
-      run: npx sgmf-scripts --test test/unit/**/*.js
+      run: npx sgmf-scripts --cover test/unit/**/*.js
