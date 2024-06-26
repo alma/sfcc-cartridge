@@ -9,5 +9,5 @@ WORKDIR /app
 RUN npm i npm@6.14.11
 
 # Install requirements
-COPY . .
+COPY ./package.json ./package-lock.json ./
 RUN npm ci
