@@ -26,4 +26,4 @@ metadata/
 /.editorconfig
 
 # coverage report
-coverage/
+/coverage
