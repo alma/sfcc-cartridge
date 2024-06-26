@@ -61,15 +61,14 @@ tasks:
     deps:
       - docker:build
     cmds:
-      - docker compose run -T --rm sfcc-cartridge npx sgmf-scripts --lint js
+      - docker compose run -T --rm sfcc-cartridge bash -c "npx sgmf-scripts --lint js; npx sgmf-scripts --lint css"
 
   lint:fix:
     desc: Run linter and apply fix
     deps:
       - docker:build
     cmds:
-      -  docker compose run -T --rm sfcc-cartridge npx sgmf-scripts --lint js --fix
-
+      -  docker compose run -T --rm sfcc-cartridge bash -c "npx sgmf-scripts --lint js --fix; npx sgmf-scripts --lint css --fix"
 
   crowdin:
     internal: true

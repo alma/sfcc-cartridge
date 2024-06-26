@@ -18,15 +18,20 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
+
     - name: Checkout current repo in CI
       uses: actions/checkout@v4
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
+
     - name: Install dependencies
       run: npm i
+
     - name: Enforce that the code is Linted
-      run: npm run lint
+      run: npx sgmf-scripts --lint js && npx sgmf-scripts --lint css
+
     - name: Run tests
-      run: npm run test
+      run: npx sgmf-scripts --test test/unit/**/*.js
