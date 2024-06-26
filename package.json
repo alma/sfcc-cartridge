@@ -79,12 +79,5 @@
     "presets": [
       "env"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint",
-      "pre-push": "npm run lint",
-      "commit-msg": "npx --no -- commitlint --edit ''"
-    }
   }
 }
