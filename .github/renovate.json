@@ -5,6 +5,7 @@
   "recreateWhen": "always",
   "enabledManagers": ["github-actions", "nvm", "npm"],
   "reviewers": ["team:squad-e-commerce-integrations"],
+  "baseBranches": ["develop"],
   "extends": [
     "github>alma/renovate:github-actions",
     "github>alma/renovate:vulnerabilities",
