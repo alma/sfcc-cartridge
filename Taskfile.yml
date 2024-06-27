@@ -2,6 +2,9 @@ version: 3
 
 env:
   REPOSITORY: sfcc-cartridge
+  # This project requires node 12.x.
+  # You can set RUN_IN_DOCKER env var to true to run the tasks if you don't have node 12.x installed.
+  RUN_IN_DOCKER: '{{ .RUN_IN_DOCKER | default "false" }}'
 
 tasks:
 
@@ -35,40 +38,107 @@ tasks:
     cmds:
       - docker compose build sfcc-cartridge
 
-  dev:
-    desc: Apply changes on the dev env of SFCC
-    deps:
-      - docker:build
+  upload:
+    desc: Upload changes on a test env of SFCC
     cmds:
-      -  docker compose run --rm sfcc-cartridge npx sgmf-scripts --uploadCartridge int_alma
+      - |
+        {{if eq .RUN_IN_DOCKER "true"}}
+          docker compose run --build --rm sfcc-cartridge npx sgmf-scripts --uploadCartridge int_alma
+        {{else}}
+          npx sgmf-scripts --uploadCartridge int_alma
+        {{end}}
 
-  metadata:build:
+  build:
     desc: Build metadata .zip file (based on .env file)
-    deps:
-      - docker:build
     cmds:
-      -  docker compose run --rm sfcc-cartridge node site_preference_builder/compress.js && node site_preference_builder/main.js
+      - |
+        {{if eq .RUN_IN_DOCKER "true"}}
+          docker compose run --build --rm sfcc-cartridge node site_preference_builder/compress.js && node site_preference_builder/main.js
+        {{else}}
+          node site_preference_builder/compress.js && node site_preference_builder/main.js
+        {{end}}
 
   test:
     desc: Execute Unit Tests with coverage
-    deps:
-      - docker:build
     cmds:
-      - docker compose run -T --rm sfcc-cartridge npx sgmf-scripts --cover test/unit/**/*.js
+      - |
+        {{if eq .RUN_IN_DOCKER "true"}}
+          docker compose run --build -T --rm sfcc-cartridge npx sgmf-scripts --cover test/unit/**/*.js
+        {{else}}
+          npx sgmf-scripts --cover test/unit/**/*.js
+        {{end}}
 
   lint:
     desc: Run linter
     deps:
-      - docker:build
+      - js:lint
+      - css:lint
+
+  js:lint:
+    desc: Run JS linter
     cmds:
-      - docker compose run -T --rm sfcc-cartridge bash -c "npx sgmf-scripts --lint js; npx sgmf-scripts --lint css"
+      - |
+        {{if eq .RUN_IN_DOCKER "true"}}
+          docker compose run --build -T --rm sfcc-cartridge npx sgmf-scripts --lint js
+        {{else}}
+          npx sgmf-scripts --lint js
+        {{end}}
+
+  css:lint:
+    desc: Run CSS linter
+    cmds:
+      - |
+        {{if eq .RUN_IN_DOCKER "true"}}
+          docker compose run --build -T --rm sfcc-cartridge npx sgmf-scripts --lint css
+        {{else}}
+          npx sgmf-scripts --lint css
+        {{end}}
+
+  isml:lint:
+    desc: Run ISML linter
+    cmds:
+      - |
+        {{if eq .RUN_IN_DOCKER "true"}}
+          docker compose run --build -T --rm sfcc-cartridge npx isml-linter --build
+        {{else}}
+          npx isml-linter --build
+        {{end}}
 
   lint:fix:
     desc: Run linter and apply fix
     deps:
-      - docker:build
+      - js:lint:fix
+      - css:lint:fix
+
+  js:lint:fix:
+    desc: Run JS linter and apply fix
     cmds:
-      -  docker compose run -T --rm sfcc-cartridge bash -c "npx sgmf-scripts --lint js --fix; npx sgmf-scripts --lint css --fix"
+      - |
+        {{if eq .RUN_IN_DOCKER "true"}}
+          docker compose run --build -T --rm sfcc-cartridge npx sgmf-scripts --lint js --fix
+        {{else}}
+          npx sgmf-scripts --lint js --fix
+        {{end}}
+
+  css:lint:fix:
+    desc: Run CSS linter and apply fix
+    cmds:
+      - |
+        {{if eq .RUN_IN_DOCKER "true"}}
+          docker compose run --build -T --rm sfcc-cartridge npx sgmf-scripts --lint css --fix
+        {{else}}
+          npx sgmf-scripts --lint css --fix
+        {{end}}
+
+  isml:lint:fix:
+    desc: Run ISML linter and apply fix
+    cmds:
+      - |
+        {{if eq .RUN_IN_DOCKER "true"}}
+          docker compose run --build -T --rm sfcc-cartridge npx isml-linter --autofix
+        {{else}}
+          npx isml-linter --autofix
+        {{end}}
 
   crowdin:
     internal: true

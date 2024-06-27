@@ -6,21 +6,6 @@
   "engines": {
     "node": ">=12.22"
   },
-  "scripts": {
-    "test": "sgmf-scripts --test test/unit/**/*.js",
-    "build:archive": "node site_preference_builder/compress.js",
-    "build:metadata": "node site_preference_builder/main.js",
-    "build": "npm run build:metadata && npm run build:archive",
-    "lint": "npm run lint:css && npm run lint:js",
-    "lint:css": "sgmf-scripts --lint css",
-    "lint:js": "sgmf-scripts --lint js",
-    "lint:js:fix": "./node_modules/eslint/bin/eslint.js . --fix",
-    "init:isml": "./node_modules/.bin/isml-linter --init",
-    "lint:isml": "./node_modules/.bin/isml-linter",
-    "build:isml": "./node_modules/.bin/isml-linter --build",
-    "fix:isml": "./node_modules/.bin/isml-linter --autofix",
-    "uploadCartridge": "sgmf-scripts --uploadCartridge int_alma"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alma/sfcc-plugin.git"
