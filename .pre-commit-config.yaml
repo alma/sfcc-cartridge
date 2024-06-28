@@ -16,49 +16,30 @@ repos:
       - id: detect-private-key
       - id: check-merge-conflict
 
-  - repo: https://github.com/pre-commit/mirrors-jshint
-    rev: v2.13.6
-    hooks:
-      - id: jshint
-        files: "(^.*\\.js$)"
-
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v8.29.0
-    hooks:
-      - id: eslint
-        files: "(^cartridges/int_alma/cartridge/.*\\.js$)"# *.js, *.jsx, *.ts and *.tsx
-        types: [file]
-        args:
-          - --fix
-
-  - repo: https://github.com/thibaudcolas/pre-commit-stylelint
-    rev: v14.16.0
-    hooks:
-      - id: stylelint
-        files: "(^cartridges/int_alma/cartridge/static/default/css/.*\\.css$)"
-        args:
-          - --config
-          - .stylelintrc.json
-        additional_dependencies:
-          - stylelint@15.10.2
-          - prettier@2.8.8
-          - stylelint-config-standard@32.0.0
-          - stylelint-prettier@3.0.0
-
   - repo: local
     hooks:
       - id: coding-standard-fixer
-        name: Check the PHP and SFCC coding standards and autofix
+        name: Check the PHP and SFCC coding standards for JS and autofix
         language: system
-        pass_filenames: false
-        entry:  task lint:fix
+        entry:  npx sgmf-scripts --lint js --fix
+        stages: [commit]
+
+      - id: coding-standard-fixer
+        name: Check the PHP and SFCC coding standards for CSS and autofix
+        language: system
+        entry:  npx sgmf-scripts --lint css --fix
         stages: [commit]
 
       - id: coding-standard
-        name: Check the PHP and SFCC coding standards
+        name: Check the PHP and SFCC coding standards for JS
         language: system
-        pass_filenames: false
-        entry:  task lint
+        entry:  npx sgmf-scripts --lint js
+        stages: [commit]
+
+      - id: coding-standard
+        name: Check the PHP and SFCC coding standards for CSS
+        language: system
+        entry:  npx sgmf-scripts --lint css
         stages: [commit]
 
 #  - repo: https://github.com/returntocorp/semgrep
