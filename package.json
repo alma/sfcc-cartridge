@@ -49,7 +49,7 @@
     "mocha": "^5.2.0",
     "mocha-junit-reporter": "^1.23.1",
     "node-fetch": "^2.2.0",
-    "node-sass": "^4.12.0",
+    "node-sass": "^9.0.0",
     "postcss-loader": "^2.1.6",
     "properties-parser": "^0.3.1",
     "proxyquire": "1.7.4",
