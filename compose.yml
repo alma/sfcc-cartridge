@@ -1,0 +1,9 @@
+services:
+  sfcc-cartridge:
+    build:
+      context: .
+    volumes:
+      - .:/app/
+      # NPM modules were installed during the build phase of Docker.
+      # => Do NOT mount the directory containing them
+      - /app/node_modules
