@@ -30,18 +30,6 @@ repos:
         entry:  npx sgmf-scripts --lint css --fix
         stages: [commit]
 
-      - id: coding-standard
-        name: Check the PHP and SFCC coding standards for JS
-        language: system
-        entry:  npx sgmf-scripts --lint js
-        stages: [commit]
-
-      - id: coding-standard
-        name: Check the PHP and SFCC coding standards for CSS
-        language: system
-        entry:  npx sgmf-scripts --lint css
-        stages: [commit]
-
 #  - repo: https://github.com/returntocorp/semgrep
 #    rev: v1.27.0
 #    hooks:
