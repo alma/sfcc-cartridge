@@ -17,7 +17,7 @@ jobs:
 
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: devx/dex-892-update-cicd-on-sfcc-cartridge
 
       - name: Release drafter
         uses: release-drafter/release-drafter@v6

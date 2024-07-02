@@ -20,8 +20,8 @@ jobs:
       # See https://github.com/peter-evans/create-pull-request/blob/main/docs/examples.md#keep-a-branch-up-to-date-with-another
       - name: Fetch develop branch
         run: |
-          git fetch origin develop:develop
-          git reset --hard develop
+          git fetch origin devx/dex-892-update-cicd-on-sfcc-cartridge:devx/dex-892-update-cicd-on-sfcc-cartridge
+          git reset --hard devx/dex-892-update-cicd-on-sfcc-cartridge
 
       - name: Create release draft
         uses: release-drafter/release-drafter@v6
