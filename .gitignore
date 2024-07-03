@@ -25,4 +25,5 @@ metadata/
 # avoid publishing translation config
 /.editorconfig
 
-package-lock.json
+# coverage report
+/coverage

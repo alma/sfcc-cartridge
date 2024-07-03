@@ -18,15 +18,26 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
+
     - name: Checkout current repo in CI
       uses: actions/checkout@v4
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
+
     - name: Install dependencies
       run: npm i
+
+    - name: Install taskfile.dev
+      uses: arduino/setup-task@v2
+      with:
+        version: 3.x
+        repo-token: ${{ github.token }}
+
     - name: Enforce that the code is Linted
-      run: npm run lint
+      run: task lint
+
     - name: Run tests
-      run: npm run test
+      run: task test
