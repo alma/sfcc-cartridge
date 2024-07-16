@@ -25,5 +25,6 @@ metadata/
 # avoid publishing translation config
 /.editorconfig
 
+
 # coverage report
 /coverage
