@@ -110,7 +110,6 @@
   * `build:sitepref` (see below)
   * `lint` allow to lint css, js and isml for the cartridge
   * `uploadCartridge` upload cartridge to a sandbox
-  
 * refactored widget and fragment usage to use Alma plans
 * refactored Alma controller
 * refactored job for onShipment orders
