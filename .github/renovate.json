@@ -23,6 +23,11 @@
       "groupName": "major NPM dependencies",
       "reviewers": ["team:squad-e-commerce-integrations"],
       "draftPR": true
+    },
+    {
+      "description": "Ignore NodeJS",
+      "packageNames": ["node"],
+      "enabled": false
     }
   ]
 }
