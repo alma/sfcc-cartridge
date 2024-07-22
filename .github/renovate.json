@@ -3,7 +3,7 @@
   "prHourlyLimit": 20,
   "prConcurrentLimit": 20,
   "recreateWhen": "always",
-  "enabledManagers": ["github-actions", "nvm", "npm"],
+  "enabledManagers": ["github-actions", "npm"],
   "reviewers": ["team:squad-e-commerce-integrations"],
   "baseBranches": ["develop"],
   "extends": [
@@ -23,11 +23,6 @@
       "groupName": "major NPM dependencies",
       "reviewers": ["team:squad-e-commerce-integrations"],
       "draftPR": true
-    },
-    {
-      "description": "Ignore NodeJS",
-      "packageNames": ["node"],
-      "enabled": false
     }
   ]
 }
