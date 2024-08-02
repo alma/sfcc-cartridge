@@ -5,6 +5,7 @@ var proxyquire = require('proxyquire')
     .noCallThru()
     .noPreserveCache();
 var almaConfigHelpers = require('./almaConfigHelpers').almaConfigHelpers;
+var almaHelpers = require('./almaHelpers');
 var setCustomPreferenceValue = require('./almaConfigHelpers').setCustomPreferenceValue;
 
 var resource = {
@@ -73,6 +74,7 @@ function proxyModel() {
         },
         'dw/system/Site': site,
         '*/cartridge/scripts/helpers/almaConfigHelper': almaConfigHelpers,
+        '*/cartridge/scripts/helpers/almaHelpers': almaHelpers,
         'dw/order/PaymentMgr': paymentMgr,
         '*/cartridge/scripts/helpers/almaPaymentHelper': {
             isAvailableForManualCapture: function () {

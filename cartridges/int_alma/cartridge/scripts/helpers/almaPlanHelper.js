@@ -171,6 +171,7 @@ function buildEligiblePlans(purchaseAmount, feePlans, locale, currentBasket, pla
         plans[planEligible.payment_method][planEligible.selector].payment_plans = planEligible.payment_plan;
         plans[planEligible.payment_method][planEligible.selector].properties = planEligible.properties;
         plans[planEligible.payment_method][planEligible.selector].in_page = planEligible.in_page;
+        plans[planEligible.payment_method][planEligible.selector].alma_mode = planEligible.alma_mode;
     });
 
     return plans;
