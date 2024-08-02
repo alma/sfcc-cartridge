@@ -11,7 +11,12 @@ function formatCustomerData() {
     };
 }
 
+function getMode() {
+    return 'TEST';
+}
+
 module.exports = {
     getSfccVersion: getSfccVersion,
-    formatCustomerData: formatCustomerData
+    formatCustomerData: formatCustomerData,
+    getMode: getMode
 };
