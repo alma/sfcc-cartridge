@@ -6,7 +6,7 @@ var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShip
 var PaymentMgr = require('dw/order/PaymentMgr');
 var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
 var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
-const {getMode} = require("./almaHelpers");
+var {getMode} = require("./almaHelpers");
 
 var ALMA_PNX_ID = 'ALMA_PNX';
 var ALMA_CREDIT_ID = 'ALMA_CREDIT';
