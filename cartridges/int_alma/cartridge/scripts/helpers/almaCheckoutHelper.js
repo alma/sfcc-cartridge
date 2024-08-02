@@ -6,7 +6,7 @@ var isOnShipmentPaymentEnabled = require('*/cartridge/scripts/helpers/almaOnShip
 var PaymentMgr = require('dw/order/PaymentMgr');
 var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
 var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
-var {getMode} = require("./almaHelpers");
+var almaHelpers = require("*/cartridge/scripts/helpers/almaHelpers");
 
 var ALMA_PNX_ID = 'ALMA_PNX';
 var ALMA_CREDIT_ID = 'ALMA_CREDIT';
@@ -232,7 +232,7 @@ function formatPlanForCheckout(plan, currencyCode) {
             payment_plan: plan.payment_plan,
             properties: getPropertiesForPlan(plan, currencyCode),
             payment_method: getPlanPaymentMethodID(plan),
-            alma_mode: getMode()
+            alma_mode: almaHelpers.getMode()
         };
     }
     if (plan.installments_count >= 5 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_CREDIT_ID), plan)) {
@@ -246,7 +246,7 @@ function formatPlanForCheckout(plan, currencyCode) {
             payment_plan: plan.payment_plan,
             properties: getPropertiesForPlan(plan, currencyCode),
             payment_method: getPlanPaymentMethodID(plan),
-            alma_mode: getMode()
+            alma_mode: almaHelpers.getMode()
         };
     }
     if (plan.deferred_days > 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_DEFERRED_ID), plan)) {
@@ -260,7 +260,7 @@ function formatPlanForCheckout(plan, currencyCode) {
             payment_plan: plan.payment_plan,
             properties: getPropertiesForPlan(plan, currencyCode),
             payment_method: getPlanPaymentMethodID(plan),
-            alma_mode: getMode()
+            alma_mode: almaHelpers.getMode()
         };
     }
     if (plan.installments_count === 1 && plan.deferred_days === 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PAY_NOW_ID), plan)) {
@@ -274,7 +274,7 @@ function formatPlanForCheckout(plan, currencyCode) {
             payment_plan: plan.payment_plan,
             properties: getPropertiesForPlan(plan, currencyCode),
             payment_method: getPlanPaymentMethodID(plan),
-            alma_mode: getMode()
+            alma_mode: almaHelpers.getMode()
         };
     }
     return formatPlan;
