@@ -262,7 +262,7 @@ function formatPlanForCheckout(plan, currencyCode) {
             payment_plan: plan.payment_plan,
             properties: getPropertiesForPlan(plan, currencyCode),
             payment_method: getPlanPaymentMethodID(plan),
-            alma_mode: getFormatAlmaModeData()
+            alma_mode: getFormattedAlmaModeData()
         };
     }
     if (plan.deferred_days > 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_DEFERRED_ID), plan)) {
@@ -276,7 +276,7 @@ function formatPlanForCheckout(plan, currencyCode) {
             payment_plan: plan.payment_plan,
             properties: getPropertiesForPlan(plan, currencyCode),
             payment_method: getPlanPaymentMethodID(plan),
-            alma_mode: getFormatAlmaModeData()
+            alma_mode: getFormattedAlmaModeData()
         };
     }
     if (plan.installments_count === 1 && plan.deferred_days === 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PAY_NOW_ID), plan)) {
@@ -290,7 +290,7 @@ function formatPlanForCheckout(plan, currencyCode) {
             payment_plan: plan.payment_plan,
             properties: getPropertiesForPlan(plan, currencyCode),
             payment_method: getPlanPaymentMethodID(plan),
-            alma_mode: getFormatAlmaModeData()
+            alma_mode: getFormattedAlmaModeData()
         };
     }
     return formatPlan;
