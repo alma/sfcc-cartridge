@@ -214,6 +214,22 @@ function getPlanPaymentMethodID(plan) {
 }
 
 /**
+ * Format Alma mode data to fit in Checkout view data
+ * @returns {Object} Alma mode data
+ * - isTest: boolean true if Alma mode is TEST
+ * - labels: object with title and description for translations
+ */
+function getFormattedAlmaModeData() {
+    return {
+        isTest: almaHelpers.getMode() === 'TEST',
+        labels: {
+            title: Resource.msg('alma.test.mode.warn.title', 'alma', null),
+            description: Resource.msg('alma.test.mode.warn.description', 'alma', null)
+        }
+    };
+}
+
+/**
  * Format plan data to fit in Checkout view data
  * @param  {Object} plan any alma plan
  * @param  {string} currencyCode e.g. 'EUR'
@@ -232,7 +248,7 @@ function formatPlanForCheckout(plan, currencyCode) {
             payment_plan: plan.payment_plan,
             properties: getPropertiesForPlan(plan, currencyCode),
             payment_method: getPlanPaymentMethodID(plan),
-            alma_mode: almaHelpers.getMode()
+            alma_mode: getFormattedAlmaModeData()
         };
     }
     if (plan.installments_count >= 5 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_CREDIT_ID), plan)) {
@@ -246,7 +262,7 @@ function formatPlanForCheckout(plan, currencyCode) {
             payment_plan: plan.payment_plan,
             properties: getPropertiesForPlan(plan, currencyCode),
             payment_method: getPlanPaymentMethodID(plan),
-            alma_mode: almaHelpers.getMode()
+            alma_mode: getFormatAlmaModeData()
         };
     }
     if (plan.deferred_days > 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_DEFERRED_ID), plan)) {
@@ -260,7 +276,7 @@ function formatPlanForCheckout(plan, currencyCode) {
             payment_plan: plan.payment_plan,
             properties: getPropertiesForPlan(plan, currencyCode),
             payment_method: getPlanPaymentMethodID(plan),
-            alma_mode: almaHelpers.getMode()
+            alma_mode: getFormatAlmaModeData()
         };
     }
     if (plan.installments_count === 1 && plan.deferred_days === 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PAY_NOW_ID), plan)) {
@@ -274,7 +290,7 @@ function formatPlanForCheckout(plan, currencyCode) {
             payment_plan: plan.payment_plan,
             properties: getPropertiesForPlan(plan, currencyCode),
             payment_method: getPlanPaymentMethodID(plan),
-            alma_mode: almaHelpers.getMode()
+            alma_mode: getFormatAlmaModeData()
         };
     }
     return formatPlan;

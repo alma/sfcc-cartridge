@@ -46,13 +46,13 @@
                         <p class="pt-30" id="${plan.key + '-fees'}">
                             <isprint value="${plan.properties.fees}"/>
                         </p>
-                        <isif condition="${plan.alma_mode === 'TEST'}">
+                        <isif condition="${plan.alma_mode.isTest}">
                             <p class="alma-test-mode">
                                 <img src="${URLUtils.staticURL('/images/warning.svg')}" alt="">
                                 <span>
-                                    <b>Alma is currently being tested</b>
+                                    <b>"${plan.alma_mode.labels.title}"</b>
                                     <br>
-                                    The transaction will be fake and the order will not be completed if you chose the payement method
+                                    "${plan.alma_mode.labels.description}"
                                 </span>
                             </p>
                         </isif>
