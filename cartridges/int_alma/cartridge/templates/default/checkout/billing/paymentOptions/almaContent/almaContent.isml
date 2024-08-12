@@ -50,9 +50,9 @@
                             <p class="alma-test-mode">
                                 <img src="${URLUtils.staticURL('/images/warning.svg')}" alt="">
                                 <span>
-                                    <b>"${plan.alma_mode.labels.title}"</b>
+                                    <b>${plan.alma_mode.labels.title}</b>
                                     <br>
-                                    "${plan.alma_mode.labels.description}"
+                                    ${plan.alma_mode.labels.description}
                                 </span>
                             </p>
                         </isif>
