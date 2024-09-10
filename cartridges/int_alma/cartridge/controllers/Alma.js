@@ -198,10 +198,29 @@ server.get(
 server.get('IPN', function (req, res, next) {
     var paymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
     var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
+    var almaHelpers = require('*/cartridge/scripts/helpers/almaHelpers');
+    var Signature = require('dw/crypto/Signature');
     var paymentObj = null;
+    var paymentId = req.querystring.pid;
+    var signature = new Signature();
 
     try {
-        paymentObj = buildPaymentObj(req.querystring.pid);
+        signature.verifySignature(
+            req.httpHeaders.get('X-Alma-Signature'),
+            paymentId,
+            almaHelpers.getApiKey(),
+            'SHA256withRSA'
+        );
+    } catch (e) {
+        res.setStatusCode(500);
+        res.render('error', {
+            message: e.message
+        });
+        return next();
+    }
+
+    try {
+        paymentObj = buildPaymentObj(paymentId);
     } catch (e) {
         res.setStatusCode(500);
         res.render('error', {
@@ -209,12 +228,12 @@ server.get('IPN', function (req, res, next) {
         });
         return next();
     }
-    var order = getOrderByAlmaPaymentId(req.querystring.pid);
+    var order = getOrderByAlmaPaymentId(paymentId);
 
     if (!order) {
         var basketUuid = paymentObj.custom_data.basket_id;
         order = paymentHelper.createOrderFromBasketUUID(basketUuid);
-        orderHelper.addPidToOrder(order, req.querystring.pid);
+        orderHelper.addPidToOrder(order, paymentId);
     }
 
     if (!order) {
