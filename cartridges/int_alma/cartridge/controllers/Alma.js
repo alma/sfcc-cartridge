@@ -198,19 +198,14 @@ server.get(
 server.get('IPN', function (req, res, next) {
     var paymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
     var orderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
+    var almaSecurityHelper = require('*/cartridge/scripts/helpers/almaSecurityHelper');
     var almaHelpers = require('*/cartridge/scripts/helpers/almaHelpers');
-    var Signature = require('dw/crypto/Signature');
     var paymentObj = null;
     var paymentId = req.querystring.pid;
-    var signature = new Signature();
+    var signature = req.httpHeaders.get('X-Alma-Signature');
 
     try {
-        signature.verifySignature(
-            req.httpHeaders.get('X-Alma-Signature'),
-            paymentId,
-            almaHelpers.getApiKey(),
-            'SHA256withRSA'
-        );
+        almaSecurityHelper.checkIpnSignature(signature, paymentId, almaHelpers.getApiKey());
     } catch (e) {
         res.setStatusCode(500);
         res.render('error', {
