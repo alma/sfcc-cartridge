@@ -22,7 +22,7 @@ describe('Alma security helper', function () {
         }, 'Signature is not valid');
     });
 
-    it('checkIpnSignature not throw error with bad signature', function () {
+    it('checkIpnSignature not throw error with good signature', function () {
         assert.doesNotThrow(function () {
             almaSecurityHelper.checkIpnSignature(GOOD_SIGNATURE, PAYMENT_ID, API_KEY);
         });
