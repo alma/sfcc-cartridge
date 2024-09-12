@@ -16,13 +16,22 @@ function getSfccVersion() {
     return sfccMajor + '.' + sfccMinor;
 }
 
+
+/**
+ * Return current Api key
+ * @returns {string} current api key
+ */
+function getApiKey() {
+    return Site.getCurrent().getCustomPreferenceValue('ALMA_APIKey');
+}
+
 /**
  * Adds common headers to request
  * @param {dw.svc.Service} service - current service instance
  * @returns {dw.svc.Service} service
  */
 function addHeaders(service) {
-    var apiKey = Site.getCurrent().getCustomPreferenceValue('ALMA_APIKey');
+    var apiKey = getApiKey();
     if (!apiKey) {
         logger.error('Alma api key is not configured');
         return service;
@@ -223,5 +232,6 @@ module.exports = {
     isAlmaOnShipment: isAlmaOnShipment,
     getSfccVersion: getSfccVersion,
     haveExcludedCategory: haveExcludedCategory,
-    formatItem: formatItem
+    formatItem: formatItem,
+    getApiKey: getApiKey
 };
