@@ -2,11 +2,6 @@
 
 ## v4.6.0 - 2024-09-16
 
-### Changes
-
-- Backport main to develop (#131)
-- ALF-129 : ignore nodejs updates (#123)
-
 ### 🚀 New Features
 
 - Add hmac verification on IPN (#129)
