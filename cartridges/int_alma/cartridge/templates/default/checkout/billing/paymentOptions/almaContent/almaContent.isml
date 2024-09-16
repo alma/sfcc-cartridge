@@ -46,6 +46,16 @@
                         <p class="pt-30" id="${plan.key + '-fees'}">
                             <isprint value="${plan.properties.fees}"/>
                         </p>
+                        <isif condition="${plan.alma_mode.isTest}">
+                            <p class="alma-test-mode">
+                                <img src="${URLUtils.staticURL('/images/warning.svg')}" alt="">
+                                <span>
+                                    <b>${plan.alma_mode.labels.title}</b>
+                                    <br>
+                                    ${plan.alma_mode.labels.description}
+                                </span>
+                            </p>
+                        </isif>
                     </isif>
                 </div>
                 <div class="col-1 icon">

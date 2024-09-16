@@ -101,3 +101,14 @@
         transform: rotate(360deg);
     }
 }
+
+.alma-test-mode {
+    background-color: #FFF5CC;
+    padding: 24px;
+    border-radius: 20px;
+    font-size: small;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    align-items: flex-start;
+}

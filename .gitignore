@@ -20,6 +20,7 @@ metadata/
 *.p12
 **/dw.js
 **/dw.json
+**/dw.json.*
 .env
 
 # avoid publishing translation config
