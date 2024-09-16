@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v4.6.0 - 2024-09-16
+
+### Changes
+
+- Backport main to develop (#131)
+- ALF-129 : ignore nodejs updates (#123)
+
+### 🚀 New Features
+
+- Add hmac verification on IPN (#129)
+- Add test warning on Frontstore (#124)
+
+#### Contributors
+
+@CapMousse, @FranceBe, @Francois-Gomis, @alma-renovate-bot, @alma-renovate-bot[bot], @carine-bonnafous, @gdraynz, @github-actions, @hyahiaoui and @joyet-simon
+
 ## v4.5.2 - 2024-07-16
 
 ### Changes
@@ -110,6 +126,7 @@
   * `build:sitepref` (see below)
   * `lint` allow to lint css, js and isml for the cartridge
   * `uploadCartridge` upload cartridge to a sandbox
+  
 * refactored widget and fragment usage to use Alma plans
 * refactored Alma controller
 * refactored job for onShipment orders
