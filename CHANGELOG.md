@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v4.6.0 - 2024-09-16
+
+### Changes
+
+### 🚀 New Features
+
+- Add test warning on Frontstore (#124)
+
+#### Contributors
+
+@FranceBe, @Francois-Gomis, @alma-renovate-bot, @alma-renovate-bot[bot], @github-actions, @hyahiaoui and @joyet-simon
+
 ## v4.5.2 - 2024-07-16
 
 ### Changes
@@ -110,6 +122,7 @@
   * `build:sitepref` (see below)
   * `lint` allow to lint css, js and isml for the cartridge
   * `uploadCartridge` upload cartridge to a sandbox
+  
 * refactored widget and fragment usage to use Alma plans
 * refactored Alma controller
 * refactored job for onShipment orders

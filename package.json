@@ -1,6 +1,6 @@
 {
   "name": "alma-sfcc-plugin",
-  "version": "4.5.2",
+  "version": "4.6.0",
   "description": "Alma SFCC integration plugin",
   "main": "index.js",
   "engines": {
