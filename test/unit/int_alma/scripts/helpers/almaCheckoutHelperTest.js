@@ -88,7 +88,7 @@ describe('AlmaCheckoutHelpers', function () {
                 installments_count: 10
             });
             checkoutData = almaCheckoutHelpers.formatPlanForCheckout(planP10x, currencyCode);
-            assert.equal(checkoutData.in_page, false);
+            assert.equal(checkoutData.in_page, true);
         });
 
         it('Check field selector depending of the plan', function () {
