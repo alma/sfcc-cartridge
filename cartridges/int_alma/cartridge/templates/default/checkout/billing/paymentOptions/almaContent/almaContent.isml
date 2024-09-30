@@ -31,26 +31,6 @@
                         <isprint value="${plan.properties.payment_installments}" encoding="off"/>
                     </p>
 
-                    <!-- Affichage conditionnel des coûts en fonction du nombre d'échéances -->
-                    <isif condition="${plan.installments_count > 4}">
-                        <p class="no-margin" id="${plan.key}-basket_cost">
-                            <isprint value="${plan.properties.credit.basket_cost}"/>
-                        </p>
-                        <p class="no-margin" id="${plan.key}-rate">
-                            <isprint value="${plan.properties.credit.rate}"/>
-                        </p>
-                        <p class="no-margin" id="${plan.key}-amount">
-                            <isprint value="${plan.properties.credit.amount}"/>
-                        </p>
-                        <p id="${plan.key}-total_cost">
-                            <isprint value="${plan.properties.credit.total_cost}"/>
-                        </p>
-                        <iselse/>
-                        <p class="pt-30" id="${plan.key}-fees">
-                            <isprint value="${plan.properties.fees}"/>
-                        </p>
-                    </isif>
-
                     <!-- Mode test Alma (affiché si activé) -->
                     <isif condition="${plan.alma_mode.isTest}">
                         <p class="alma-test-mode">
