@@ -6,12 +6,12 @@
                  data-deferred-days="${plan.deferred_days}"
                  data-in-page="${plan.in_page}"
                  data-alma-payment-method="${paymentOption.ID}"
-                 data-captureMethod="${plan.captureMethod}"
-            >
+                 data-captureMethod="${plan.captureMethod}">
+
                 <div class="col-2 img-content">
                     <div class="img">
                         <isif condition="${paymentOption.ID !== 'ALMA_PAY_NOW'}">
-                            <div class="img-text" id="${plan.key + '-img'}">
+                            <div class="img-text" id="${plan.key}-img">
                                 <isprint value="${plan.properties.img}" encoding="off"/>
                             </div>
                         </isif>
@@ -19,60 +19,61 @@
                              style="height: 20px;"/>
                     </div>
                 </div>
+
                 <div class="col-9">
-                    <h4 id="${plan.key + '-title'}">
+                    <h4 id="${plan.key}-title">
                         <isprint value="${plan.properties.title}" encoding="off"/>
                     </h4>
-                    <p id="${plan.key + '-description'}">
+                    <p id="${plan.key}-description">
                         <isprint value="${plan.properties.description}" encoding="off"/>
                     </p>
-                    <p class="no-margin" id="${plan.key + '-payment_installments'}">
+                    <p class="no-margin" id="${plan.key}-payment_installments">
                         <isprint value="${plan.properties.payment_installments}" encoding="off"/>
                     </p>
+
+                    <!-- Affichage conditionnel des coûts en fonction du nombre d'échéances -->
                     <isif condition="${plan.installments_count > 4}">
-                        <p class="no-margin" id="${plan.key + '-basket_cost'}">
+                        <p class="no-margin" id="${plan.key}-basket_cost">
                             <isprint value="${plan.properties.credit.basket_cost}"/>
                         </p>
-                        <p class="no-margin" id="${plan.key + '-rate'}">
+                        <p class="no-margin" id="${plan.key}-rate">
                             <isprint value="${plan.properties.credit.rate}"/>
                         </p>
-                        <p class="no-margin" id="${plan.key + '-amount'}">
+                        <p class="no-margin" id="${plan.key}-amount">
                             <isprint value="${plan.properties.credit.amount}"/>
                         </p>
-                        <p id="${plan.key + '-total_cost'}">
+                        <p id="${plan.key}-total_cost">
                             <isprint value="${plan.properties.credit.total_cost}"/>
                         </p>
                         <iselse/>
-                        <p class="pt-30" id="${plan.key + '-fees'}">
+                        <p class="pt-30" id="${plan.key}-fees">
                             <isprint value="${plan.properties.fees}"/>
                         </p>
-                        <isif condition="${plan.alma_mode.isTest}">
-                            <p class="alma-test-mode">
-                                <img src="${URLUtils.staticURL('/images/warning.svg')}" alt="">
-                                <span>
-                                    <b>${plan.alma_mode.labels.title}</b>
-                                    <br>
-                                    ${plan.alma_mode.labels.description}
-                                </span>
-                            </p>
-                        </isif>
+                    </isif>
+
+                    <!-- Mode test Alma (affiché si activé) -->
+                    <isif condition="${plan.alma_mode.isTest}">
+                        <p class="alma-test-mode">
+                            <img src="${URLUtils.staticURL('/images/warning.svg')}" alt="">
+                            <span>
+                                <b>${plan.alma_mode.labels.title}</b><br>
+                                ${plan.alma_mode.labels.description}
+                            </span>
+                        </p>
                     </isif>
                 </div>
+
                 <div class="col-1 icon">
                     <span class="fa fa-chevron-right"></span>
                 </div>
             </div>
-            <isif condition="${plan.key === 'ALMA_general_1_0'}">
-                <div id="${plan.key}-inpage" hidden></div>
-                <iselse>
-                    <div id="${plan.key}-inpage"></div>
-                </iselse>
-            </isif>
+
+            <!-- Gestion de l'affichage dynamique de la section inpage -->
+            <div id="${plan.key}-inpage" ${plan.key === 'ALMA_general_1_0' || plan.installments_count > 4 ? 'hidden' : ''}></div>
         </isloop>
     </isif>
 </isloop>
 
 <fieldset class="payment-form-fields">
-    <input type="hidden" class="form-control" name="${pdict.forms.billingForm.paymentMethod.htmlName}"
-           value="ALMA"/>
+    <input type="hidden" class="form-control" name="${pdict.forms.billingForm.paymentMethod.htmlName}" value="ALMA"/>
 </fieldset>
