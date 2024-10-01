@@ -49,7 +49,7 @@
             </div>
 
             <!-- Gestion de l'affichage dynamique de la section inpage -->
-            <div id="${plan.key}-inpage" ${plan.key === 'ALMA_general_1_0' || plan.installments_count > 4 ? 'hidden' : ''}></div>
+            <div id="${plan.key}-inpage" ${plan.key === 'ALMA_general_1_0' ? 'hidden' : ''}></div>
         </isloop>
     </isif>
 </isloop>
