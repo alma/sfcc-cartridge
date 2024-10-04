@@ -363,7 +363,6 @@ function buildPaymentData(installmentsCount, deferredDays, locale, isManualCaptu
     var BasketMgr = require('dw/order/BasketMgr');
     var URLUtils = require('dw/web/URLUtils');
     var almaHelper = require('*/cartridge/scripts/helpers/almaHelpers');
-    var almaCheckoutHelper = require('*/cartridge/scripts/helpers/almaCheckoutHelper');
     var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
 
     var formatAddress = require('*/cartridge/scripts/helpers/almaAddressHelper').formatAddress;
@@ -371,7 +370,7 @@ function buildPaymentData(installmentsCount, deferredDays, locale, isManualCaptu
     var formatCustomerData = require('*/cartridge/scripts/helpers/almaHelpers').formatCustomerData;
 
     var origin = 'online';
-    if (almaCheckoutHelper.isAvailableForInpage(installmentsCount) && almaConfigHelper.isInpageActivated()) {
+    if (almaConfigHelper.isInpageActivated()) {
         origin = 'online_in_page';
     }
 

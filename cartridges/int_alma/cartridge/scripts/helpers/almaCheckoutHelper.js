@@ -166,15 +166,6 @@ function getPropertiesForPlan(plan, currencyCode) {
 }
 
 /**
- * Returns if the current payment option is pnx 2,3 or 4
- * @param  {int} installmentsCount installments count
- * @returns {boolean} true means we can use inpage
- */
-function isAvailableForInpage(installmentsCount) {
-    return installmentsCount <= 4;
-}
-
-/**
  * Return true if plan is activated
  * @param {Object} paymentMethod payment method
  * @param {Object} plan plan
@@ -243,7 +234,7 @@ function formatPlanForCheckout(plan, currencyCode) {
     var ALMA_PAY_NOW = plan.installments_count === 1 && plan.deferred_days === 0 && planIsActivated(PaymentMgr.getPaymentMethod(ALMA_PAY_NOW_ID), plan);
     if (ALMA_PNX || ALMA_CREDIT || ALMA_DEFERRED || ALMA_PAY_NOW) {
         formatPlan = {
-            in_page: isAvailableForInpage(plan.installments_count) && almaConfigHelper.isInpageActivated(),
+            in_page: almaConfigHelper.isInpageActivated(),
             selector: getSelectorNameFromPlan(plan),
             installments_count: plan.installments_count,
             deferred_days: plan.deferred_days,
@@ -260,6 +251,5 @@ function formatPlanForCheckout(plan, currencyCode) {
 
 module.exports = {
     formatPlanForCheckout: formatPlanForCheckout,
-    getPlanPaymentMethodID: getPlanPaymentMethodID,
-    isAvailableForInpage: isAvailableForInpage
+    getPlanPaymentMethodID: getPlanPaymentMethodID
 };
