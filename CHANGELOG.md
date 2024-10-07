@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v4.7.0 - 2024-10-07
+
+### Changes
+
+### 🚀 New Features
+
+- Integrate credit for in page (#135)
+
+#### Contributors
+
+@alma-renovate-bot, @alma-renovate-bot[bot], @github-actions, @joyet-simon and @remi-zuffinetti
+
 ## v4.6.0 - 2024-09-16
 
 ### 🚀 New Features
@@ -117,14 +129,19 @@
 ## v3.0.0
 
 * added package.json to pilot the project
+  
 * added npm commands :
+  
   * `build:sitepref` (see below)
   * `lint` allow to lint css, js and isml for the cartridge
   * `uploadCartridge` upload cartridge to a sandbox
   
 * refactored widget and fragment usage to use Alma plans
+  
 * refactored Alma controller
+  
 * refactored job for onShipment orders
+  
 
 ## v2.3.0
 

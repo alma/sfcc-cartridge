@@ -52,7 +52,7 @@ describe('almaPaymentHelper', function () {
             setIsAvailableForInpage(false);
 
             var payment = almaPaymentHelper.buildPaymentData(12, 0, 'fr_FR', false);
-            assert.deepEqual(payment, resolvedPaymentData(12, 0, 'fr_FR', 'online', true));
+            assert.deepEqual(payment, resolvedPaymentData(12, 0, 'fr_FR', 'online_in_page', true));
         });
     });
     describe('Build payment data for deferred capture', function () {
