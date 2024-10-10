@@ -3,7 +3,8 @@ name: Aqua
 on:
   pull_request:
     branches:
-      - master
+      - main
+      - develop
 
 jobs:
   aqua:
