@@ -1,6 +1,6 @@
-exports.ConfigException = class {
+export class ConfigException {
   constructor(message) {
     this.message = message;
     this.name = 'ConfigException';
   }
-};
+}

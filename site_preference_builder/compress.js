@@ -1,36 +1,34 @@
 /* eslint-disable no-console */
-const gulp = require('gulp');
-const zip = require('gulp-zip');
-const del = require('del');
-const path = require('path');
-require('dotenv').config({
-  path: path.resolve(__dirname, '../.env')
-});
+import gulp from 'gulp';
+import zip from 'gulp-zip';
+import {deleteSync} from 'del';
+import path from 'path';
+import { config } from 'dotenv';
+import { createDir } from './fs.js';
 
-const { createDir } = require('./fs');
+config({
+  path: path.resolve(new URL('.', import.meta.url).pathname, '../.env')
+});
 
 /**
  * Create payment processor and payment methods files
  */
-function createPaymentRefFiles() {
+async function createPaymentRefFiles() {
   const siteDir = `./metadata/site_template/sites/${process.env.SFCC_SITE_NAME}/`;
-  createDir(siteDir);
+  await createDir(siteDir);
 
   console.log('Copying ref. files');
   const paymentRefFiles = './site_preference_builder/ref/payment/*.xml';
-  gulp.src(paymentRefFiles)
-   .pipe(gulp.dest(siteDir))
-  ;
+  gulp.src(paymentRefFiles).pipe(gulp.dest(siteDir));
 }
 
 /**
  * Create services file
  */
-function copyServiceFile() {
+async function copyServiceFile() {
   console.log('Copying service file');
   gulp.src('./site_preference_builder/ref/services.xml')
-   .pipe(gulp.dest('./metadata/site_template/'))
-  ;
+      .pipe(gulp.dest('./metadata/site_template/'));
 }
 
 /**
@@ -38,31 +36,32 @@ function copyServiceFile() {
  */
 function createZipFile() {
   console.log('Creating archive');
-  del(['./site_template.zip']);
+  deleteSync(['./site_template.zip']);
   gulp.src('./metadata/**')
-    .pipe(zip('site_template.zip'))
-    .pipe(gulp.dest('./'));
+      .pipe(zip('site_template.zip'))
+      .pipe(gulp.dest('./'));
 }
 
 /**
  * entry point
  * @returns {number} 0|1 0 is success, 1 is an error
  */
-function main() {
+async function main() {
   if (!process.env.SFCC_SITE_NAME) {
-    console.error('Undefined env variable SFCC_SITE_NAME.' +
-      'Please go to your .env file to configure it');
+    console.error('Undefined env variable SFCC_SITE_NAME. Please go to your .env file to configure it');
     return 1;
   }
-  console.log(`Your SFCC site name : ${process.env.SFCC_SITE_NAME}`);
+  console.log(`Your SFCC site name: ${process.env.SFCC_SITE_NAME}`);
 
-  createPaymentRefFiles();
-  copyServiceFile();
-  createZipFile();
+  await createPaymentRefFiles();
+  await copyServiceFile();
+  await createZipFile();
 
   console.log('Done');
-
   return 0;
 }
 
-main();
+main().catch(error => {
+  console.error('An error occurred:', error);
+  process.exit(1);
+});

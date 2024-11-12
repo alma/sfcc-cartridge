@@ -1,8 +1,8 @@
-const fetch = require('node-fetch');
+import fetch from "node-fetch";
 
 const API_VERSION = 'v1';
 
-exports.getFeePlansFromAPI = async function (baseurl, key) {
+export async function getFeePlansFromAPI (baseurl, key) {
   const url = `${baseurl}/${API_VERSION}/me/fee-plans?kind=general&only=all&deferred=true`;
   try {
     const response = await fetch(url, {
@@ -18,4 +18,4 @@ exports.getFeePlansFromAPI = async function (baseurl, key) {
     console.error(`Could not reach API : "${url}", please check your .env`);
   }
   return {};
-};
+}

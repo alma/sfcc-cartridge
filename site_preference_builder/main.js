@@ -1,12 +1,6 @@
-const {
-  getFeePlansFromAPI
-} = require('./api.js');
-const {
-  readFile,
-  writeFile,
-  createDir
-} = require('./fs.js');
-const {
+import { getFeePlansFromAPI } from './api.js';
+import { readFile, writeFile, createDir } from './fs.js';
+import {
   xmlToJson,
   jsonToXML,
   addCustomAttrFromPlan,
@@ -15,13 +9,13 @@ const {
   addAPIInfo,
   addRefundCustomAttributes,
   addRefundCustomAttributesGroup
-} = require('./customSitePrefBuilder.js');
+} from './customSitePrefBuilder.js';
+import path from 'path';
+import { writeJobsFile } from './jobs.js';
+import { config } from 'dotenv';
 
-const path = require('path');
-const { writeJobsFile } = require('./jobs');
-
-require('dotenv').config({
-  path: path.resolve(__dirname, '../.env')
+config({
+  path: path.resolve(new URL('.', import.meta.url).pathname, '../.env')
 });
 
 const LIVE_MODE = {
@@ -40,7 +34,7 @@ const OUTPUT_FILE = './metadata/site_template/meta/system-objecttype-extensions.
 const REFUND_IS_DISABLED = 'off';
 
 /**
- * return the merchantId from feeplans
+ * Return the merchantId from fee plans
  * @param {Object} feePlans returned from Alma API
  * @returns {string} merchantId
  */
@@ -58,10 +52,7 @@ async function main() {
 
   const sitePref = await xmlToJson(fileContent);
 
-  const {
-    url,
-    apiKey
-  } = process.env.ALMA_API_MODE === 'live' ? LIVE_MODE : TEST_MODE;
+  const { url, apiKey } = process.env.ALMA_API_MODE === 'live' ? LIVE_MODE : TEST_MODE;
   const plans = await getFeePlansFromAPI(url, apiKey);
   const merchantId = getMerchantIdFromFeePlans(plans);
 
@@ -80,4 +71,4 @@ async function main() {
 }
 
 /* eslint-disable no-console */
-main().then().catch((e) => console.log(e));
+main().catch((e) => console.log(e));
