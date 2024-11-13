@@ -29,3 +29,4 @@ metadata/
 
 # coverage report
 /coverage
+.nyc_output/
