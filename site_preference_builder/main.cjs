@@ -1,6 +1,8 @@
+'use strict';
+
 const {
   getFeePlansFromAPI
-} = require('./api.js');
+} = require('./api.cjs');
 const {
   readFile,
   writeFile,
@@ -45,13 +47,22 @@ const REFUND_IS_DISABLED = 'off';
  * @returns {string} merchantId
  */
 function getMerchantIdFromFeePlans(feePlans) {
+  if (!feePlans || feePlans.length === 0) {
+    throw new Error('Fee plans are undefined or empty');
+  }
   return feePlans[0].merchant;
 }
 
 /**
  * Script entry point
  */
+// eslint-disable-next-line consistent-return,require-jsdoc
 async function main() {
+  if (!process.env.SFCC_SITE_NAME) {
+    console.error('Undefined env variable SFCC_SITE_NAME. Please go to your .env file to configure it');
+    return 1;
+  }
+
   createDir(METADIR);
 
   const fileContent = readFile(INPUT_FILE);

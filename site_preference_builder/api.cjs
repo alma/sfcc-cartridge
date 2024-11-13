@@ -1,8 +1,9 @@
-const fetch = require('node-fetch');
+'use strict';
 
 const API_VERSION = 'v1';
 
 exports.getFeePlansFromAPI = async function (baseurl, key) {
+  const fetch = (await import('node-fetch')).default;
   const url = `${baseurl}/${API_VERSION}/me/fee-plans?kind=general&only=all&deferred=true`;
   try {
     const response = await fetch(url, {

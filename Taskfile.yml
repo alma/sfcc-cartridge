@@ -53,9 +53,9 @@ tasks:
     cmds:
       - |
         {{if eq .RUN_IN_DOCKER "true"}}
-          docker compose run --build --rm sfcc-cartridge node site_preference_builder/compress.js && node site_preference_builder/main.js
+          docker compose run --build --rm sfcc-cartridge node site_preference_builder/compress.cjs && node site_preference_builder/main.cjs
         {{else}}
-          node site_preference_builder/compress.js && node site_preference_builder/main.js
+          node site_preference_builder/compress.cjs && node site_preference_builder/main.cjs
         {{end}}
 
   test:
@@ -175,7 +175,7 @@ tasks:
     deps:
       - gh-cli
     desc: Create a release pull request
-    cmds: 
+    cmds:
       - gh workflow run release-pull-request.yml
       - cmd: sleep 2
         silent: true
@@ -197,7 +197,7 @@ tasks:
         msg: |
           ⚠️ This task requires a changelog message.
           Please provide a changelog message. Example: `task hotfix CHANGELOG_MESSAGE='This is a message'`.
-    cmds: 
+    cmds:
       - gh workflow run hotfix-pull-request.yml -F changelog-message='{{.CHANGELOG_MESSAGE}}'
       - cmd: sleep 2
         silent: true
