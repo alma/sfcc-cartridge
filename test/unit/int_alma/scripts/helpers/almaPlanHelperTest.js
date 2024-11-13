@@ -1,7 +1,5 @@
 // planHelpers.js unit tests
 
-var expect = require('chai').expect;
-
 var almaPlanHelperMock = require('../../../../mocks/helpers/almaPlanHelperMock').almaPlanHelperMock;
 var setIsDeferredCaptureEnable = require('../../../../mocks/helpers/almaPlanHelperMock').setIsDeferredCaptureEnable;
 var formattedPlansForCheckoutExpected = require('../../../../mocks/data/plans').formattedPlansForCheckoutExpected;
@@ -9,6 +7,10 @@ var plansForCheckout = require('../../../../mocks/data/plans').plansForCheckout;
 
 
 describe('AlmaPlanHelper', function () {
+    before(async function () {
+        const chai = await import('chai');
+        expect = chai.expect;
+    });
     describe('Format plan Helper', function () {
         it('Check array returned by getFormattedPlans for a given plans is well formed', function () {
             setIsDeferredCaptureEnable(false);

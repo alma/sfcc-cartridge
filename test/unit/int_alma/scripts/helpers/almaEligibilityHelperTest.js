@@ -1,9 +1,4 @@
-'use strict';
-
 // almaEligibilityHelper.js unit tests
-
-var assert = require('chai').assert;
-var expect = require('chai').expect;
 var almaEligibilityHelperMocks = require('../../../../mocks/helpers/almaEligibilityHelperMocks').almaEligibilityHelperMocks;
 var basketMock = require('../../../../mocks/dw/order/BasketMgr');
 var deferredCaptureEnabled = true;
@@ -45,6 +40,11 @@ var baseReturn =
 
 var baseBasket = basketMock.getCurrentBasket();
 describe('Construct eligibility payload', function () {
+    before(async function () {
+        const chai = await import('chai');
+        assert = chai.assert;
+        expect = chai.expect;
+    });
     it('Return a empty array for a null current bask', function () {
         var params = almaEligibilityHelperMocks.getParams([], 'fr_FR', null, deferredCaptureDisabled);
         // eslint-disable-next-line no-unused-expressions
