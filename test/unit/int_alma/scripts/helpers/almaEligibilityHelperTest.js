@@ -1,45 +1,48 @@
+'use strict';
+
 // almaEligibilityHelper.js unit tests
 var almaEligibilityHelperMocks = require('../../../../mocks/helpers/almaEligibilityHelperMocks').almaEligibilityHelperMocks;
 var basketMock = require('../../../../mocks/dw/order/BasketMgr');
 var deferredCaptureEnabled = true;
 var deferredCaptureDisabled = false;
 
-var baseReturn =
-    {
-        purchase_amount: 25000,
-        queries: [],
-        locale: 'fr_FR',
-        billing_address: {
-            title: 'address.jobTitle',
-            first_name: 'address.lastName',
-            last_name: 'address.firstName',
-            company: 'address.companyName',
-            line1: 'address.address1',
-            line2: 'address.address2',
-            postal_code: 'address.postalCode',
-            city: 'address.city',
-            country: 'address.countryCode.value',
-            state_province: 'address.stateCode',
-            phone: 'address.phone'
-        },
-        shipping_address: {
-            title: 'address.jobTitle',
-            first_name: 'address.lastName',
-            last_name: 'address.firstName',
-            company: 'address.companyName',
-            line1: 'address.address1',
-            line2: 'address.address2',
-            postal_code: 'address.postalCode',
-            city: 'address.city',
-            country: 'address.countryCode.value',
-            state_province: 'address.stateCode',
-            phone: 'address.phone'
-        },
-        capture_method: 'automatic'
-    };
+var baseReturn = {
+    purchase_amount: 25000,
+    queries: [],
+    locale: 'fr_FR',
+    billing_address: {
+        title: 'address.jobTitle',
+        first_name: 'address.lastName',
+        last_name: 'address.firstName',
+        company: 'address.companyName',
+        line1: 'address.address1',
+        line2: 'address.address2',
+        postal_code: 'address.postalCode',
+        city: 'address.city',
+        country: 'address.countryCode.value',
+        state_province: 'address.stateCode',
+        phone: 'address.phone'
+    },
+    shipping_address: {
+        title: 'address.jobTitle',
+        first_name: 'address.lastName',
+        last_name: 'address.firstName',
+        company: 'address.companyName',
+        line1: 'address.address1',
+        line2: 'address.address2',
+        postal_code: 'address.postalCode',
+        city: 'address.city',
+        country: 'address.countryCode.value',
+        state_province: 'address.stateCode',
+        phone: 'address.phone'
+    },
+    capture_method: 'automatic'
+};
 
 var baseBasket = basketMock.getCurrentBasket();
 describe('Construct eligibility payload', function () {
+    let assert;
+    let expect;
     before(async function () {
         const chai = await import('chai');
         assert = chai.assert;
@@ -66,4 +69,3 @@ describe('Construct eligibility payload', function () {
         );
     });
 });
-

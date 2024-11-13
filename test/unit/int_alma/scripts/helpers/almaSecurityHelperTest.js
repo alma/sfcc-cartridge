@@ -1,3 +1,5 @@
+'use strict';
+
 // almaSecurityHelper.js unit tests
 
 var almaSecurityHelper = require('../../../../mocks/helpers/almaSecurityHelper').almaSecurityHelper;
@@ -7,6 +9,7 @@ var BAD_SIGNATURE = 'bad_signature';
 var GOOD_SIGNATURE = '4545854d3b8704d4b21cf88bc8b5da5680c46b2ab9d45c8cffe6278d8a8b1860';
 
 describe('Alma security helper', function () {
+    let assert;
     before(async function () {
         const chai = await import('chai');
         assert = chai.assert;

@@ -1,3 +1,5 @@
+'use strict';
+
 // almaPayment.js unit tests
 
 var sinon = require('sinon');
@@ -31,6 +33,7 @@ var paymentAuthorizationNotExpired = {
 };
 
 describe('almaPaymentHelper', function () {
+    let assert;
     before(async function () {
         const chai = await import('chai');
         assert = chai.assert;

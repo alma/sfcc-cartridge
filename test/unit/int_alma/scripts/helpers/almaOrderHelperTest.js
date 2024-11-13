@@ -1,3 +1,5 @@
+'use strict';
+
 // almaOrderHelper unit tests
 
 var sinon = require('sinon');
@@ -11,6 +13,7 @@ var order = {
     }
 };
 describe('Alma order helper', function () {
+    let assert;
     before(async function () {
         const chai = await import('chai');
         assert = chai.assert;

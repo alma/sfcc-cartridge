@@ -35,8 +35,7 @@ function getFeePlans() {
  */
 function getSitePrefNameFromPlan(plan) {
     // ALMA_general + number of installments (p1x, p3x, p4x, ....) + by how many days is the payment deferred
-    return 'ALMA_general_' + plan.installments_count + '_' + plan.deferred_days
-    ;
+    return 'ALMA_general_' + plan.installments_count + '_' + plan.deferred_days;
 }
 
 /**

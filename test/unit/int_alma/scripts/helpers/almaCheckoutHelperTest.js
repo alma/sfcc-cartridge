@@ -1,3 +1,5 @@
+'use strict';
+
 // checkoutHelpers.js unit tests
 
 var almaCheckoutHelpers = require('../../../../mocks/helpers/almaCheckoutHelpers').almaCheckoutHelpers;
@@ -76,9 +78,9 @@ var plansDeferred = {
 var currencyCode = 'EUR';
 
 describe('AlmaCheckoutHelpers', function () {
+    let assert;
     before(async function () {
         const chai = await import('chai');
-        expect = chai.expect;
         assert = chai.assert;
     });
     describe('FormatPlanForCheckout', function () {
@@ -162,8 +164,7 @@ describe('AlmaCheckoutHelpers', function () {
 
         it('Check payment method for PNX', function () {
             var checkoutData = almaCheckoutHelpers.formatPlanForCheckout(plan, currencyCode);
-            assert.equal(checkoutData.payment_method, 'ALMA_PNX'
-            );
+            assert.equal(checkoutData.payment_method, 'ALMA_PNX');
         });
 
         it('check payment method for CREDIT', function () {

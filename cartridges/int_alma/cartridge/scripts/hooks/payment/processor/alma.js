@@ -31,9 +31,7 @@ function Handle(basket, paymentInformation, paymentMethodID, contactInfoFields) 
             }
         });
 
-        var paymentInstrument = currentBasket.createPaymentInstrument(
-            'ALMA', currentBasket.totalGrossPrice
-        );
+        var paymentInstrument = currentBasket.createPaymentInstrument('ALMA', currentBasket.totalGrossPrice);
 
         paymentInstrument.paymentTransaction.setPaymentProcessor(paymentProcessor);
     });
@@ -53,7 +51,9 @@ function Handle(basket, paymentInformation, paymentMethodID, contactInfoFields) 
         });
     }
 
-    return { fieldErrors: [], serverErrors: errors, error: error, urlRedirect: almaRedirect };
+    return {
+        fieldErrors: [], serverErrors: errors, error: error, urlRedirect: almaRedirect
+    };
 }
 
 /**

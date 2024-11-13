@@ -1,3 +1,5 @@
+'use strict';
+
 // refundHelpers.js unit tests
 
 var order = {
@@ -14,6 +16,8 @@ var order = {
 var almaRefundHelpers = require('../../../../mocks/helpers/almaRefundHelpers');
 
 describe('AlmaRefundHelpers', function () {
+    let assert;
+    let expect;
     before(async function () {
         const chai = await import('chai');
         assert = chai.assert;

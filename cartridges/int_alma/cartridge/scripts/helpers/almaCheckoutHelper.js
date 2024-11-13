@@ -86,9 +86,9 @@ function getCreditInfo(plan, currencyCode) {
  * @returns {string} the message to display fees
  */
 function getPaymentFees(plan, currencyCode) {
-    return plan.payment_plan[0].customer_fee > 0 ?
-        Resource.msgf('alma.with_fee', 'alma', null, formatCurrency(plan.payment_plan[0].customer_fee / 100, currencyCode)) :
-        Resource.msg('alma.not_fee', 'alma', null);
+    return plan.payment_plan[0].customer_fee > 0
+        ? Resource.msgf('alma.with_fee', 'alma', null, formatCurrency(plan.payment_plan[0].customer_fee / 100, currencyCode))
+        : Resource.msg('alma.not_fee', 'alma', null);
 }
 
 /**
@@ -112,7 +112,10 @@ function getInstallmentCountAfterFirst(plan) {
 function getPaymentInstallments(plan, currencyCode) {
     // deferred payment
     if (plan.deferred_days > 0) {
-        return Resource.msgf(getPropertyCategory(plan) + '.installments', 'alma', null,
+        return Resource.msgf(
+            getPropertyCategory(plan) + '.installments',
+            'alma',
+            null,
             formatCurrency(plan.payment_plan[0].purchase_amount / 100, currencyCode),
             plan.deferred_days
         );
@@ -120,32 +123,29 @@ function getPaymentInstallments(plan, currencyCode) {
 
     // pay now
     if (plan.installments_count === 1 && plan.deferred_days === 0) {
-        return formatCurrency(plan.payment_plan[0].purchase_amount / 100, currencyCode) + ' ' +
-            Resource.msgf(getPropertyCategory(plan) + '.installments', 'alma', null);
+        return formatCurrency(plan.payment_plan[0].purchase_amount / 100, currencyCode) + ' '
+            + Resource.msgf(getPropertyCategory(plan) + '.installments', 'alma', null);
     }
     // on shipment payment
     if (isOnShipmentPaymentEnabled(plan.installments_count)) {
-        return formatCurrency(plan.payment_plan[0].purchase_amount / 100, currencyCode) + ' ' +
-            Resource.msg(getPropertyCategory(plan) + '.installments.onshipment', 'alma', null) + ' ' +
-            getInstallmentCountAfterFirst(plan) +
-            formatCurrency(plan.payment_plan[1].purchase_amount / 100, currencyCode)
-        ;
+        return formatCurrency(plan.payment_plan[0].purchase_amount / 100, currencyCode) + ' '
+            + Resource.msg(getPropertyCategory(plan) + '.installments.onshipment', 'alma', null) + ' '
+            + getInstallmentCountAfterFirst(plan)
+            + formatCurrency(plan.payment_plan[1].purchase_amount / 100, currencyCode);
     }
     // on deferred capture
     if (almaPaymentHelper.isAvailableForManualCapture(almaConfigHelper.isDeferredCaptureEnable(), plan.installments_count, plan.deferred_days)) {
-        return formatCurrency(plan.payment_plan[0].purchase_amount / 100, currencyCode) + ' ' +
-            plan.payment_plan[0].localized_due_date +
-            Resource.msg(getPropertyCategory(plan) + '.installments.then', 'alma', null) + ' ' +
-            getInstallmentCountAfterFirst(plan) +
-            formatCurrency(plan.payment_plan[1].purchase_amount / 100, currencyCode)
-        ;
+        return formatCurrency(plan.payment_plan[0].purchase_amount / 100, currencyCode) + ' '
+            + plan.payment_plan[0].localized_due_date
+            + Resource.msg(getPropertyCategory(plan) + '.installments.then', 'alma', null) + ' '
+            + getInstallmentCountAfterFirst(plan)
+            + formatCurrency(plan.payment_plan[1].purchase_amount / 100, currencyCode);
     }
     // installment payment
-    return formatCurrency(plan.payment_plan[0].purchase_amount / 100, currencyCode) + ' ' +
-        Resource.msg(getPropertyCategory(plan) + '.installments', 'alma', null) + ' ' +
-        getInstallmentCountAfterFirst(plan) +
-        formatCurrency(plan.payment_plan[1].purchase_amount / 100, currencyCode)
-    ;
+    return formatCurrency(plan.payment_plan[0].purchase_amount / 100, currencyCode) + ' '
+        + Resource.msg(getPropertyCategory(plan) + '.installments', 'alma', null) + ' '
+        + getInstallmentCountAfterFirst(plan)
+        + formatCurrency(plan.payment_plan[1].purchase_amount / 100, currencyCode);
 }
 
 /**

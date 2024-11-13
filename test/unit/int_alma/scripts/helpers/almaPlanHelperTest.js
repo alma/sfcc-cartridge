@@ -1,3 +1,5 @@
+'use strict';
+
 // planHelpers.js unit tests
 
 var almaPlanHelperMock = require('../../../../mocks/helpers/almaPlanHelperMock').almaPlanHelperMock;
@@ -5,8 +7,8 @@ var setIsDeferredCaptureEnable = require('../../../../mocks/helpers/almaPlanHelp
 var formattedPlansForCheckoutExpected = require('../../../../mocks/data/plans').formattedPlansForCheckoutExpected;
 var plansForCheckout = require('../../../../mocks/data/plans').plansForCheckout;
 
-
 describe('AlmaPlanHelper', function () {
+    let expect;
     before(async function () {
         const chai = await import('chai');
         expect = chai.expect;
@@ -36,4 +38,3 @@ describe('AlmaPlanHelper', function () {
         });
     });
 });
-

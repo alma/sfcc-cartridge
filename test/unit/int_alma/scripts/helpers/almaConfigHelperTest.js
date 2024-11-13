@@ -1,3 +1,5 @@
+'use strict';
+
 // almaConfigHelper.js unit tests
 
 var site = require('../../../../mocks/helpers/almaConfigHelpers').site;
@@ -5,6 +7,7 @@ var almaConfigHelpers = require('../../../../mocks/helpers/almaConfigHelpers').a
 var setCustomPreferenceValue = require('../../../../mocks/helpers/almaConfigHelpers').setCustomPreferenceValue;
 
 describe('Get back-office variables', function () {
+    let assert;
     before(async function () {
         const chai = await import('chai');
         assert = chai.assert;

@@ -2,8 +2,6 @@
 
 var Order = require('dw/order/Order');
 var Status = require('dw/system/Status');
-var almaOrderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
-var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
 
 /**
  * Try to make a capture while we have an order
@@ -12,6 +10,9 @@ var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper')
  */
 function makeCaptureWhileHaveAnOrder(orders, CAPTURE) {
     var Logger = require('dw/system/Logger');
+    var almaOrderHelper = require('*/cartridge/scripts/helpers/almaOrderHelper');
+    var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
+
     while (orders.hasNext()) {
         var order = orders.next();
         var params = { external_id: order.custom.almaPaymentId };
@@ -36,6 +37,8 @@ function makeCaptureWhileHaveAnOrder(orders, CAPTURE) {
 
 exports.execute = function () {
     var OrderMgr = require('dw/order/OrderMgr');
+    var almaPaymentHelper = require('*/cartridge/scripts/helpers/almaPaymentHelper');
+
     var CAPTURE = almaPaymentHelper.CAPTURE;
     var orders = OrderMgr.searchOrders(
         'custom.ALMA_Deferred_Capture_Status={0} and status != {1} and status != {2}',

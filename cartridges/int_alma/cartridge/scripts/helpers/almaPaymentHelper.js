@@ -54,7 +54,6 @@ function getPaymentObj(almaPaymentId) {
     return JSON.parse(httpResult.getObject().text);
 }
 
-
 /**
  * Once Alma API return a success for the Order payment, accept the Order
  * @param {dw.order.Order} order the order to accept
@@ -100,17 +99,19 @@ function getPaymentDetails(paymentObj) {
     }
     var payDetail = '';
     var payPlan = paymentObj.payment_plan;
+    // TODO: muting no-plusplus rule until we refactor more efficiently the code to match Node >=22
+    // eslint-disable-next-line no-plusplus
     for (var i = 0, l = payPlan.length; i < l; i++) {
-        payDetail +=
-            StringUtils.formatCalendar(
+        payDetail
+            += StringUtils.formatCalendar(
                 new Calendar(new Date(payPlan[i].due_date * 1000)),
                 'dd/MM/yyyy'
-            ) +
-            ': ' +
-            formatCurrency(payPlan[i].purchase_amount / 100, 'EUR') +
-            ' ' +
-            payPlan[i].state +
-            '  ';
+            )
+            + ': '
+            + formatCurrency(payPlan[i].purchase_amount / 100, 'EUR')
+            + ' '
+            + payPlan[i].state
+            + '  ';
     }
     return payDetail;
 }
@@ -409,7 +410,6 @@ function buildPaymentData(installmentsCount, deferredDays, locale, isManualCaptu
         paymentData.payment.capture_method = 'manual';
     }
 
-
     var products = currentBasket.getAllProductLineItems();
     var items = [];
 
@@ -422,7 +422,6 @@ function buildPaymentData(installmentsCount, deferredDays, locale, isManualCaptu
     paymentData.payment.cart = {
         items: items
     };
-
 
     return paymentData;
 }
@@ -482,7 +481,6 @@ function isPaymentAuthorizationExpired(paymentObj) {
     var authorizationExpiresAtDate = new Date(paymentObj.authorization_expires_at);
     return authorizationExpiresAtDate.getTime() < today.getTime();
 }
-
 
 module.exports = {
     orderStatusEquals: orderStatusEquals,

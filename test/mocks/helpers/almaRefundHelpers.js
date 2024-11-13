@@ -1,6 +1,3 @@
-'use strict';
-
-
 var proxyquire = require('proxyquire')
     .noCallThru()
     .noPreserveCache();

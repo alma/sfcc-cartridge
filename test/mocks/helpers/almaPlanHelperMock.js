@@ -1,12 +1,9 @@
-'use strict';
-
 const sinon = require('sinon');
 var almaPaymentHelper = require('../../../cartridges/int_alma/cartridge/scripts/helpers/almaPaymentHelper');
 
 var proxyquire = require('proxyquire')
     .noCallThru()
     .noPreserveCache();
-
 
 var site = {
     getCurrent: function () {
