@@ -1,9 +1,16 @@
 'use strict';
 
+let fetch;
 const API_VERSION = 'v1';
 
+async function loadFetch() {
+  if (!fetch) {
+    fetch = (await import('node-fetch')).default;
+  }
+}
+
 exports.getFeePlansFromAPI = async function (baseurl, key) {
-  const fetch = (await import('node-fetch')).default;
+  await loadFetch();
   const url = `${baseurl}/${API_VERSION}/me/fee-plans?kind=general&only=all&deferred=true`;
   try {
     const response = await fetch(url, {

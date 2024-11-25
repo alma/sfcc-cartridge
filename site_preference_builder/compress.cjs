@@ -1,11 +1,27 @@
 /* eslint-disable no-console */
+'use strict';
+
 const gulp = require('gulp');
 const path = require('path');
 require('dotenv').config({
-  path: path.resolve(__dirname, '../.env')
+  path: path.resolve(__dirname, '../.env'),
 });
 
 const { createDir } = require('./fs');
+
+let deleteSync;
+let zip;
+
+/**
+ * Charge dynamiquement les modules ESM nécessaires
+ */
+async function loadDependencies() {
+  if (!deleteSync || !zip) {
+    const del = await import('del');
+    deleteSync = del.deleteSync;
+    zip = (await import('gulp-zip')).default;
+  }
+}
 
 /**
  * Create payment processor and payment methods files
@@ -34,8 +50,7 @@ async function copyServiceFile() {
  */
 async function createZipFile() {
   console.log('Creating archive');
-  const { deleteSync } = (await import('del'));
-  const zip = (await import('gulp-zip')).default;
+  await loadDependencies(); // Charger les modules ESM nécessaires
   deleteSync(['./site_template.zip']);
   gulp.src('./metadata/**')
     .pipe(zip('site_template.zip'))
