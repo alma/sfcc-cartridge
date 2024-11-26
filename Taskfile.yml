@@ -2,8 +2,8 @@ version: 3
 
 env:
   REPOSITORY: sfcc-cartridge
-  # This project requires node 12.x.
-  # You can set RUN_IN_DOCKER env var to true to run the tasks if you don't have node 12.x installed.
+  # This project requires node 22.x.
+  # You can set RUN_IN_DOCKER env var to true to run the tasks if you don't have node 22.x installed.
   RUN_IN_DOCKER: '{{ .RUN_IN_DOCKER | default "false" }}'
 
 tasks:

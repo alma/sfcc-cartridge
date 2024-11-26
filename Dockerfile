@@ -1,5 +1,5 @@
-# SFCC Cartridge requires npm 6.14^ and node 12.22.12
-FROM node:12
+# SFCC Cartridge requires npm 10.9^ and node 22.11.0
+FROM node:22
 
 # Create app directory, and make it the current directory
 RUN mkdir -p /app
