@@ -72,7 +72,8 @@ tasks:
     desc: Run linter
     deps:
       - js:lint
-      - css:lint
+# Removing css lint, as sgmf-scripts only lint scss files but we are using css files
+# TODO : use another linter for css files
 
   js:lint:
     desc: Run JS linter
