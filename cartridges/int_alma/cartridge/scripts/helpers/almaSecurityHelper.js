@@ -3,7 +3,6 @@
 var Mac = require('dw/crypto/Mac');
 var Encoding = require('dw/crypto/Encoding');
 
-
 /**
 * Check is the IPN signature is valid
 * @param {string|null} almaSignature signature to check

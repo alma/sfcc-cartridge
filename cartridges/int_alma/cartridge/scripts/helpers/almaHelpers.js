@@ -16,7 +16,6 @@ function getSfccVersion() {
     return sfccMajor + '.' + sfccMinor;
 }
 
-
 /**
  * Return current Api key
  * @returns {string} current api key
@@ -219,7 +218,6 @@ function formatItem(product, productLine, locale) {
         requires_shipping: !!productLine.getShipment()
     };
 }
-
 
 module.exports = {
     addHeaders: addHeaders,

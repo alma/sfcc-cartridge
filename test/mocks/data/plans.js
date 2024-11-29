@@ -1,10 +1,9 @@
-'use strict';
-
-
 const sinon = require('sinon');
 
 function mockPlanFactory(count) {
     var plans = [];
+    // TODO: Muting no-plusplus rule until we refactor more efficiently the code to match Node >=22
+    // eslint-disable-next-line no-plusplus
     for (var i = 0; i < count; i++) {
         var localizedDueDate = i + ' months later';
         if (i === 0) {

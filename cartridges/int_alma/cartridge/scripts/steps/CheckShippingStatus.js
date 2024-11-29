@@ -8,8 +8,8 @@
 function isOrderToBePaidOnShipment(order) {
     var Order = require('dw/order/Order');
 
-    return order.custom.almaPaymentId &&
-        parseInt(order.paymentStatus, 10) === parseInt(Order.PAYMENT_STATUS_NOTPAID, 10);
+    return order.custom.almaPaymentId
+        && parseInt(order.paymentStatus, 10) === parseInt(Order.PAYMENT_STATUS_NOTPAID, 10);
 }
 
 /**
@@ -52,9 +52,7 @@ function triggerPaymentForOrder(triggerService, order) {
 function getOrderShipped() {
     var OrderMgr = require('dw/order/OrderMgr');
 
-    return OrderMgr.searchOrders(
-        "shippingStatus={0} and custom.ALMA_ResponseDetails='onShipment'", null, 2
-    );
+    return OrderMgr.searchOrders("shippingStatus={0} and custom.ALMA_ResponseDetails='onShipment'", null, 2);
 }
 
 exports.execute = function () {

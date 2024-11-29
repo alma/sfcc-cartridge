@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * A forOf function to mimic for..of . :')
  * @param {array|Object} iterable any iterable item
@@ -14,6 +16,9 @@ function forOf(iterable, predicate) {
     }
 
     var keys = Object.keys(iterable);
+
+    // TODO: muting no-plusplus rule until we refactor more efficiently the code to match Node >=22
+    // eslint-disable-next-line no-plusplus
     for (var i = 0, l = keys.length; i < l; i++) {
         predicate(iterable[keys[i]]);
     }
@@ -45,6 +50,8 @@ function filter(arrayToFilter, predicate) {
  */
 function find(haystack, predicate) {
     var keys = Object.keys(haystack);
+    // TODO: muting no-plusplus rule until we refactor more efficiently the code to match Node >=22
+    // eslint-disable-next-line no-plusplus
     for (var i = 0, l = keys.length; i < l; i++) {
         if (predicate(haystack[keys[i]])) {
             return haystack[keys[i]];
@@ -79,7 +86,6 @@ function map(arrayToTransform, predicate) {
 function some(haystack, predicate) {
     return filter(haystack, predicate).length > 0;
 }
-
 
 module.exports = {
     forOf: forOf,

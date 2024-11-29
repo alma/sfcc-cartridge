@@ -1,5 +1,3 @@
-'use strict';
-
 // mocking ~/cartridge/scripts/renderTemplateHelper
 
 var proxyquire = require('proxyquire').noCallThru().noPreserveCache();

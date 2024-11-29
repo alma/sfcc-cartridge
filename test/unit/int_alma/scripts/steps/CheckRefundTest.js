@@ -1,3 +1,5 @@
+'use strict';
+
 var sinon = require('sinon');
 
 var OrderMgr = require('../../../../mocks/steps/CheckRefundMocks').OrderMgr;
@@ -31,6 +33,8 @@ function orderFactory(count, refundType, partialRefundAmount, capture) {
 function hasNextFactory(count) {
     var hasNext = sinon.stub();
 
+    // TODO: Muting no-plusplus rule until we refactor more efficiently the code to match Node >=22
+    // eslint-disable-next-line no-plusplus
     for (var i = 0; i <= count; i++) {
         if (i === count) {
             hasNext.onCall(i)
@@ -46,6 +50,8 @@ function hasNextFactory(count) {
 function nextFactory(count, refundType, partialRefundAmount, capture) {
     var next = sinon.stub();
 
+    // TODO: Muting no-plusplus rule until we refactor more efficiently the code to match Node >=22
+    // eslint-disable-next-line no-plusplus
     for (var i = 0; i <= count; i++) {
         next.onCall(i)
             .returns(orderFactory(i, refundType, partialRefundAmount, capture));

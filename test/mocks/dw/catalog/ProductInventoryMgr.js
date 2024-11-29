@@ -1,5 +1,3 @@
-'use strict';
-
 var productInventoryMgr = {
     getInventoryList: function (inventoryListId) {
         var inventoryListId0001 = {
@@ -18,9 +16,9 @@ var productInventoryMgr = {
 
                 if (productID === '000001') {
                     return product000001;
-                } else if (productID === '000002') {
+                } if (productID === '000002') {
                     return product000002;
-                } else if (productID === '000003') {
+                } if (productID === '000003') {
                     return product000003;
                 }
 
@@ -44,9 +42,9 @@ var productInventoryMgr = {
 
                 if (productID === '000001') {
                     return product000001;
-                } else if (productID === '000002') {
+                } if (productID === '000002') {
                     return product000002;
-                } else if (productID === '000003') {
+                } if (productID === '000003') {
                     return product000003;
                 }
 
@@ -70,9 +68,9 @@ var productInventoryMgr = {
 
                 if (productID === '000001') {
                     return product000001;
-                } else if (productID === '000002') {
+                } if (productID === '000002') {
                     return product000002;
-                } else if (productID === '000003') {
+                } if (productID === '000003') {
                     return product000003;
                 }
 
@@ -82,16 +80,15 @@ var productInventoryMgr = {
 
         if (inventoryListId === 'inventoryListId0001') {
             return inventoryListId0001;
-        } else if (inventoryListId === 'inventoryListId0002') {
+        } if (inventoryListId === 'inventoryListId0002') {
             return inventoryListId0002;
-        } else if (inventoryListId === 'inventoryListId0003') {
+        } if (inventoryListId === 'inventoryListId0003') {
             return inventoryListId0003;
         }
 
         return {};
     }
 };
-
 
 module.exports = {
     getInventoryList: productInventoryMgr.getInventoryList

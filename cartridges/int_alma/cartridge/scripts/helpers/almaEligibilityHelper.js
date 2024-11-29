@@ -27,7 +27,6 @@ function callEligibility(param) {
     return [];
 }
 
-
 /**
  * Get eligibility params for a given set of plan, a locale and a basket
  * @param  {Object} plansForEligibility Alma plans

@@ -1,3 +1,5 @@
+'use strict';
+
 // CapturePaymentOrders.js unit tests
 var sinon = require('sinon');
 
@@ -10,6 +12,8 @@ var warnStub = require('../../../../mocks/steps/CapturePaymentOrders').warnStub;
 function hasNextFactory(count) {
     var hasNext = sinon.stub();
 
+    // TODO: Muting no-plusplus rule until we refactor more efficiently the code to match Node >=22
+    // eslint-disable-next-line no-plusplus
     for (var i = 0; i <= count; i++) {
         if (i === count) {
             hasNext.onCall(i)
@@ -25,6 +29,8 @@ function hasNextFactory(count) {
 function nextFactory(count) {
     var next = sinon.stub();
 
+    // TODO: Muting no-plusplus rule until we refactor more efficiently the code to match Node >=22
+    // eslint-disable-next-line no-plusplus
     for (var i = 0; i <= count; i++) {
         next.onCall(i)
             .returns({
@@ -46,7 +52,6 @@ function mockOrderFactory(count) {
     };
 }
 
-
 describe('Deferred capture job', function () {
     beforeEach(function () {
         OrderMgr.searchOrders = sinon.stub()
@@ -64,11 +69,14 @@ describe('Deferred capture job', function () {
 
         sinon.assert.calledOnce(OrderMgr.searchOrders);
         // status : 8 failed - 6 canceled
-        sinon.assert.calledWith(OrderMgr.searchOrders, 'custom.ALMA_Deferred_Capture_Status={0} and status != {1} and status != {2}',
+        sinon.assert.calledWith(
+            OrderMgr.searchOrders,
+            'custom.ALMA_Deferred_Capture_Status={0} and status != {1} and status != {2}',
             null,
             'ToCapture',
             8,
-            6);
+            6
+        );
     });
 
     it('Should not call Capture endpoint where their is no order', function () {
@@ -88,6 +96,9 @@ describe('Deferred capture job', function () {
         CapturePaymentOrders.execute();
 
         sinon.assert.callCount(almaPaymentHelper.capturePayment, count);
+
+        // TODO: Muting no-plusplus rule until we refactor more efficiently the code to match Node >=22
+        // eslint-disable-next-line no-plusplus
         for (var i = 0; i < count; i++) {
             sinon.assert.calledWith(almaPaymentHelper.capturePayment.getCall(i), {
                 external_id: 'payment_' + i,
@@ -136,4 +147,3 @@ describe('Deferred capture job', function () {
         );
     });
 });
-

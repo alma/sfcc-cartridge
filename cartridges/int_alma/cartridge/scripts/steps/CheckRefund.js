@@ -20,9 +20,7 @@ function isOrderToBeRefund(order) {
 function getOrdersRefunded() {
     var OrderMgr = require('dw/order/OrderMgr');
 
-    return OrderMgr.searchOrders(
-        'paymentStatus = {0} and (custom.almaRefundType = \'Total\' or (custom.almaRefundType = \'Partial\' and custom.almaWantedRefundAmount > 0)) and custom.almaPaymentId != NULL', null, 2
-    );
+    return OrderMgr.searchOrders('paymentStatus = {0} and (custom.almaRefundType = \'Total\' or (custom.almaRefundType = \'Partial\' and custom.almaWantedRefundAmount > 0)) and custom.almaPaymentId != NULL', null, 2);
 }
 
 /**

@@ -1,6 +1,6 @@
 {
   "node": true,
-  "esversion": 8,
+  "esversion": 11,
   "expr": true,
   "predef": [
     "describe",

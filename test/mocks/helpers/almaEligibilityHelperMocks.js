@@ -1,5 +1,3 @@
-'use strict';
-
 var proxyquire = require('proxyquire').noCallThru().noPreserveCache();
 var sinon = require('sinon');
 var almaAddressHelper = require('../../mocks/helpers/almaAddressHelper');
@@ -11,7 +9,6 @@ var logger = {
         };
     }
 };
-
 
 function proxyModel() {
     return proxyquire(

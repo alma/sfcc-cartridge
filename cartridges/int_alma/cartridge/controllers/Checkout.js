@@ -17,7 +17,6 @@ function getAlmaInfo() {
     };
 }
 
-
 /**
  * Fetch all the Alma URL needed by frontend
  * @returns {Object} string urls
@@ -46,7 +45,6 @@ server.append('Begin', function (req, res, next) {
     var almaHelpers = require('*/cartridge/scripts/helpers/almaHelpers');
     var almaConfigInfo = getAlmaInfo();
     var almaConfigHelper = require('*/cartridge/scripts/helpers/almaConfigHelper');
-
 
     var BasketMgr = require('dw/order/BasketMgr');
     var currentBasket = BasketMgr.getCurrentBasket();
@@ -81,6 +79,5 @@ server.append('Begin', function (req, res, next) {
     res.setViewData(viewData);
     next();
 });
-
 
 module.exports = server.exports();

@@ -1,3 +1,5 @@
+'use strict';
+
 var Site = require('dw/system/Site');
 var almaHelpers = require('*/cartridge/scripts/helpers/almaHelpers');
 var utils = require('*/cartridge/scripts/helpers/almaUtilsHelper');

@@ -49,7 +49,6 @@ exports.refundPaymentForOrder = function (order, amount) {
     var httpResult = refundService()
         .call(refundPaymentParams(order, amount));
 
-
     if (httpResult.msg !== 'OK') {
         throw Error('Could not create refund on Alma side.');
     }
@@ -63,4 +62,3 @@ exports.refundPaymentForOrder = function (order, amount) {
         order.custom.almaRefundType = null;
     });
 };
-
