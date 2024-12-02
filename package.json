@@ -22,7 +22,7 @@
     "del": "^8.0.0",
     "dotenv": "^16.4.5",
     "dw": "^1.0.1",
-    "eslint": "^8.57.1",
+    "eslint": "^9.0.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-sitegenesis": "~1.0.0",
