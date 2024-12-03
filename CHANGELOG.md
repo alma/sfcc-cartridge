@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## v4.8.0 - 2024-12-02
+
+### Changes
+
+- Security update sfcc node version (#141)
+
+### 🚀 New Features
+
+- Change wording for in page configuration (#139)
+
+#### Contributors
+
+@FranceBe, @alma-renovate-bot, @alma-renovate-bot[bot], @gdraynz, @github-actions, @joyet-simon and @remi-zuffinetti
+
 ## v4.7.0 - 2024-10-07
 
 ### Changes

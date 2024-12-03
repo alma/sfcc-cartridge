@@ -163,7 +163,8 @@ server.get('PaymentSuccess', function (req, res, next) {
     paymentHelper.emptyCurrentBasket();
     orderHelper.addAlmaPaymentDetails(order, paymentHelper.getPaymentDetails(paymentObj));
 
-    res.render('checkout/confirmation/confirmation',
+    res.render(
+        'checkout/confirmation/confirmation',
         buildViewParams(paymentObj, order, req.locale.id, req.currentCustomer.profile)
     );
 
@@ -350,7 +351,6 @@ server.post(
             });
         }
 
-
         return next();
     }
 );
@@ -406,9 +406,11 @@ server.get(
         }
 
         return next();
-    });
+    }
+);
 
-server.get('Plans',
+server.get(
+    'Plans',
     server.middleware.https,
     function (req, res, next) {
         var getLocale = require('*/cartridge/scripts/helpers/almaHelpers').getLocale;
@@ -424,6 +426,7 @@ server.get('Plans',
             plans: almaPlanHelper.getPlansForCheckout(getLocale(req), currentBasket, isDeferredCaptureEnabled)
         });
         return next();
-    });
+    }
+);
 
 module.exports = server.exports();

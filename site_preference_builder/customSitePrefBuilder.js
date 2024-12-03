@@ -1,4 +1,5 @@
-/* eslint-disable max-len */
+'use strict';
+
 const fs = require('fs');
 
 const xml2js = require('xml2js');
@@ -20,7 +21,8 @@ if (locale !== 'en_GB' && fs.existsSync(path.join(__dirname, `messages-${locale}
 
 const messages = require(localisationFile);
 
-// we also remove 1x that isn't deferred, as the api will provide it, but we don't want to display it
+// we also remove 1x that isn't deferred, as the api will provide it,
+// but we don't want to display it
 const filterAllowedPlan = (plan) => {
   return plan.allowed;
 };
@@ -47,6 +49,8 @@ const getSitePrefDisplayInfos = (plan) => {
   const message = messages[getMessageKey(installments, deferredDays)];
   // use of another variable to avoid side effects
   const currentMessage = {};
+  // TODO: use Object.entries when we refactor code to match Node >=22
+  // eslint-disable-next-line no-restricted-syntax
   for (let messageKey of Object.keys(message)) {
     currentMessage[messageKey] = message[messageKey]
       .replace('[[installments]]', installments)
@@ -235,8 +239,8 @@ exports.addCustomAttrFromPlan = (file, plans) => {
         text,
         min,
         max,
-        min_disclaimer,
-        max_disclaimer
+        min_disclaimer: minDisclaimer,
+        max_disclaimer: maxDisclaimer
       } = getSitePrefDisplayInfos(plan);
 
       file.metadata['type-extension'][2]['custom-attribute-definitions'][0]['attribute-definition'].push(
@@ -251,7 +255,7 @@ exports.addCustomAttrFromPlan = (file, plans) => {
           id: `${id}_min`,
           name: min,
           type: 'double',
-          description: min_disclaimer
+          description: minDisclaimer
         })
       );
       file.metadata['type-extension'][2]['custom-attribute-definitions'][0]['attribute-definition'].push(
@@ -259,7 +263,7 @@ exports.addCustomAttrFromPlan = (file, plans) => {
           id: `${id}_max`,
           name: max,
           type: 'double',
-          description: max_disclaimer
+          description: maxDisclaimer
         })
       );
     });
@@ -274,11 +278,11 @@ exports.addCustomGroupFromPlan = (file, plans) => {
       const {
         id,
         group,
-        group_id
+        group_id: groupId
       } = getSitePrefDisplayInfos(plan);
 
       file.metadata['type-extension'][2]['group-definitions'][0]['attribute-group'].push(
-        buildCustomGroupObject(group_id, group, [`${id}`, `${id}_min`, `${id}_max`])
+        buildCustomGroupObject(groupId, group, [`${id}`, `${id}_min`, `${id}_max`])
       );
     });
 
@@ -324,7 +328,8 @@ exports.addRefundCustomAttributes = (file) => {
 
 exports.addRefundCustomAttributesGroup = (file) => {
   file.metadata['type-extension'][0]['group-definitions'][0]['attribute-group'].push(
-    buildCustomGroupObject('AlmaRefund',
+    buildCustomGroupObject(
+      'AlmaRefund',
       messages.AlmaRefund.name,
       [
         'almaRefundedAmount',

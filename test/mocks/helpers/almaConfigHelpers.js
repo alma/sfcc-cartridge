@@ -1,5 +1,3 @@
-'use strict';
-
 var proxyquire = require('proxyquire')
     .noCallThru()
     .noPreserveCache();
@@ -11,7 +9,6 @@ function setCustomPreferenceValue(value) {
     getCustomPreferenceValue = sinon.stub()
         .returns(value);
 }
-
 
 var site = {
     getCurrent: function () {
@@ -26,7 +23,6 @@ var order = {
         ALMA_Deferred_Capture_Partial_Amount: 100
     }
 };
-
 
 function proxyModel() {
     return proxyquire('../../../cartridges/int_alma/cartridge/scripts/helpers/almaConfigHelper', {

@@ -1,3 +1,5 @@
+'use strict';
+
 const fs = require('fs');
 
 exports.readFile = function (filename) {
@@ -18,7 +20,6 @@ exports.writeFile = function (filename, fileContent) {
     console.error(err);
   }
 };
-
 
 /**
  * create a directory and all its parents if needed

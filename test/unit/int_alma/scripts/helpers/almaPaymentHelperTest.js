@@ -2,7 +2,6 @@
 
 // almaPayment.js unit tests
 
-var assert = require('chai').assert;
 var sinon = require('sinon');
 var almaPaymentHelper = require('../../../../mocks/helpers/almaPaymentHelpers').proxyModel;
 var resolvedPaymentData = require('../../../../mocks/helpers/almaPaymentHelpers').resolvedPaymentData;
@@ -34,6 +33,11 @@ var paymentAuthorizationNotExpired = {
 };
 
 describe('almaPaymentHelper', function () {
+    let assert;
+    before(async function () {
+        const chai = await import('chai');
+        assert = chai.assert;
+    });
     describe('Build payment data', function () {
         // TODO : Add test for payment deferred and pnx without inpage
         it('payment data for pnx is well formed', function () {

@@ -1,5 +1,3 @@
-'use strict';
-
 var proxyquire = require('proxyquire').noCallThru().noPreserveCache();
 
 var AddressModel = require('./address');
@@ -37,10 +35,11 @@ function proxyModel() {
         '*/cartridge/models/productLineItems': ProductLineItemsModel,
         '*/cartridge/scripts/checkout/shippingHelpers': {
             getShippingModels: function () {
-                return [{ shippingAddress: {
-                    firstName: 'someString',
-                    lastName: null
-                }
+                return [{
+                    shippingAddress: {
+                        firstName: 'someString',
+                        lastName: null
+                    }
                 }];
             }
         },

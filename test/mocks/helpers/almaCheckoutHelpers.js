@@ -1,6 +1,3 @@
-'use strict';
-
-
 var proxyquire = require('proxyquire')
     .noCallThru()
     .noPreserveCache();
@@ -57,7 +54,6 @@ var isAvailableForManualCapture;
 function setIsAvailableForManualCapture(value) {
     isAvailableForManualCapture = value;
 }
-
 
 function proxyModel() {
     return proxyquire('../../../cartridges/int_alma/cartridge/scripts/helpers/almaCheckoutHelper', {

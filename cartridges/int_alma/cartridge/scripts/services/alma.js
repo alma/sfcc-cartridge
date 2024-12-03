@@ -69,7 +69,6 @@ function getPaymentDetails() {
     });
 }
 
-
 /**
  * Builds service for getting eligibility. Min and Max values
  * @returns {dw.svc.Service} service instances

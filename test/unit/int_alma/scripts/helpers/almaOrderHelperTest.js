@@ -2,7 +2,6 @@
 
 // almaOrderHelper unit tests
 
-var assert = require('chai').assert;
 var sinon = require('sinon');
 var almaOrderHelper = require('../../../../mocks/helpers/almaOrderHelpers').almaOrderHelpers;
 var transaction = require('../../../../mocks/helpers/almaOrderHelpers').transaction;
@@ -14,6 +13,11 @@ var order = {
     }
 };
 describe('Alma order helper', function () {
+    let assert;
+    before(async function () {
+        const chai = await import('chai');
+        assert = chai.assert;
+    });
     it('Add Alma data to order does not throw an error', function () {
         createNewTransaction();
         assert.doesNotThrow(function () {

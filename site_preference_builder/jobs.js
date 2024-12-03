@@ -1,3 +1,5 @@
+'use strict';
+
 const { readFileSync, writeFileSync } = require('fs');
 const builder = require('./customSitePrefBuilder');
 
@@ -19,7 +21,7 @@ exports.merchantHasOnShipment = merchantHasOnShipment;
 const getJobShipment = async (plans, siteName) => {
   if (merchantHasOnShipment(plans)) {
     const jobShipment = readFileSync(INPUT_JOB_SHIPMENT_FILE)
-            .toString();
+      .toString();
     const onShipmentJob = await builder.xmlToJson(jobShipment.replace('[[SITENAME]]', siteName));
     allJobs.job.push(onShipmentJob.job);
   }
@@ -27,9 +29,9 @@ const getJobShipment = async (plans, siteName) => {
 
 const getJobDeferredCapture = async (siteName) => {
   const jobDeferredCapture = readFileSync(INPUT_JOB_DEFERRED_CAPTURE_FILE)
-        .toString();
+    .toString();
   const deferredCaptureJob = await builder.xmlToJson(
-      jobDeferredCapture.replace('[[SITENAME]]', siteName)
+    jobDeferredCapture.replace('[[SITENAME]]', siteName)
   );
   allJobs.job.push(deferredCaptureJob.job);
 };
@@ -39,7 +41,7 @@ const getJobRefund = async (toggleRefund, siteName) => {
     return;
   }
   const jobRefund = readFileSync(INPUT_JOB_REFUND_FILE)
-        .toString();
+    .toString();
   const onRefundJob = await builder.xmlToJson(jobRefund.replace('[[SITENAME]]', siteName));
   allJobs.job.push(onRefundJob.job);
 };

@@ -74,7 +74,6 @@ function getPartialCaptureAmount(order) {
     return order.custom.ALMA_Deferred_Capture_Partial_Amount;
 }
 
-
 module.exports = {
     addPidToOrder: addPidToOrder,
     addAlmaPaymentDetails: addAlmaPaymentDetails,
