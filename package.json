@@ -15,6 +15,7 @@
   "homepage": "https://github.com/alma/sfcc-plugin",
   "devDependencies": {
     "@commitlint/config-conventional": "^19.5.0",
+    "@stylistic/eslint-plugin-js": "^2.13.0",
     "@types/chai": "^5.0.1",
     "chai": "^5.1.2",
     "chai-subset": "^1.6.0",
