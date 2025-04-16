@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v4.9.0 - 2025-04-16
+
+### Changes
+
+### 🚀 New Features
+
+- feat: Set the IN_PAGE setting true by default (#153)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @alma-renovate-bot[bot], @carine-bonnafous, @joyet-simon, @remi-zuffinetti, [alma-renovate-bot[bot]](https://github.com/apps/alma-renovate-bot) and [github-actions[bot]](https://github.com/apps/github-actions)
+
 ## v4.8.0 - 2024-12-02
 
 ### Changes
