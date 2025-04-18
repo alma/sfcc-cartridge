@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v4.10.0 - 2025-04-18
+
+### Changes
+
+### 🚀 New Features
+
+- Update widget version from 3.x.x to 4.x.x (#159)
+
+#### Contributors
+
+@joyet-simon and [github-actions[bot]](https://github.com/apps/github-actions)
+
 ## v4.9.0 - 2025-04-16
 
 ### Changes

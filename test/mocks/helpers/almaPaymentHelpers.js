@@ -101,7 +101,7 @@ function resolvedPaymentData(installmentsCount, defferedDays, locale, origin, ha
             custom_data: {
                 cms_name: 'SFCC',
                 cms_version: '4.0.0',
-                alma_plugin_version: '4.9.0'
+                alma_plugin_version: '4.10.0'
             }
         },
         customer: {
