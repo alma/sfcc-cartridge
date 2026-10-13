@@ -94,8 +94,6 @@ jobs:
 
             ${{ steps.fetch-release-draft.outputs.body }}
 
-            cc <@khadija.cherif>
-
       - name: Send changelog to Slack
         uses: slackapi/slack-github-action@485a9d42d3a73031f12ec201c457e2162c45d02d # v2.0.0
         with:
