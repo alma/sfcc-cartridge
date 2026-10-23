@@ -6,6 +6,6 @@
 'type: docs': docs/*
 'type: bugfix': ['fix/*', 'bug/*', 'hotfix-backport/*']
 'type: feature': ['feature/*', 'feat/*']
-'type: security': ['security/*', 'dependabot/*']
+'type: security': 'security/*'
 'type: hotfix': 'hotfix/*'
 'type: devx': 'devx/*'
