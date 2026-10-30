@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [ "github>alma/renovate:defaults.json5" ],
+  "enabledManagers": [ "github-actions", "npm" ],
+  "reviewers": [ "team:squad-e-commerce-integrations" ],
+  "baseBranches": [ "develop" ],
+  "packageRules": [
+    {
+      "matchManagers": [ "npm" ],
+      "groupName": "NPM dependencies",
+      "reviewers": [ "team:squad-e-commerce-integrations" ]
+    },
+    {
+      // require approval for major npm version updates in dependency dashboard
+      "matchManagers": [ "npm" ],
+      "matchUpdateTypes": [ "major" ],
+      "dependencyDashboardApproval": true,
+      "separateMultipleMajor": true,
+    }
+  ]
+}
